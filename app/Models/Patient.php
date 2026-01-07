@@ -1,0 +1,63 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Patient extends Model
+{
+    use SoftDeletes;
+
+    /**
+     * The attributes that are mass assignable.
+     */
+    protected $fillable = [
+        'nik',
+        'no_kk',
+        'no_bpjs',
+        'name',
+        'dob',
+        'address',
+        'phone',
+        'blood_type',
+        'husband_name',
+        'husband_nik',
+        'husband_job',
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     */
+    protected function casts(): array
+    {
+        return [
+            'dob' => 'date',
+        ];
+    }
+
+    /**
+     * Get all pregnancies for this patient.
+     */
+    public function pregnancies(): HasMany
+    {
+        return $this->hasMany(Pregnancy::class);
+    }
+
+    /**
+     * Get the active pregnancy for this patient.
+     */
+    public function activePregnancy()
+    {
+        return $this->hasOne(Pregnancy::class)->where('status', 'Aktif');
+    }
+
+    /**
+     * Get patient's age.
+     */
+    public function getAgeAttribute(): int
+    {
+        return $this->dob->age;
+    }
+}
