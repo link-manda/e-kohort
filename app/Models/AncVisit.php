@@ -37,6 +37,8 @@ class AncVisit extends Model
         'risk_category',
         'diagnosis',
         'referral_target',
+        'deleted_reason',
+        'deleted_by',
     ];
 
     /**

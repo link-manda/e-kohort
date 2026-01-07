@@ -1,0 +1,628 @@
+<div class="space-y-6">
+    <!-- Header & Stats -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                    </path>
+                </svg>
+                Riwayat Kunjungan ANC
+            </h2>
+            <p class="text-sm text-gray-500 mt-1">{{ $pregnancy->patient->name }} - {{ $pregnancy->gravida }}</p>
+        </div>
+
+        <a href="{{ route('anc-visits.create', $pregnancy->id) }}"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6">
+                </path>
+            </svg>
+            Tambah Kunjungan
+        </a>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Total Visits -->
+        <div wire:click="$set('riskFilter', 'all')"
+            class="bg-white rounded-lg shadow-sm border-2 border-blue-500 p-4 cursor-pointer hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">Total Kunjungan</p>
+                    <p class="text-3xl font-bold text-blue-600">{{ $stats['total'] }}</p>
+                </div>
+                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                        <path fill-rule="evenodd"
+                            d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- High Risk -->
+        <div wire:click="$set('riskFilter', 'ekstrem')"
+            class="bg-white rounded-lg shadow-sm border-2 {{ $riskFilter === 'ekstrem' ? 'border-red-500' : 'border-gray-200' }} p-4 cursor-pointer hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">Risiko Ekstrem</p>
+                    <p class="text-3xl font-bold text-red-600">{{ $stats['ekstrem'] }}</p>
+                </div>
+                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medium Risk -->
+        <div wire:click="$set('riskFilter', 'tinggi')"
+            class="bg-white rounded-lg shadow-sm border-2 {{ $riskFilter === 'tinggi' ? 'border-orange-500' : 'border-gray-200' }} p-4 cursor-pointer hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">Risiko Tinggi</p>
+                    <p class="text-3xl font-bold text-orange-600">{{ $stats['tinggi'] }}</p>
+                </div>
+                <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Low Risk -->
+        <div wire:click="$set('riskFilter', 'rendah')"
+            class="bg-white rounded-lg shadow-sm border-2 {{ $riskFilter === 'rendah' ? 'border-green-500' : 'border-gray-200' }} p-4 cursor-pointer hover:shadow-md transition-shadow">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm text-gray-600">Risiko Rendah</p>
+                    <p class="text-3xl font-bold text-green-600">{{ $stats['rendah'] }}</p>
+                </div>
+                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters & Search -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <!-- Search -->
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Cari Catatan Kunjungan</label>
+                <input type="text" wire:model.live.debounce.300ms="search"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    placeholder="Cari di anamnesis atau catatan klinis...">
+            </div>
+
+            <!-- Visit Code Filter -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Kode Kunjungan</label>
+                <select wire:model.live="visitCodeFilter"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500">
+                    <option value="all">Semua ({{ $stats['total'] }})</option>
+                    <option value="k1">K1 ({{ $stats['k1'] }})</option>
+                    <option value="k2">K2 ({{ $stats['k2'] }})</option>
+                    <option value="k3">K3 ({{ $stats['k3'] }})</option>
+                    <option value="k4">K4 ({{ $stats['k4'] }})</option>
+                    <option value="k5">K5 ({{ $stats['k5'] }})</option>
+                    <option value="k6">K6 ({{ $stats['k6'] }})</option>
+                </select>
+            </div>
+
+            <!-- Per Page -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Tampilkan</label>
+                <select wire:model.live="perPage"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500">
+                    <option value="10">10 per halaman</option>
+                    <option value="25">25 per halaman</option>
+                    <option value="50">50 per halaman</option>
+                    <option value="100">100 per halaman</option>
+                </select>
+            </div>
+        </div>
+
+        @if ($riskFilter !== 'all' || $visitCodeFilter !== 'all' || $search)
+            <div class="mt-3 flex items-center justify-between">
+                <p class="text-sm text-gray-600">
+                    Filter aktif:
+                    @if ($riskFilter !== 'all')
+                        <span class="font-medium">Risiko {{ ucfirst($riskFilter) }}</span>
+                    @endif
+                    @if ($visitCodeFilter !== 'all')
+                        <span class="font-medium">{{ strtoupper($visitCodeFilter) }}</span>
+                    @endif
+                    @if ($search)
+                        <span class="font-medium">"{{ $search }}"</span>
+                    @endif
+                </p>
+                <button wire:click="clearFilters" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                    Reset Filter
+                </button>
+            </div>
+        @endif
+    </div>
+
+    <!-- Visit History Table -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        @if ($visits->count() > 0)
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-4 py-3 text-left">
+                                <button wire:click="sortBy('visit_code')"
+                                    class="flex items-center gap-1 text-xs font-semibold text-gray-700 uppercase hover:text-blue-600">
+                                    Kode
+                                    @if ($sortField === 'visit_code')
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            @if ($sortDirection === 'asc')
+                                                <path fill-rule="evenodd"
+                                                    d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
+                                                    clip-rule="evenodd"></path>
+                                            @else
+                                                <path fill-rule="evenodd"
+                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                    clip-rule="evenodd"></path>
+                                            @endif
+                                        </svg>
+                                    @endif
+                                </button>
+                            </th>
+                            <th class="px-4 py-3 text-left">
+                                <button wire:click="sortBy('visit_date')"
+                                    class="flex items-center gap-1 text-xs font-semibold text-gray-700 uppercase hover:text-blue-600">
+                                    Tanggal
+                                    @if ($sortField === 'visit_date')
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            @if ($sortDirection === 'asc')
+                                                <path fill-rule="evenodd"
+                                                    d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
+                                                    clip-rule="evenodd"></path>
+                                            @else
+                                                <path fill-rule="evenodd"
+                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                    clip-rule="evenodd"></path>
+                                            @endif
+                                        </svg>
+                                    @endif
+                                </button>
+                            </th>
+                            <th class="px-4 py-3 text-left">
+                                <button wire:click="sortBy('gestational_age')"
+                                    class="flex items-center gap-1 text-xs font-semibold text-gray-700 uppercase hover:text-blue-600">
+                                    UK
+                                    @if ($sortField === 'gestational_age')
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            @if ($sortDirection === 'asc')
+                                                <path fill-rule="evenodd"
+                                                    d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
+                                                    clip-rule="evenodd"></path>
+                                            @else
+                                                <path fill-rule="evenodd"
+                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                    clip-rule="evenodd"></path>
+                                            @endif
+                                        </svg>
+                                    @endif
+                                </button>
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Indikator
+                                Utama</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Triple
+                                Eliminasi</th>
+                            <th class="px-4 py-3 text-left">
+                                <button wire:click="sortBy('risk_category')"
+                                    class="flex items-center gap-1 text-xs font-semibold text-gray-700 uppercase hover:text-blue-600">
+                                    Risiko
+                                    @if ($sortField === 'risk_category')
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            @if ($sortDirection === 'asc')
+                                                <path fill-rule="evenodd"
+                                                    d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
+                                                    clip-rule="evenodd"></path>
+                                            @else
+                                                <path fill-rule="evenodd"
+                                                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                    clip-rule="evenodd"></path>
+                                            @endif
+                                        </svg>
+                                    @endif
+                                </button>
+                            </th>
+                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        @foreach ($visits as $visit)
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <!-- Visit Code -->
+                                <td class="px-4 py-3">
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 text-sm font-bold rounded-full
+                                        {{ in_array($visit->visit_code, ['K1', 'K2']) ? 'bg-blue-100 text-blue-800' : '' }}
+                                        {{ in_array($visit->visit_code, ['K3', 'K4']) ? 'bg-green-100 text-green-800' : '' }}
+                                        {{ in_array($visit->visit_code, ['K5', 'K6']) ? 'bg-purple-100 text-purple-800' : '' }}">
+                                        {{ $visit->visit_code }}
+                                    </span>
+                                </td>
+
+                                <!-- Visit Date -->
+                                <td class="px-4 py-3">
+                                    <p class="text-sm font-medium text-gray-900">
+                                        {{ $visit->visit_date->locale('id')->isoFormat('D MMM YYYY') }}</p>
+                                    <p class="text-xs text-gray-500">{{ $visit->visit_date->diffForHumans() }}</p>
+                                </td>
+
+                                <!-- Gestational Age -->
+                                <td class="px-4 py-3">
+                                    <span class="text-sm font-semibold text-gray-900">{{ $visit->gestational_age }}
+                                        mg</span>
+                                </td>
+
+                                <!-- Key Indicators -->
+                                <td class="px-4 py-3">
+                                    <div class="space-y-1 text-xs">
+                                        <p class="flex items-center gap-1">
+                                            <span class="font-medium text-gray-600">MAP:</span>
+                                            <span
+                                                class="font-bold {{ $visit->map_score > 100 ? 'text-red-600' : ($visit->map_score > 90 ? 'text-orange-600' : 'text-green-600') }}">
+                                                {{ number_format($visit->map_score, 1) }}
+                                            </span>
+                                        </p>
+                                        @if ($visit->hb)
+                                            <p class="flex items-center gap-1">
+                                                <span class="font-medium text-gray-600">Hb:</span>
+                                                <span
+                                                    class="font-bold {{ $visit->hb < 11 ? 'text-red-600' : 'text-green-600' }}">
+                                                    {{ number_format($visit->hb, 1) }} g/dL
+                                                </span>
+                                            </p>
+                                        @endif
+                                        @if ($visit->lila)
+                                            <p class="flex items-center gap-1">
+                                                <span class="font-medium text-gray-600">LILA:</span>
+                                                <span
+                                                    class="font-bold {{ $visit->lila < 23.5 ? 'text-red-600' : 'text-green-600' }}">
+                                                    {{ number_format($visit->lila, 1) }} cm
+                                                </span>
+                                            </p>
+                                        @endif
+                                    </div>
+                                </td>
+
+                                <!-- Triple Eliminasi -->
+                                <td class="px-4 py-3">
+                                    <div class="flex gap-1">
+                                        <span
+                                            class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded {{ $visit->hiv_status === 'R' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}"
+                                            title="HIV">
+                                            HIV
+                                        </span>
+                                        <span
+                                            class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded {{ $visit->syphilis_status === 'R' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}"
+                                            title="Syphilis">
+                                            Syp
+                                        </span>
+                                        <span
+                                            class="inline-flex items-center px-2 py-1 text-xs font-semibold rounded {{ $visit->hbsag_status === 'R' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' }}"
+                                            title="HBsAg">
+                                            HBs
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <!-- Risk Category -->
+                                <td class="px-4 py-3">
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 text-sm font-bold rounded-full
+                                        {{ $visit->risk_category === 'Ekstrem' ? 'bg-red-100 text-red-800' : '' }}
+                                        {{ $visit->risk_category === 'Tinggi' ? 'bg-orange-100 text-orange-800' : '' }}
+                                        {{ $visit->risk_category === 'Rendah' ? 'bg-green-100 text-green-800' : '' }}">
+                                        {{ $visit->risk_category }}
+                                    </span>
+                                </td>
+
+                                <!-- Actions -->
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <button wire:click="toggleExpand({{ $visit->id }})"
+                                            class="p-1 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors"
+                                            title="Detail">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                @if (in_array($visit->id, $expandedVisits))
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                                @else
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                                @endif
+                                            </svg>
+                                        </button>
+                                        <a href="{{ route('anc-visits.show', $visit->id) }}"
+                                            class="p-1 text-green-600 hover:text-green-700 hover:bg-green-50 rounded transition-colors"
+                                            title="Lihat Detail">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                                </path>
+                                            </svg>
+                                        </a>
+                                        <button wire:click="deleteVisit({{ $visit->id }})"
+                                            wire:confirm="Apakah Anda yakin ingin menghapus kunjungan {{ $visit->visit_code }}?"
+                                            class="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
+                                            title="Hapus">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Expanded Row Details -->
+                            @if (in_array($visit->id, $expandedVisits))
+                                <tr class="bg-blue-50">
+                                    <td colspan="7" class="px-6 py-4">
+                                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                            <!-- Physical Examination -->
+                                            <div>
+                                                <h4 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                                    <svg class="w-4 h-4 text-blue-600" fill="currentColor"
+                                                        viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd"
+                                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                                                            clip-rule="evenodd"></path>
+                                                    </svg>
+                                                    Pemeriksaan Fisik
+                                                </h4>
+                                                <div class="space-y-2 text-sm">
+                                                    <p><span class="font-medium">BB:</span> {{ $visit->weight }} kg
+                                                    </p>
+                                                    <p><span class="font-medium">TD:</span>
+                                                        {{ $visit->systolic }}/{{ $visit->diastolic }} mmHg</p>
+                                                    <p><span class="font-medium">Suhu:</span>
+                                                        {{ $visit->temperature }}°C</p>
+                                                    @if ($visit->fundal_height)
+                                                        <p><span class="font-medium">TFU:</span>
+                                                            {{ $visit->fundal_height }} cm</p>
+                                                    @endif
+                                                    @if ($visit->fetal_heart_rate)
+                                                        <p><span class="font-medium">DJJ:</span>
+                                                            {{ $visit->fetal_heart_rate }} bpm</p>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <!-- Interventions -->
+                                            <div>
+                                                <h4 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                                    <svg class="w-4 h-4 text-green-600" fill="currentColor"
+                                                        viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd"
+                                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                            clip-rule="evenodd"></path>
+                                                    </svg>
+                                                    Intervensi
+                                                </h4>
+                                                <div class="space-y-2 text-sm">
+                                                    @if ($visit->ttd_given)
+                                                        <p class="flex items-center gap-1">
+                                                            <svg class="w-4 h-4 text-green-600" fill="currentColor"
+                                                                viewBox="0 0 20 20">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                                    clip-rule="evenodd"></path>
+                                                            </svg>
+                                                            TTD Diberikan
+                                                        </p>
+                                                    @endif
+                                                    @if ($visit->fe_given)
+                                                        <p class="flex items-center gap-1">
+                                                            <svg class="w-4 h-4 text-green-600" fill="currentColor"
+                                                                viewBox="0 0 20 20">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                                    clip-rule="evenodd"></path>
+                                                            </svg>
+                                                            Fe Diberikan
+                                                        </p>
+                                                    @endif
+                                                    @if ($visit->counseling_given)
+                                                        <p class="flex items-center gap-1">
+                                                            <svg class="w-4 h-4 text-green-600" fill="currentColor"
+                                                                viewBox="0 0 20 20">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                                                    clip-rule="evenodd"></path>
+                                                            </svg>
+                                                            Konseling Diberikan
+                                                        </p>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            <!-- Clinical Notes -->
+                                            <div>
+                                                <h4 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                                                    <svg class="w-4 h-4 text-purple-600" fill="currentColor"
+                                                        viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd"
+                                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                                            clip-rule="evenodd"></path>
+                                                    </svg>
+                                                    Catatan Klinis
+                                                </h4>
+                                                <div class="space-y-2 text-sm">
+                                                    @if ($visit->anamnesis)
+                                                        <p><span class="font-medium">Anamnesis:</span>
+                                                            {{ $visit->anamnesis }}</p>
+                                                    @endif
+                                                    @if ($visit->clinical_notes)
+                                                        <p><span class="font-medium">Catatan:</span>
+                                                            {{ $visit->clinical_notes }}</p>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endif
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="px-6 py-4 border-t border-gray-200">
+                {{ $visits->links() }}
+            </div>
+        @else
+            <!-- Empty State -->
+            <div class="text-center py-12">
+                <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                    </path>
+                </svg>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Belum ada kunjungan ANC</h3>
+                <p class="text-gray-600 mb-6">Mulai catat kunjungan ANC untuk kehamilan ini</p>
+                <a href="{{ route('anc-visits.create', $pregnancy->id) }}"
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Tambah Kunjungan Pertama
+                </a>
+            </div>
+        @endif
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    @if($showDeleteModal)
+        <div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50"
+            x-data="{ show: @entangle('showDeleteModal') }"
+            x-show="show"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0">
+            
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 transform scale-90"
+                x-transition:enter-end="opacity-100 transform scale-100"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 transform scale-100"
+                x-transition:leave-end="opacity-0 transform scale-90"
+                @click.away="$wire.cancelDelete()">
+                
+                <!-- Header -->
+                <div class="bg-red-50 px-6 py-4 rounded-t-lg border-b border-red-100">
+                    <div class="flex items-start gap-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                                    </path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900">Konfirmasi Penghapusan</h3>
+                            <p class="text-sm text-gray-600 mt-1">Anda yakin ingin menghapus kunjungan ini?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Body -->
+                <div class="px-6 py-4 space-y-4">
+                    @if($visitToDelete)
+                        <!-- Visit Info -->
+                        <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Kode Kunjungan:</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ $visitToDelete->visit_code }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Tanggal:</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ $visitToDelete->visit_date->format('d M Y') }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-600">Usia Kehamilan:</span>
+                                <span class="text-sm font-semibold text-gray-900">{{ $visitToDelete->gestational_age }} minggu</span>
+                            </div>
+                        </div>
+
+                        <!-- Warning Message -->
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                            <p class="text-sm text-yellow-800">
+                                <strong>Perhatian:</strong> Data akan di-soft delete dan dapat dipulihkan oleh admin jika diperlukan.
+                            </p>
+                        </div>
+
+                        <!-- Reason Input -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Alasan Penghapusan <span class="text-gray-400">(Opsional)</span>
+                            </label>
+                            <textarea 
+                                wire:model="deleteReason"
+                                rows="3"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm"
+                                placeholder="Contoh: Data duplikat, kesalahan input, dll."></textarea>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Footer -->
+                <div class="bg-gray-50 px-6 py-4 rounded-b-lg flex items-center justify-end gap-3">
+                    <button 
+                        type="button"
+                        wire:click="cancelDelete"
+                        class="px-4 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                        Batal
+                    </button>
+                    <button 
+                        type="button"
+                        wire:click="confirmDelete"
+                        class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                            </path>
+                        </svg>
+                        Hapus Kunjungan
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif

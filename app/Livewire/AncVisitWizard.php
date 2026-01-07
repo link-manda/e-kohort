@@ -13,6 +13,11 @@ class AncVisitWizard extends Component
     public $currentStep = 1;
     public $totalSteps = 4;
 
+    // Edit Mode
+    public $visitId;
+    public $isEditMode = false;
+    public $originalVisitCode;
+
     // Pregnancy Data
     public $pregnancy_id;
     public $pregnancy;
@@ -90,12 +95,67 @@ class AncVisitWizard extends Component
         return $rules;
     }
 
-    public function mount($pregnancy_id)
+    public function mount($pregnancy_id, $visit_id = null)
     {
         $this->pregnancy_id = $pregnancy_id;
         $this->pregnancy = Pregnancy::with('patient')->findOrFail($pregnancy_id);
-        $this->visit_date = now()->format('Y-m-d');
-        $this->gestational_age_weeks = $this->pregnancy->gestational_age;
+
+        // Check if edit mode
+        if ($visit_id) {
+            $this->isEditMode = true;
+            $this->visitId = $visit_id;
+            $this->loadVisitData($visit_id);
+        } else {
+            // Create mode - set defaults
+            $this->visit_date = now()->format('Y-m-d');
+            $this->gestational_age_weeks = $this->pregnancy->gestational_age;
+        }
+    }
+
+    public function loadVisitData($visit_id)
+    {
+        $visit = AncVisit::findOrFail($visit_id);
+
+        // Store original visit code (cannot be changed)
+        $this->originalVisitCode = $visit->visit_code;
+
+        // Load all visit data
+        $this->visit_date = $visit->visit_date->format('Y-m-d');
+        $this->gestational_age_weeks = $visit->gestational_age;
+        $this->chief_complaint = $visit->anamnesis;
+
+        // Physical examination
+        $this->weight = $visit->weight;
+        $this->height = $visit->height;
+        $this->lila = $visit->lila;
+        $this->tfu = $visit->fundal_height;
+        $this->djj = $visit->fetal_heart_rate;
+        $this->fetal_presentation = $visit->fetal_presentation;
+
+        // Blood pressure
+        $this->systolic = $visit->systolic;
+        $this->diastolic = $visit->diastolic;
+        $this->map_score = $visit->map_score;
+
+        // Laboratory
+        $this->hb = $visit->hb;
+        $this->protein_urine = $visit->protein_urine;
+        $this->blood_sugar = $visit->glucose_urine;
+        $this->hiv_status = $visit->hiv_status;
+        $this->syphilis_status = $visit->syphilis_status;
+        $this->hbsag_status = $visit->hbsag_status;
+        $this->tt_immunization = $visit->ttd_given ? 'T1' : null;
+        $this->fe_tablets = $visit->fe_given ? 90 : 0;
+        $this->diagnosis = $visit->clinical_notes;
+        $this->referral_target = null;
+
+        // Risk detection
+        $this->has_kek = $visit->lila && $visit->lila < 23.5;
+        $this->has_anemia = $visit->hb && $visit->hb < 11;
+        $this->risk_category = $visit->risk_category;
+
+        // Recalculate MAP
+        $this->calculateMAP();
     }
 
     public function updated($propertyName)
@@ -177,16 +237,9 @@ class AncVisitWizard extends Component
         // Calculate trimester based on gestational age
         $trimester = $this->gestational_age_weeks <= 12 ? 1 : ($this->gestational_age_weeks <= 28 ? 2 : 3);
 
-        // Determine visit code based on existing visits
-        $visitCount = AncVisit::where('pregnancy_id', $this->pregnancy_id)->count();
-        $visitCodes = ['K1', 'K2', 'K3', 'K4', 'K5', 'K6'];
-        $visitCode = $visitCodes[min($visitCount, 5)] ?? 'K6';
-
-        AncVisit::create([
-            'pregnancy_id' => $this->pregnancy_id,
+        $data = [
             'visit_date' => $this->visit_date,
             'trimester' => $trimester,
-            'visit_code' => $visitCode,
             'gestational_age' => $this->gestational_age_weeks,
             'weight' => $this->weight ?: null,
             'height' => $this->height ?: null,
@@ -194,22 +247,43 @@ class AncVisitWizard extends Component
             'systolic' => $this->systolic,
             'diastolic' => $this->diastolic,
             'map_score' => $this->map_score,
-            'tfu' => $this->tfu ?: null,
-            'djj' => $this->djj ?: null,
+            'fundal_height' => $this->tfu ?: null,
+            'fetal_heart_rate' => $this->djj ?: null,
+            'fetal_presentation' => $this->fetal_presentation ?: null,
             'hb' => $this->hb ?: null,
             'protein_urine' => $this->protein_urine ?: null,
+            'glucose_urine' => $this->blood_sugar ?: null,
             'hiv_status' => $this->hiv_status,
             'syphilis_status' => $this->syphilis_status,
             'hbsag_status' => $this->hbsag_status,
-            'tt_immunization' => $this->tt_immunization ?: null,
-            'fe_tablets' => $this->fe_tablets ?: null,
+            'ttd_given' => $this->tt_immunization ? true : false,
+            'fe_given' => $this->fe_tablets && $this->fe_tablets > 0 ? true : false,
             'risk_category' => $this->risk_category,
-            'diagnosis' => $this->diagnosis ?: null,
-            'referral_target' => $this->referral_target ?: null,
-        ]);
+            'anamnesis' => $this->chief_complaint ?: null,
+            'clinical_notes' => $this->diagnosis ?: null,
+        ];
 
-        session()->flash('success', 'Kunjungan ANC berhasil dicatat');
-        return redirect()->route('patients.show', $this->pregnancy->patient_id);
+        if ($this->isEditMode) {
+            // Update existing visit
+            $visit = AncVisit::findOrFail($this->visitId);
+            $visit->update($data);
+
+            session()->flash('success', 'Kunjungan ANC berhasil diperbarui');
+            return redirect()->route('anc-visits.show', $this->visitId);
+        } else {
+            // Determine visit code based on existing visits
+            $visitCount = AncVisit::where('pregnancy_id', $this->pregnancy_id)->count();
+            $visitCodes = ['K1', 'K2', 'K3', 'K4', 'K5', 'K6'];
+            $visitCode = $visitCodes[min($visitCount, 5)] ?? 'K6';
+
+            $data['pregnancy_id'] = $this->pregnancy_id;
+            $data['visit_code'] = $visitCode;
+
+            AncVisit::create($data);
+
+            session()->flash('success', 'Kunjungan ANC berhasil dicatat');
+            return redirect()->route('patients.show', $this->pregnancy->patient_id);
+        }
     }
 
     public function render()
