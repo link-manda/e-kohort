@@ -1,4 +1,10 @@
 <div>
+    <!-- Breadcrumb -->
+    <x-breadcrumb :items="[
+        ['label' => 'Kunjungan ANC', 'url' => route('anc-visits.index')],
+        ['label' => $isEditMode ? 'Edit Kunjungan' : 'Tambah Kunjungan'],
+    ]" />
+
     <!-- Pregnancy Info Header -->
     <div class="bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl p-6 text-white mb-6">
         <div class="flex items-center justify-between">
@@ -393,6 +399,76 @@
                     </div>
                 </div>
 
+                <!-- Pemeriksaan Tambahan -->
+                <div class="mt-6 p-4 bg-indigo-50 rounded-lg">
+                    <h4 class="font-bold text-indigo-900 mb-3">🔍 Pemeriksaan Tambahan</h4>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <!-- ANC 12T Checkbox -->
+                        <div class="flex items-center space-x-3 p-3 bg-white rounded-lg border border-indigo-200">
+                            <input type="checkbox" wire:model="anc_12t" id="anc_12t"
+                                class="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
+                            <label for="anc_12t" class="text-sm font-semibold text-gray-700 cursor-pointer">
+                                ANC 12T Lengkap
+                            </label>
+                        </div>
+
+                        <!-- USG Check -->
+                        <div class="flex items-center space-x-3 p-3 bg-white rounded-lg border border-indigo-200">
+                            <input type="checkbox" wire:model="usg_check" id="usg_check"
+                                class="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
+                            <label for="usg_check" class="text-sm font-semibold text-gray-700 cursor-pointer">
+                                Sudah USG
+                            </label>
+                        </div>
+
+                        <!-- Counseling Check -->
+                        <div class="flex items-center space-x-3 p-3 bg-white rounded-lg border border-indigo-200">
+                            <input type="checkbox" wire:model="counseling_check" id="counseling_check"
+                                class="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
+                            <label for="counseling_check" class="text-sm font-semibold text-gray-700 cursor-pointer">
+                                Sudah Konseling
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- BMI (Auto-calculated) -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                BMI (Indeks Massa Tubuh)
+                            </label>
+                            <input type="number" wire:model="bmi" readonly
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 focus:outline-none"
+                                placeholder="Auto-calculated">
+                            @if ($bmi)
+                                <p class="text-xs mt-1"
+                                    @if ($bmi < 18.5) class="text-yellow-600 font-semibold">⚠ {{ number_format($bmi, 1) }} - Underweight
+                                    @elseif ($bmi < 25)
+                                        class="text-green-600 font-semibold">✓ {{ number_format($bmi, 1) }} - Normal
+                                    @elseif ($bmi < 30)
+                                        class="text-orange-600 font-semibold">⚠ {{ number_format($bmi, 1) }} - Overweight
+                                    @else
+                                        class="text-red-600 font-semibold">⚠ {{ number_format($bmi, 1) }} - Obesitas @endif
+                                    </p>
+                                @else
+                                <p class="text-xs text-gray-500 mt-1">Masukkan BB & TB untuk kalkulasi otomatis</p>
+                            @endif
+                        </div>
+
+                        <!-- Midwife Name -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Nama Bidan/Nakes
+                            </label>
+                            <input type="text" wire:model="midwife_name"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                placeholder="Nama tenaga kesehatan yang memeriksa">
+                            <p class="text-xs text-gray-500 mt-1">Petugas yang melakukan pemeriksaan</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Diagnosis & Rujukan -->
                 <div class="mt-6 p-4 bg-yellow-50 rounded-lg">
                     <h4 class="font-bold text-yellow-900 mb-3">📋 Diagnosis & Rujukan</h4>
@@ -416,6 +492,26 @@
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                                 placeholder="Contoh: RSUD Badung, Puskesmas Abiansemal...">
                             <p class="text-xs text-gray-500 mt-1">Kosongkan jika tidak ada rujukan</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Analisa Resiko
+                            </label>
+                            <textarea wire:model="risk_level" rows="2"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                placeholder="Contoh: Resiko KEK, Resiko Anemia, Resiko Preeklamsia..."></textarea>
+                            <p class="text-xs text-gray-500 mt-1">Analisa faktor risiko yang ditemukan</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Tindak Lanjut
+                            </label>
+                            <textarea wire:model="follow_up" rows="2"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                                placeholder="Contoh: Kontrol 4 minggu lagi, Rujuk ke RSUD, Tambah asupan gizi..."></textarea>
+                            <p class="text-xs text-gray-500 mt-1">Rencana tindak lanjut pemeriksaan</p>
                         </div>
                     </div>
                 </div>

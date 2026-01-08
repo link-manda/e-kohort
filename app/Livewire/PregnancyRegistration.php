@@ -19,6 +19,8 @@ class PregnancyRegistration extends Component
     public $hpht;
     public $hpl;
     public $pregnancy_gap;
+    public $weight_before;
+    public $height;
     public $risk_score_initial;
 
     protected $rules = [
@@ -28,6 +30,8 @@ class PregnancyRegistration extends Component
         'hpht' => 'required|date|before_or_equal:today',
         'hpl' => 'required|date|after:hpht',
         'pregnancy_gap' => 'nullable|integer|min:0|max:50',
+        'weight_before' => 'nullable|numeric|min:20|max:200',
+        'height' => 'nullable|numeric|min:100|max:250',
         'risk_score_initial' => 'nullable|integer|min:0|max:50',
     ];
 
@@ -81,6 +85,8 @@ class PregnancyRegistration extends Component
             'hpht' => $this->hpht,
             'hpl' => $this->hpl,
             'pregnancy_gap' => $this->pregnancy_gap ?: null,
+            'weight_before' => $this->weight_before ?: null,
+            'height' => $this->height ?: null,
             'risk_score_initial' => $this->risk_score_initial ?: null,
             'status' => 'Aktif',
         ]);

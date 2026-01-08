@@ -106,22 +106,6 @@
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Left Column -->
             <div class="space-y-6">
-                <!-- Anamnesis -->
-                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        Anamnesis & Keluhan
-                    </h3>
-                    <div class="bg-gray-50 rounded-lg p-4">
-                        <p class="text-gray-800 leading-relaxed whitespace-pre-wrap">
-                            {{ $visit->anamnesis ?? 'Tidak ada keluhan' }}</p>
-                    </div>
-                </div>
-
                 <!-- Physical Examination -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
@@ -162,23 +146,39 @@
                                 @endif
                             </div>
                         @endif
-                        @if ($visit->fundal_height)
+                        @if ($visit->bmi)
+                            <div class="bg-cyan-50 rounded-lg p-4">
+                                <p class="text-xs font-semibold text-cyan-700 uppercase mb-1">BMI (Indeks Massa Tubuh)
+                                </p>
+                                <p class="text-2xl font-bold text-cyan-900">{{ number_format($visit->bmi, 1) }}</p>
+                                @if ($visit->bmi < 18.5)
+                                    <p class="text-xs text-yellow-600 font-semibold mt-1">⚠ Underweight</p>
+                                @elseif ($visit->bmi < 25)
+                                    <p class="text-xs text-green-600 font-semibold mt-1">✓ Normal</p>
+                                @elseif ($visit->bmi < 30)
+                                    <p class="text-xs text-orange-600 font-semibold mt-1">⚠ Overweight</p>
+                                @else
+                                    <p class="text-xs text-red-600 font-semibold mt-1">⚠ Obesitas</p>
+                                @endif
+                            </div>
+                        @endif
+                        @if ($visit->tfu)
                             <div class="bg-green-50 rounded-lg p-4">
                                 <p class="text-xs font-semibold text-green-700 uppercase mb-1">Tinggi Fundus Uteri
                                     (TFU)
                                 </p>
-                                <p class="text-2xl font-bold text-green-900">{{ $visit->fundal_height }} <span
+                                <p class="text-2xl font-bold text-green-900">{{ $visit->tfu }} <span
                                         class="text-sm">cm</span></p>
                             </div>
                         @endif
-                        @if ($visit->fetal_heart_rate)
+                        @if ($visit->djj)
                             <div class="bg-pink-50 rounded-lg p-4">
                                 <p class="text-xs font-semibold text-pink-700 uppercase mb-1">Denyut Jantung Janin
                                     (DJJ)
                                 </p>
-                                <p class="text-2xl font-bold text-pink-900">{{ $visit->fetal_heart_rate }} <span
+                                <p class="text-2xl font-bold text-pink-900">{{ $visit->djj }} <span
                                         class="text-sm">bpm</span></p>
-                                @if ($visit->fetal_heart_rate < 120 || $visit->fetal_heart_rate > 160)
+                                @if ($visit->djj < 120 || $visit->djj > 160)
                                     <p class="text-xs text-red-600 font-semibold mt-1">⚠ Di luar rentang normal</p>
                                 @else
                                     <p class="text-xs text-green-600 font-semibold mt-1">✓ Normal (120-160 bpm)</p>
@@ -189,7 +189,7 @@
                 </div>
 
                 <!-- Laboratory Results -->
-                @if ($visit->hb || $visit->protein_urine || $visit->glucose_urine)
+                @if ($visit->hb || $visit->protein_urine)
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                         <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                             <svg class="w-5 h-5 text-red-600" fill="currentColor" viewBox="0 0 20 20">
@@ -233,38 +233,25 @@
                                     </div>
                                 </div>
                             @endif
-                            @if ($visit->glucose_urine)
-                                <div class="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
-                                    <div>
-                                        <p class="text-sm font-semibold text-gray-700">Glukosa Urin</p>
-                                        <p class="text-xs text-gray-500">Normal: Negatif</p>
-                                    </div>
-                                    <div class="text-right">
-                                        <p
-                                            class="text-lg font-bold {{ $visit->glucose_urine === 'Negatif' ? 'text-green-600' : 'text-red-600' }}">
-                                            {{ $visit->glucose_urine }}
-                                        </p>
-                                    </div>
-                                </div>
-                            @endif
                         </div>
                     </div>
                 @endif
 
-                <!-- Interventions -->
+                <!-- Pemeriksaan Tambahan & Intervensi -->
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                     <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                        <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <svg class="w-5 h-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd"
                                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                                 clip-rule="evenodd"></path>
                         </svg>
-                        Intervensi & Tindakan
+                        Pemeriksaan & Intervensi
                     </h3>
-                    <div class="space-y-2">
+                    <div class="grid grid-cols-2 gap-3">
+                        <!-- ANC 12T -->
                         <div
-                            class="flex items-center gap-3 p-3 rounded-lg {{ $visit->ttd_given ? 'bg-green-50' : 'bg-gray-50' }}">
-                            @if ($visit->ttd_given)
+                            class="flex items-center gap-3 p-3 rounded-lg {{ $visit->anc_12t ? 'bg-green-50' : 'bg-gray-50' }}">
+                            @if ($visit->anc_12t)
                                 <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd"
                                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -277,12 +264,16 @@
                                         clip-rule="evenodd"></path>
                                 </svg>
                             @endif
-                            <p class="font-semibold {{ $visit->ttd_given ? 'text-green-900' : 'text-gray-500' }}">
-                                Tablet Tambah Darah (TTD)</p>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900">ANC 12T Lengkap</p>
+                                <p class="text-xs text-gray-500">{{ $visit->anc_12t ? 'Sudah' : 'Belum' }}</p>
+                            </div>
                         </div>
+
+                        <!-- USG -->
                         <div
-                            class="flex items-center gap-3 p-3 rounded-lg {{ $visit->fe_given ? 'bg-green-50' : 'bg-gray-50' }}">
-                            @if ($visit->fe_given)
+                            class="flex items-center gap-3 p-3 rounded-lg {{ $visit->usg_check ? 'bg-green-50' : 'bg-gray-50' }}">
+                            @if ($visit->usg_check)
                                 <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd"
                                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -295,12 +286,16 @@
                                         clip-rule="evenodd"></path>
                                 </svg>
                             @endif
-                            <p class="font-semibold {{ $visit->fe_given ? 'text-green-900' : 'text-gray-500' }}">
-                                Tablet Fe</p>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900">USG</p>
+                                <p class="text-xs text-gray-500">{{ $visit->usg_check ? 'Sudah' : 'Belum' }}</p>
+                            </div>
                         </div>
+
+                        <!-- Konseling -->
                         <div
-                            class="flex items-center gap-3 p-3 rounded-lg {{ $visit->counseling_given ? 'bg-green-50' : 'bg-gray-50' }}">
-                            @if ($visit->counseling_given)
+                            class="flex items-center gap-3 p-3 rounded-lg {{ $visit->counseling_check ? 'bg-green-50' : 'bg-gray-50' }}">
+                            @if ($visit->counseling_check)
                                 <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd"
                                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -313,12 +308,86 @@
                                         clip-rule="evenodd"></path>
                                 </svg>
                             @endif
-                            <p
-                                class="font-semibold {{ $visit->counseling_given ? 'text-green-900' : 'text-gray-500' }}">
-                                Konseling Gizi & Kesehatan</p>
+                            <div>
+                                <p class="text-sm font-semibold text-gray-900">Konseling</p>
+                                <p class="text-xs text-gray-500">{{ $visit->counseling_check ? 'Sudah' : 'Belum' }}
+                                </p>
+                            </div>
                         </div>
+
+                        <!-- TT Immunization -->
+                        @if ($visit->tt_immunization)
+                            <div class="flex items-center gap-3 p-3 rounded-lg bg-yellow-50">
+                                <svg class="w-5 h-5 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-900">Imunisasi TT</p>
+                                    <p class="text-xs text-gray-500">Status: {{ $visit->tt_immunization }}</p>
+                                </div>
+                            </div>
+                        @endif
+
+                        <!-- Fe Tablets -->
+                        @if ($visit->fe_tablets)
+                            <div class="flex items-center gap-3 p-3 rounded-lg bg-green-50">
+                                <svg class="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                <div>
+                                    <p class="text-sm font-semibold text-gray-900">Tablet Tambah Darah</p>
+                                    <p class="text-xs text-gray-500">{{ $visit->fe_tablets }} tablet</p>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
+
+                <!-- Analisa & Tindak Lanjut -->
+                @if ($visit->risk_level || $visit->follow_up || $visit->midwife_name)
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd"
+                                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                            Analisa & Tindak Lanjut
+                        </h3>
+
+                        @if ($visit->risk_level)
+                            <div class="mb-4">
+                                <p class="text-sm font-semibold text-gray-700 mb-2">Analisa Resiko:</p>
+                                <div class="bg-yellow-50 rounded-lg p-3 border border-yellow-200">
+                                    <p class="text-gray-800 whitespace-pre-wrap">{{ $visit->risk_level }}</p>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if ($visit->follow_up)
+                            <div class="mb-4">
+                                <p class="text-sm font-semibold text-gray-700 mb-2">Rencana Tindak Lanjut:</p>
+                                <div class="bg-blue-50 rounded-lg p-3 border border-blue-200">
+                                    <p class="text-gray-800 whitespace-pre-wrap">{{ $visit->follow_up }}</p>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if ($visit->midwife_name)
+                            <div>
+                                <p class="text-sm font-semibold text-gray-700 mb-2">Pemeriksa:</p>
+                                <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                                    <p class="text-gray-800 font-medium">{{ $visit->midwife_name }}</p>
+                                    <p class="text-xs text-gray-500">Bidan/Tenaga Kesehatan</p>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                @endif
             </div>
 
             <!-- Right Column -->
@@ -423,9 +492,6 @@
                                 if ($visit->protein_urine && $visit->protein_urine !== 'Negatif') {
                                     $riskFactors[] = 'Protein Urin Positif';
                                 }
-                                if ($visit->glucose_urine && $visit->glucose_urine !== 'Negatif') {
-                                    $riskFactors[] = 'Glukosa Urin Positif';
-                                }
                                 if ($visit->systolic >= 140 || $visit->diastolic >= 90) {
                                     $riskFactors[] = 'Tekanan Darah Tinggi';
                                 }
@@ -506,8 +572,8 @@
                     </div>
                 </div>
 
-                <!-- Clinical Notes -->
-                @if ($visit->clinical_notes)
+                <!-- Diagnosis -->
+                @if ($visit->diagnosis)
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                         <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                             <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
@@ -515,10 +581,10 @@
                                     d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
                                     clip-rule="evenodd"></path>
                             </svg>
-                            Catatan Klinis
+                            Diagnosis
                         </h3>
                         <div class="bg-gray-50 rounded-lg p-4">
-                            <p class="text-gray-800 leading-relaxed whitespace-pre-wrap">{{ $visit->clinical_notes }}
+                            <p class="text-gray-800 leading-relaxed whitespace-pre-wrap">{{ $visit->diagnosis }}
                             </p>
                         </div>
                     </div>

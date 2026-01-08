@@ -113,6 +113,18 @@
                             @enderror
                         </div>
 
+                        <!-- No. RM -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                No. Rekam Medis (RM)
+                            </label>
+                            <input type="text" wire:model="no_rm"
+                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg font-mono
+                                              focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                                placeholder="RM-2026-0001">
+                            <p class="mt-1 text-xs text-gray-500">Opsional - akan di-generate otomatis jika kosong</p>
+                        </div>
+
                         <!-- Name -->
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">
@@ -159,19 +171,100 @@
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    Golongan Darah <span class="text-red-500">*</span>
+                                    Tempat Lahir
                                 </label>
-                                <select wire:model="blood_type"
-                                    class="w-full px-4 py-3 border-2 rounded-lg
-                                                   @error('blood_type') border-red-500 @else border-gray-300 @enderror
+                                <input type="text" wire:model="pob"
+                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg
+                                                  focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                                    placeholder="Kota/Kabupaten">
+                                <p class="mt-1 text-xs text-gray-500">Opsional</p>
+                            </div>
+                        </div>
+
+                        <!-- Job & Education -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Pekerjaan
+                                </label>
+                                <input type="text" wire:model="job"
+                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg
+                                                  focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                                    placeholder="Contoh: IRT, Pegawai Swasta, PNS">
+                                <p class="mt-1 text-xs text-gray-500">Opsional</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Pendidikan
+                                </label>
+                                <select wire:model="education"
+                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg
                                                    focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors">
-                                    <option value="">Pilih golongan darah</option>
-                                    @foreach ($bloodTypes as $type)
-                                        <option value="{{ $type }}">{{ $type }}</option>
-                                    @endforeach
+                                    <option value="">Pilih pendidikan</option>
+                                    <option value="Tidak Sekolah">Tidak Sekolah</option>
+                                    <option value="SD">SD</option>
+                                    <option value="SMP">SMP</option>
+                                    <option value="SMA/SMK">SMA/SMK</option>
+                                    <option value="D1/D2/D3">D1/D2/D3</option>
+                                    <option value="D4/S1">D4/S1</option>
+                                    <option value="S2/S3">S2/S3</option>
                                 </select>
-                                @error('blood_type')
-                                    <p class="mt-2 text-sm text-red-600 flex items-center gap-1">
+                                <p class="mt-1 text-xs text-gray-500">Opsional</p>
+                            </div>
+                        </div>
+
+                        <!-- Blood Type -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Golongan Darah <span class="text-red-500">*</span>
+                            </label>
+                            <select wire:model="blood_type"
+                                class="w-full px-4 py-3 border-2 rounded-lg
+                                               @error('blood_type') border-red-500 @else border-gray-300 @enderror
+                                               focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors">
+                                <option value="">Pilih golongan darah</option>
+                                @foreach ($bloodTypes as $type)
+                                    <option value="{{ $type }}">{{ $type }}</option>
+                                @endforeach
+                            </select>
+                            @error('blood_type')
+                                <p class="mt-2 text-sm text-red-600 flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                        <!-- No KK & No BPJS -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    No. Kartu Keluarga (KK) <span class="text-gray-400 text-xs">(Opsional)</span>
+                                </label>
+                                <input type="text" wire:model="no_kk" maxlength="16"
+                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg font-mono
+                                                  focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                                    placeholder="1234567890123456">
+                                <p class="mt-1 text-xs text-gray-500">16 digit - Hanya angka</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    No. BPJS <span class="text-gray-400 text-xs">(Opsional)</span>
+                                </label>
+                                <input type="text" wire:model.live="no_bpjs" maxlength="13"
+                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg font-mono
+                                                  focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors
+                                                  @error('no_bpjs') border-red-500 @enderror"
+                                    placeholder="0001234567890">
+                                <p class="mt-1 text-xs text-gray-500">13 digit - Hanya angka</p>
+                                @error('no_bpjs')
+                                    <p class="mt-1 text-xs text-red-600 flex items-center gap-1">
                                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd"
                                                 d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -180,31 +273,6 @@
                                         {{ $message }}
                                     </p>
                                 @enderror
-                            </div>
-                        </div>
-
-                        <!-- No KK & No BPJS -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    No. Kartu Keluarga (KK)
-                                </label>
-                                <input type="text" wire:model="no_kk" maxlength="16"
-                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg font-mono
-                                                  focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
-                                    placeholder="1234567890123456">
-                                <p class="mt-1 text-xs text-gray-500">Opsional</p>
-                            </div>
-
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    No. BPJS
-                                </label>
-                                <input type="text" wire:model="no_bpjs"
-                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg font-mono
-                                                  focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
-                                    placeholder="0001234567890">
-                                <p class="mt-1 text-xs text-gray-500">Opsional</p>
                             </div>
                         </div>
 
@@ -318,6 +386,41 @@
                                 class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg
                                               focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
                                 placeholder="Contoh: Petani, Wiraswasta, PNS, dll">
+                        </div>
+
+                        <!-- Husband Education & Blood Type -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Pendidikan Suami
+                                </label>
+                                <select wire:model="husband_education"
+                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg
+                                                   focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors">
+                                    <option value="">Pilih pendidikan</option>
+                                    <option value="Tidak Sekolah">Tidak Sekolah</option>
+                                    <option value="SD">SD</option>
+                                    <option value="SMP">SMP</option>
+                                    <option value="SMA/SMK">SMA/SMK</option>
+                                    <option value="D1/D2/D3">D1/D2/D3</option>
+                                    <option value="D4/S1">D4/S1</option>
+                                    <option value="S2/S3">S2/S3</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Golongan Darah Suami
+                                </label>
+                                <select wire:model="husband_blood_type"
+                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg
+                                                   focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors">
+                                    <option value="">Pilih golongan darah</option>
+                                    @foreach ($bloodTypes as $type)
+                                        <option value="{{ $type }}">{{ $type }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
                     </div>
                 @endif

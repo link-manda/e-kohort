@@ -18,7 +18,15 @@
 </head>
 
 <body class="font-sans antialiased bg-gray-50">
-    <div class="min-h-screen flex">
+    <div x-data="{ sidebarOpen: false }" class="min-h-screen flex">
+        <!-- Mobile Backdrop -->
+        <div x-show="sidebarOpen" @click="sidebarOpen = false"
+            x-transition:enter="transition-opacity ease-linear duration-300" x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100" x-transition:leave="transition-opacity ease-linear duration-300"
+            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+            class="fixed inset-0 bg-gray-900 bg-opacity-75 z-40 lg:hidden">
+        </div>
+
         <!-- Sidebar -->
         @include('layouts.sidebar')
 
@@ -32,14 +40,14 @@
                 <!-- Page Header -->
                 @isset($header)
                     <header class="bg-white border-b border-gray-200">
-                        <div class="px-6 py-4">
+                        <div class="px-4 md:px-6 py-3 md:py-4">
                             {{ $header }}
                         </div>
                     </header>
                 @endisset
 
                 <!-- Content -->
-                <div class="p-6">
+                <div class="p-4 md:p-6">
                     {{ $slot }}
                 </div>
             </main>
@@ -49,6 +57,9 @@
 
         </div>
     </div>
+
+    <!-- Toast Notification Component -->
+    @livewire('toast-notification')
 
     @livewireScripts
 </body>

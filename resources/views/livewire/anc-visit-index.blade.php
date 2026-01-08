@@ -1,4 +1,7 @@
 <div class="space-y-6">
+    <!-- Breadcrumb -->
+    <x-breadcrumb :items="[['label' => 'Kunjungan ANC']]" />
+
     <!-- Header -->
     <div class="flex items-center justify-between">
         <div>
@@ -98,7 +101,7 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">Cari Pasien atau Catatan</label>
                 <input type="text" wire:model.live.debounce.300ms="search"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                    placeholder="Nama pasien, NIK, anamnesis, atau catatan...">
+                    placeholder="Nama pasien, NIK, atau diagnosis...">
             </div>
 
             <!-- Visit Code -->

@@ -123,4 +123,20 @@ class PatientController extends Controller
             ->route('patients.index')
             ->with('success', 'Data pasien berhasil dihapus!');
     }
+
+    /**
+     * Print patient complete record
+     */
+    public function print(Patient $patient)
+    {
+        // Eager load relationships
+        $patient->load([
+            'pregnancies.ancVisits.labResult',
+            'pregnancies' => function ($query) {
+                $query->orderBy('created_at', 'desc');
+            }
+        ]);
+
+        return view('patients.print', compact('patient'));
+    }
 }

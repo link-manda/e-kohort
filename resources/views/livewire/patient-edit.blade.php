@@ -214,22 +214,35 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    No. Kartu Keluarga (KK)
+                                    No. Kartu Keluarga (KK) <span class="text-gray-400 text-xs">(Opsional)</span>
                                 </label>
                                 <input type="text" wire:model="no_kk" maxlength="16"
                                     class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg font-mono
                                               focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
                                     placeholder="1234567890123456">
+                                <p class="mt-1 text-xs text-gray-500">16 digit - Hanya angka</p>
                             </div>
 
                             <div>
                                 <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                    No. BPJS
+                                    No. BPJS <span class="text-gray-400 text-xs">(Opsional)</span>
                                 </label>
-                                <input type="text" wire:model="no_bpjs"
+                                <input type="text" wire:model.live="no_bpjs" maxlength="13"
                                     class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg font-mono
-                                              focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                                              focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors
+                                              @error('no_bpjs') border-red-500 @enderror"
                                     placeholder="0001234567890">
+                                <p class="mt-1 text-xs text-gray-500">13 digit - Hanya angka</p>
+                                @error('no_bpjs')
+                                    <p class="mt-1 text-xs text-red-600 flex items-center gap-1">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd"
+                                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                                clip-rule="evenodd"></path>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
                             </div>
                         </div>
 

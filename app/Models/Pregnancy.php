@@ -20,6 +20,8 @@ class Pregnancy extends Model
         'hpht',
         'hpl',
         'pregnancy_gap',
+        'weight_before',
+        'height',
         'status',
         'risk_score_initial',
     ];

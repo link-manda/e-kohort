@@ -66,7 +66,7 @@ class PatientEdit extends Component
             'phone' => 'nullable|string|max:20',
             'address' => 'required|string',
             'no_kk' => 'nullable|string|max:16',
-            'no_bpjs' => 'nullable|string|max:20',
+            'no_bpjs' => 'nullable|string|max:13|regex:/^[0-9]*$/',
 
             // Step 2 - Optional but validated if provided
             'husband_name' => 'nullable|string|max:255',
@@ -87,6 +87,8 @@ class PatientEdit extends Component
         'blood_type.required' => 'Golongan darah wajib dipilih',
         'address.required' => 'Alamat wajib diisi',
         'husband_nik.digits' => 'NIK suami harus 16 digit',
+        'no_bpjs.max' => 'No. BPJS maksimal 13 digit',
+        'no_bpjs.regex' => 'No. BPJS hanya boleh berisi angka',
     ];
 
     public function updatedPhone($value)
@@ -100,6 +102,12 @@ class PatientEdit extends Component
         }
 
         $this->phone = $phone;
+    }
+
+    public function updatedNoBpjs($value)
+    {
+        // Remove non-numeric characters
+        $this->no_bpjs = preg_replace('/[^0-9]/', '', $value);
     }
 
     public function nextStep()
@@ -132,19 +140,24 @@ class PatientEdit extends Component
         // Final validation
         $validatedData = $this->validate();
 
-        // Update patient
+        // Update patient - convert empty strings to NULL
         $this->patient->update([
             'nik' => $this->nik,
-            'no_kk' => $this->no_kk,
-            'no_bpjs' => $this->no_bpjs,
+            'no_kk' => $this->no_kk ?: null,
+            'no_bpjs' => $this->no_bpjs ?: null,
             'name' => $this->name,
             'dob' => $this->dob,
+            'pob' => $this->pob ?: null,
+            'job' => $this->job ?: null,
+            'education' => $this->education ?: null,
             'blood_type' => $this->blood_type,
             'phone' => $this->phone,
             'address' => $this->address,
-            'husband_name' => $this->husband_name,
-            'husband_nik' => $this->husband_nik,
-            'husband_job' => $this->husband_job,
+            'husband_name' => $this->husband_name ?: null,
+            'husband_nik' => $this->husband_nik ?: null,
+            'husband_job' => $this->husband_job ?: null,
+            'husband_education' => $this->husband_education ?: null,
+            'husband_blood_type' => $this->husband_blood_type ?: null,
         ]);
 
         $this->showSuccess = true;

@@ -1,5 +1,8 @@
 <aside x-data="{ open: true }" :class="open ? 'w-64' : 'w-20'"
-    class="bg-gradient-to-b from-blue-600 to-blue-800 text-white transition-all duration-300 flex-shrink-0">
+    class="bg-gradient-to-b from-blue-600 to-blue-800 text-white transition-all duration-300 flex-shrink-0
+           fixed lg:static inset-y-0 left-0 z-50 lg:z-auto
+           transform lg:transform-none"
+    :class="{ 'translate-x-0': $parent.sidebarOpen, '-translate-x-full': !$parent.sidebarOpen }" x-init="open = window.innerWidth >= 1024">
 
     <!-- Logo Section -->
     <div class="flex items-center justify-between px-4 py-6 border-b border-blue-700">
@@ -38,52 +41,156 @@
         </a>
 
         <!-- Pasien -->
-        <a href="{{ route('patients.index') }}"
-            class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('patients.*') ? 'bg-blue-700 shadow-lg' : 'hover:bg-blue-700/50' }}">
-            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
-                </path>
-            </svg>
-            <span x-show="open" class="font-medium">Data Pasien</span>
-        </a>
+        @can('viewAny', App\Models\Patient::class)
+            <a href="{{ route('patients.index') }}"
+                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('patients.*') ? 'bg-blue-700 shadow-lg' : 'hover:bg-blue-700/50' }}">
+                <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                    </path>
+                </svg>
+                <span x-show="open" class="font-medium">Data Pasien</span>
+            </a>
+        @endcan
 
         <!-- Kunjungan ANC -->
-        <a href="{{ route('anc-visits.index') }}"
-            class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('anc-visits.*') ? 'bg-blue-700 shadow-lg' : 'hover:bg-blue-700/50' }}">
-            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
-                </path>
-            </svg>
-            <span x-show="open" class="font-medium">Kunjungan ANC</span>
-        </a>
+        @can('viewAny', App\Models\AncVisit::class)
+            <a href="{{ route('anc-visits.index') }}"
+                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('anc-visits.*') ? 'bg-blue-700 shadow-lg' : 'hover:bg-blue-700/50' }}">
+                <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01">
+                    </path>
+                </svg>
+                <span x-show="open" class="font-medium">Kunjungan ANC</span>
+            </a>
+        @endcan
 
         <!-- Divider -->
         <div x-show="open" class="border-t border-blue-700 my-4"></div>
 
-        <!-- Laporan -->
-        <a href="{{ route('reports.index') }}"
-            class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('reports.*') ? 'bg-blue-700 shadow-lg' : 'hover:bg-blue-700/50' }}">
-            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                </path>
-            </svg>
-            <span x-show="open" class="font-medium">Laporan</span>
-        </a>
+        <!-- Export Menu (Dropdown) -->
+        @can('export', App\Models\Patient::class)
+            <div x-data="{ exportOpen: false }">
+                <button @click="exportOpen = !exportOpen"
+                    class="w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('export.*') ? 'bg-blue-700 shadow-lg' : 'hover:bg-blue-700/50' }}">
+                    <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    <span x-show="open" class="font-medium flex-1 text-left">Export Data</span>
+                    <svg x-show="open" :class="{ 'rotate-180': exportOpen }" class="w-4 h-4 transition-transform"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
 
-        <!-- Alert Pasien -->
-        <a href="{{ route('alerts.index') }}"
-            class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('alerts.*') ? 'bg-blue-700 shadow-lg' : 'hover:bg-blue-700/50' }}">
-            <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
-                </path>
-            </svg>
-            <span x-show="open" class="font-medium">Alert Risiko</span>
-            <span x-show="open" class="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">3</span>
-        </a>
+                <!-- Dropdown Items -->
+                <div x-show="exportOpen && open" x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 transform -translate-y-2"
+                    x-transition:enter-end="opacity-100 transform translate-y-0"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 transform translate-y-0"
+                    x-transition:leave-end="opacity-0 transform -translate-y-2" class="ml-9 mt-1 space-y-1">
+                    <a href="{{ route('export.anc-register') }}"
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.anc-register') ? 'bg-blue-700' : 'hover:bg-blue-700/30' }}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        <span>Register ANC</span>
+                    </a>
+                    <a href="{{ route('export.patient-list') }}"
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.patient-list') ? 'bg-blue-700' : 'hover:bg-blue-700/30' }}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                            </path>
+                        </svg>
+                        <span>Data Pasien</span>
+                    </a>
+                </div>
+            </div>
+        @endcan
+
+        <!-- Laporan (Dropdown) -->
+        @can('view-reports')
+            <div x-data="{ reportOpen: false }">
+                <button @click="reportOpen = !reportOpen"
+                    class="w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('reports.*') ? 'bg-blue-700 shadow-lg' : 'hover:bg-blue-700/50' }}">
+                    <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    <span x-show="open" class="font-medium flex-1 text-left">Laporan</span>
+                    <svg x-show="open" :class="{ 'rotate-180': reportOpen }" class="w-4 h-4 transition-transform"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+
+                <!-- Dropdown Items -->
+                <div x-show="reportOpen && open" x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 transform -translate-y-2"
+                    x-transition:enter-end="opacity-100 transform translate-y-0"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 transform translate-y-0"
+                    x-transition:leave-end="opacity-0 transform -translate-y-2" class="ml-9 mt-1 space-y-1">
+                    <a href="{{ route('reports.monthly-summary') }}"
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('reports.monthly-summary') ? 'bg-blue-700' : 'hover:bg-blue-700/30' }}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                            </path>
+                        </svg>
+                        <span>Ringkasan Bulanan</span>
+                    </a>
+                </div>
+            </div>
+        @endcan
+
+        <!-- Admin (Dropdown) -->
+        @can('manage-users')
+            <div x-data="{ adminOpen: false }">
+                <button @click="adminOpen = !adminOpen"
+                    class="w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('admin.*') ? 'bg-blue-700 shadow-lg' : 'hover:bg-blue-700/50' }}">
+                    <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z">
+                        </path>
+                    </svg>
+                    <span x-show="open" class="font-medium flex-1 text-left">Admin</span>
+                    <svg x-show="open" :class="{ 'rotate-180': adminOpen }" class="w-4 h-4 transition-transform"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+
+                <!-- Dropdown Items -->
+                <div x-show="adminOpen && open" x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 transform -translate-y-2"
+                    x-transition:enter-end="opacity-100 transform translate-y-0"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 transform translate-y-0"
+                    x-transition:leave-end="opacity-0 transform -translate-y-2" class="ml-9 mt-1 space-y-1">
+                    <a href="{{ route('admin.users') }}"
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.users') ? 'bg-blue-700' : 'hover:bg-blue-700/30' }}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                            </path>
+                        </svg>
+                        <span>Kelola User</span>
+                    </a>
+                </div>
+            </div>
+        @endcan
     </nav>
 
     {{-- Bottom Section - DISABLED FOR TESTING

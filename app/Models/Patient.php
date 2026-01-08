@@ -15,16 +15,22 @@ class Patient extends Model
      */
     protected $fillable = [
         'nik',
+        'no_rm',
         'no_kk',
         'no_bpjs',
         'name',
         'dob',
+        'pob',
         'address',
         'phone',
+        'job',
+        'education',
         'blood_type',
         'husband_name',
         'husband_nik',
         'husband_job',
+        'husband_education',
+        'husband_blood_type',
     ];
 
     /**

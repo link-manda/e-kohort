@@ -1,4 +1,7 @@
 <div>
+    <!-- Breadcrumb -->
+    <x-breadcrumb :items="[['label' => 'Data Pasien']]" />
+
     <!-- Header & Search Section -->
     <div class="mb-6">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -7,22 +10,23 @@
                 <p class="text-sm text-gray-500 mt-1">Kelola data pasien dan kehamilan</p>
             </div>
             <a href="{{ route('patients.create') }}"
-                class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors shadow-sm">
+                class="inline-flex items-center justify-center gap-2 px-4 py-3 md:py-2 min-h-[44px] bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors shadow-sm">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>
-                Tambah Pasien
+                <span class="hidden sm:inline">Tambah Pasien</span>
+                <span class="sm:hidden">Tambah</span>
             </a>
         </div>
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
         <button wire:click="$set('pregnancyFilter', 'all')"
-            class="p-4 rounded-lg border-2 transition-all text-left {{ $pregnancyFilter === 'all' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300' }}">
-            <p class="text-sm font-medium text-gray-600">Total Pasien</p>
-            <p class="text-2xl font-bold text-gray-900 mt-1">{{ $stats['total'] }}</p>
+            class="p-3 md:p-4 rounded-lg border-2 transition-all text-left min-h-[80px] {{ $pregnancyFilter === 'all' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300' }}">
+            <p class="text-xs md:text-sm font-medium text-gray-600">Total Pasien</p>
+            <p class="text-xl md:text-2xl font-bold text-gray-900 mt-1">{{ $stats['total'] }}</p>
         </button>
 
         <button wire:click="$set('pregnancyFilter', 'active')"
@@ -131,13 +135,30 @@
                             Usia Kehamilan</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                             Risiko</th>
-                        <th class="px-6 py-3 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                            Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
+                    <!-- Loading State -->
+                    <tr wire:loading.delay>
+                        <td colspan="5" class="px-6 py-8 bg-gray-50">
+                            <div class="flex items-center justify-center space-x-3">
+                                <svg class="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg"
+                                    fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                        stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                    </path>
+                                </svg>
+                                <span class="text-sm text-gray-600">Memuat data...</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Data Rows -->
                     @forelse($patients as $patient)
-                        <tr class="hover:bg-gray-50 transition-colors">
+                        <tr class="hover:bg-blue-50 transition-colors cursor-pointer" wire:loading.remove
+                            onclick="window.location='{{ route('patients.show', $patient->id) }}'">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
                                     <div
@@ -145,7 +166,9 @@
                                         {{ strtoupper(substr($patient->name, 0, 2)) }}
                                     </div>
                                     <div class="ml-4">
-                                        <div class="font-semibold text-gray-900">{{ $patient->name }}</div>
+                                        <div class="font-semibold text-gray-600 hover:text-gray-700">
+                                            {{ $patient->name }}
+                                        </div>
                                         <div class="text-sm text-gray-500">{{ $patient->phone ?? '-' }}</div>
                                     </div>
                                 </div>
@@ -202,23 +225,10 @@
                                     <span class="text-sm text-gray-400">-</span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-center">
-                                <a href="{{ route('patients.show', $patient->id) }}"
-                                    class="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 text-sm font-medium rounded-lg transition-colors">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
-                                        </path>
-                                    </svg>
-                                    Detail
-                                </a>
-                            </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center">
+                            <td colspan="5" class="px-6 py-12 text-center">
                                 <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none"
                                     stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

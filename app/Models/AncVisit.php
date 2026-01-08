@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class AncVisit extends Model
 {
@@ -18,15 +19,20 @@ class AncVisit extends Model
         'visit_date',
         'trimester',
         'visit_code',
+        'anc_12t',
         'gestational_age',
         'weight',
         'height',
         'lila',
+        'bmi',
         'systolic',
         'diastolic',
         'map_score',
         'tfu',
         'djj',
+        'fetal_presentation',
+        'usg_check',
+        'counseling_check',
         'hb',
         'protein_urine',
         'hiv_status',
@@ -35,8 +41,11 @@ class AncVisit extends Model
         'tt_immunization',
         'fe_tablets',
         'risk_category',
+        'risk_level',
         'diagnosis',
         'referral_target',
+        'follow_up',
+        'midwife_name',
         'deleted_reason',
         'deleted_by',
     ];
@@ -51,8 +60,12 @@ class AncVisit extends Model
             'weight' => 'decimal:2',
             'height' => 'decimal:2',
             'lila' => 'decimal:1',
+            'bmi' => 'decimal:2',
             'map_score' => 'decimal:2',
             'hb' => 'decimal:1',
+            'anc_12t' => 'boolean',
+            'usg_check' => 'boolean',
+            'counseling_check' => 'boolean',
         ];
     }
 
@@ -62,6 +75,14 @@ class AncVisit extends Model
     public function pregnancy(): BelongsTo
     {
         return $this->belongsTo(Pregnancy::class);
+    }
+
+    /**
+     * Get the lab result for this ANC visit.
+     */
+    public function labResult(): HasOne
+    {
+        return $this->hasOne(LabResult::class);
     }
 
     /**

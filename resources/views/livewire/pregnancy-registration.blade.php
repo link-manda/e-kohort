@@ -146,6 +146,28 @@
                     <p class="text-xs text-gray-500 mt-1">Jarak dari kehamilan sebelumnya</p>
                 </div>
 
+                <!-- Weight Before Pregnancy -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        BB Sebelum Hamil (kg)
+                    </label>
+                    <input type="number" wire:model="weight_before" min="20" max="200" step="0.1"
+                        placeholder="Contoh: 55.5"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <p class="text-xs text-gray-500 mt-1">Berat badan sebelum hamil</p>
+                </div>
+
+                <!-- Height -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        Tinggi Badan (cm)
+                    </label>
+                    <input type="number" wire:model="height" min="100" max="250" step="0.1"
+                        placeholder="Contoh: 160"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <p class="text-xs text-gray-500 mt-1">Tinggi badan ibu</p>
+                </div>
+
                 <!-- Risk Score Initial -->
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-2">

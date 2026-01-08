@@ -3,9 +3,11 @@
 namespace App\Livewire;
 
 use App\Models\AncVisit;
+use App\Models\Notification;
 use App\Models\Pregnancy;
 use Carbon\Carbon;
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
 
 class AncVisitWizard extends Component
 {
@@ -52,7 +54,13 @@ class AncVisitWizard extends Component
     public $fe_tablets;
     public $diagnosis;
     public $referral_target;
-
+    public $anc_12t = false;
+    public $bmi;
+    public $usg_check = false;
+    public $counseling_check = false;
+    public $risk_level;
+    public $follow_up;
+    public $midwife_name;
     // Auto-generated
     public $risk_category;
     public $has_kek = false;
@@ -90,6 +98,13 @@ class AncVisitWizard extends Component
             $rules['fe_tablets'] = 'nullable|integer|min:0|max:200';
             $rules['diagnosis'] = 'nullable|string|max:500';
             $rules['referral_target'] = 'nullable|string|max:200';
+            $rules['anc_12t'] = 'boolean';
+            $rules['bmi'] = 'nullable|numeric|min:10|max:50';
+            $rules['usg_check'] = 'boolean';
+            $rules['counseling_check'] = 'boolean';
+            $rules['risk_level'] = 'nullable|string|max:500';
+            $rules['follow_up'] = 'nullable|string|max:500';
+            $rules['midwife_name'] = 'nullable|string|max:200';
         }
 
         return $rules;
@@ -122,15 +137,16 @@ class AncVisitWizard extends Component
         // Load all visit data
         $this->visit_date = $visit->visit_date->format('Y-m-d');
         $this->gestational_age_weeks = $visit->gestational_age;
-        $this->chief_complaint = $visit->anamnesis;
+        $this->chief_complaint = null; // Not stored in database
 
         // Physical examination
         $this->weight = $visit->weight;
         $this->height = $visit->height;
         $this->lila = $visit->lila;
-        $this->tfu = $visit->fundal_height;
-        $this->djj = $visit->fetal_heart_rate;
+        $this->tfu = $visit->tfu;
+        $this->djj = $visit->djj;
         $this->fetal_presentation = $visit->fetal_presentation;
+        $this->bmi = $visit->bmi;
 
         // Blood pressure
         $this->systolic = $visit->systolic;
@@ -140,14 +156,23 @@ class AncVisitWizard extends Component
         // Laboratory
         $this->hb = $visit->hb;
         $this->protein_urine = $visit->protein_urine;
-        $this->blood_sugar = $visit->glucose_urine;
+        $this->blood_sugar = $visit->blood_sugar;
         $this->hiv_status = $visit->hiv_status;
         $this->syphilis_status = $visit->syphilis_status;
         $this->hbsag_status = $visit->hbsag_status;
-        $this->tt_immunization = $visit->ttd_given ? 'T1' : null;
-        $this->fe_tablets = $visit->fe_given ? 90 : 0;
-        $this->diagnosis = $visit->clinical_notes;
-        $this->referral_target = null;
+        $this->tt_immunization = $visit->tt_immunization;
+        $this->fe_tablets = $visit->fe_tablets;
+
+        // New fields
+        $this->anc_12t = $visit->anc_12t ?? false;
+        $this->usg_check = $visit->usg_check ?? false;
+        $this->counseling_check = $visit->counseling_check ?? false;
+        $this->risk_level = $visit->risk_level;
+        $this->follow_up = $visit->follow_up;
+        $this->midwife_name = $visit->midwife_name;
+
+        $this->diagnosis = $visit->diagnosis;
+        $this->referral_target = $visit->referral_target;
 
         // Risk detection
         $this->has_kek = $visit->lila && $visit->lila < 23.5;
@@ -163,6 +188,11 @@ class AncVisitWizard extends Component
         // Real-time MAP calculation
         if (in_array($propertyName, ['systolic', 'diastolic'])) {
             $this->calculateMAP();
+        }
+
+        // Real-time BMI calculation
+        if (in_array($propertyName, ['weight', 'height'])) {
+            $this->calculateBMI();
         }
 
         // Real-time KEK detection
@@ -191,6 +221,35 @@ class AncVisitWizard extends Component
             } else {
                 $this->map_risk_level = 'NORMAL';
             }
+        }
+    }
+
+    public function calculateBMI()
+    {
+        if ($this->weight && $this->height) {
+            // Convert height from cm to meters
+            $heightInMeters = $this->height / 100;
+            // BMI = weight (kg) / height (m)²
+            $this->bmi = round($this->weight / ($heightInMeters * $heightInMeters), 1);
+        } else {
+            $this->bmi = null;
+        }
+    }
+
+    public function getBMICategory()
+    {
+        if (!$this->bmi) {
+            return '';
+        }
+
+        if ($this->bmi < 18.5) {
+            return 'Underweight';
+        } elseif ($this->bmi < 25) {
+            return 'Normal';
+        } elseif ($this->bmi < 30) {
+            return 'Overweight';
+        } else {
+            return 'Obesitas';
         }
     }
 
@@ -240,32 +299,39 @@ class AncVisitWizard extends Component
         $data = [
             'visit_date' => $this->visit_date,
             'trimester' => $trimester,
+            'anc_12t' => $this->anc_12t ?? false,
             'gestational_age' => $this->gestational_age_weeks,
             'weight' => $this->weight ?: null,
             'height' => $this->height ?: null,
             'lila' => $this->lila ?: null,
+            'bmi' => $this->bmi ?: null,
             'systolic' => $this->systolic,
             'diastolic' => $this->diastolic,
             'map_score' => $this->map_score,
-            'fundal_height' => $this->tfu ?: null,
-            'fetal_heart_rate' => $this->djj ?: null,
+            'tfu' => $this->tfu ?: null,
+            'djj' => $this->djj ?: null,
             'fetal_presentation' => $this->fetal_presentation ?: null,
+            'usg_check' => $this->usg_check ?? false,
+            'counseling_check' => $this->counseling_check ?? false,
             'hb' => $this->hb ?: null,
             'protein_urine' => $this->protein_urine ?: null,
-            'glucose_urine' => $this->blood_sugar ?: null,
             'hiv_status' => $this->hiv_status,
             'syphilis_status' => $this->syphilis_status,
             'hbsag_status' => $this->hbsag_status,
-            'ttd_given' => $this->tt_immunization ? true : false,
-            'fe_given' => $this->fe_tablets && $this->fe_tablets > 0 ? true : false,
+            'tt_immunization' => $this->tt_immunization ?: null,
+            'fe_tablets' => $this->fe_tablets ?: null,
             'risk_category' => $this->risk_category,
-            'anamnesis' => $this->chief_complaint ?: null,
-            'clinical_notes' => $this->diagnosis ?: null,
+            'risk_level' => $this->risk_level ?: null,
+            'diagnosis' => $this->diagnosis ?: null,
+            'referral_target' => $this->referral_target ?: null,
+            'follow_up' => $this->follow_up ?: null,
+            'midwife_name' => $this->midwife_name ?: null,
         ];
 
         if ($this->isEditMode) {
-            // Update existing visit
+            // Update existing visit - preserve original visit_code
             $visit = AncVisit::findOrFail($this->visitId);
+            $data['visit_code'] = $this->originalVisitCode; // Preserve original visit code
             $visit->update($data);
 
             session()->flash('success', 'Kunjungan ANC berhasil diperbarui');
@@ -273,17 +339,71 @@ class AncVisitWizard extends Component
         } else {
             // Determine visit code based on existing visits
             $visitCount = AncVisit::where('pregnancy_id', $this->pregnancy_id)->count();
-            $visitCodes = ['K1', 'K2', 'K3', 'K4', 'K5', 'K6'];
-            $visitCode = $visitCodes[min($visitCount, 5)] ?? 'K6';
+            $visitCodes = ['K1', 'K2', 'K3', 'K4', 'K5', 'K6', 'K7', 'K8'];
+            $visitCode = $visitCodes[min($visitCount, 7)] ?? 'K8';
 
             $data['pregnancy_id'] = $this->pregnancy_id;
             $data['visit_code'] = $visitCode;
 
-            AncVisit::create($data);
+            $visit = AncVisit::create($data);
+
+            // Create notifications for high-risk conditions
+            $this->createNotificationsIfNeeded($visit);
 
             session()->flash('success', 'Kunjungan ANC berhasil dicatat');
             return redirect()->route('patients.show', $this->pregnancy->patient_id);
         }
+    }
+
+    private function createNotificationsIfNeeded(AncVisit $visit)
+    {
+        $patient = $visit->pregnancy->patient;
+        $user = Auth::user();
+
+        // 1. Check for High Risk (MAP > 90)
+        if ($visit->map_score >= 90) {
+            $riskLevel = $visit->map_score >= 100 ? 'BAHAYA (MAP ≥ 100)' : 'WASPADA (MAP ≥ 90)';
+
+            Notification::createHighRiskAlert($user, $patient, $visit, $riskLevel);
+        }
+
+        // 2. Check for Triple Eliminasi Reaktif
+        $hasReaktif = $visit->hiv_status === 'Reaktif' ||
+            $visit->syphilis_status === 'Reaktif' ||
+            $visit->hbsag_status === 'Reaktif';
+
+        if ($hasReaktif) {
+            Notification::createTripleEliminasiAlert($user, $patient, $visit);
+        }
+
+        // 3. Check for KEK (LILA < 23.5)
+        if ($visit->lila && $visit->lila < 23.5) {
+            Notification::create([
+                'user_id' => $user->id,
+                'type' => 'high_risk',
+                'title' => '⚠️ KEK Terdeteksi',
+                'message' => "Pasien {$patient->nama_lengkap} memiliki LILA {$visit->lila} cm (KEK)",
+                'link' => route('patients.show', $patient->id),
+                'patient_id' => $patient->id,
+                'anc_visit_id' => $visit->id,
+            ]);
+        }
+
+        // 4. Check for Anemia (Hb < 11)
+        if ($visit->hb && $visit->hb < 11) {
+            Notification::create([
+                'user_id' => $user->id,
+                'type' => 'high_risk',
+                'title' => '⚠️ Anemia Terdeteksi',
+                'message' => "Pasien {$patient->nama_lengkap} memiliki Hb {$visit->hb} g/dL (Anemia)",
+                'link' => route('patients.show', $patient->id),
+                'patient_id' => $patient->id,
+                'anc_visit_id' => $visit->id,
+            ]);
+        }
+
+        // Dispatch event to refresh notification bell
+        $this->dispatch('notification-created');
     }
 
     public function render()

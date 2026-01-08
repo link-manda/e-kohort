@@ -1,18 +1,22 @@
 <x-dashboard-layout>
     <x-slot name="header">
+        <!-- Breadcrumb -->
+        <x-breadcrumb :items="[['label' => 'Dashboard']]" />
+
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-2xl font-bold text-gray-800">Dashboard</h1>
                 <p class="text-sm text-gray-600 mt-1">Selamat datang kembali, {{ Auth::user()->name }}</p>
             </div>
             <div class="flex items-center space-x-3">
-                <span class="text-sm text-gray-600">{{ now()->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</span>
+                <span
+                    class="text-xs md:text-sm text-gray-600 hidden sm:inline">{{ now()->locale('id')->isoFormat('dddd, D MMMM YYYY') }}</span>
                 <a href="{{ route('patients.create') }}"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2 transition-colors">
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-3 md:px-4 py-2 md:py-2 min-h-[44px] rounded-lg flex items-center space-x-2 transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
-                    <span>Pasien Baru</span>
+                    <span class="hidden sm:inline">Pasien Baru</span>
                 </a>
             </div>
         </div>

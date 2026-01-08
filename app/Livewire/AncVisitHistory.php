@@ -102,8 +102,7 @@ class AncVisitHistory extends Component
         // Apply search (by date or notes)
         if ($this->search) {
             $query->where(function ($q) {
-                $q->where('clinical_notes', 'like', '%' . $this->search . '%')
-                    ->orWhere('anamnesis', 'like', '%' . $this->search . '%');
+                $q->where('diagnosis', 'like', '%' . $this->search . '%');
             });
         }
 

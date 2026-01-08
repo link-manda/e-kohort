@@ -60,15 +60,14 @@ class AncVisitIndex extends Component
             $query->where('visit_code', strtoupper($this->visitCodeFilter));
         }
 
-        // Search in patient name, anamnesis, or clinical notes
+        // Search in patient name, NIK, or diagnosis
         if ($this->search) {
             $query->where(function ($q) {
                 $q->whereHas('pregnancy.patient', function ($patientQuery) {
                     $patientQuery->where('name', 'like', '%' . $this->search . '%')
                         ->orWhere('nik', 'like', '%' . $this->search . '%');
                 })
-                    ->orWhere('anamnesis', 'like', '%' . $this->search . '%')
-                    ->orWhere('clinical_notes', 'like', '%' . $this->search . '%');
+                    ->orWhere('diagnosis', 'like', '%' . $this->search . '%');
             });
         }
 

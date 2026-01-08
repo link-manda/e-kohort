@@ -1,4 +1,31 @@
 <div class="space-y-6">
+    <!-- Flash Messages -->
+    @if (session()->has('success'))
+        <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg shadow-sm">
+            <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
+            </div>
+        </div>
+    @endif
+
+    @if (session()->has('error'))
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg shadow-sm">
+            <div class="flex items-center gap-3">
+                <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clip-rule="evenodd"></path>
+                </svg>
+                <p class="text-sm font-medium text-red-800">{{ session('error') }}</p>
+            </div>
+        </div>
+    @endif
+
     <!-- Header & Stats -->
     <div class="flex items-center justify-between">
         <div>
@@ -107,7 +134,7 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">Cari Catatan Kunjungan</label>
                 <input type="text" wire:model.live.debounce.300ms="search"
                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
-                    placeholder="Cari di anamnesis atau catatan klinis...">
+                    placeholder="Cari di diagnosis atau catatan klinis...">
             </div>
 
             <!-- Visit Code Filter -->
@@ -369,7 +396,6 @@
                                             </svg>
                                         </a>
                                         <button wire:click="deleteVisit({{ $visit->id }})"
-                                            wire:confirm="Apakah Anda yakin ingin menghapus kunjungan {{ $visit->visit_code }}?"
                                             class="p-1 text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors"
                                             title="Hapus">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor"
@@ -406,13 +432,13 @@
                                                         {{ $visit->systolic }}/{{ $visit->diastolic }} mmHg</p>
                                                     <p><span class="font-medium">Suhu:</span>
                                                         {{ $visit->temperature }}°C</p>
-                                                    @if ($visit->fundal_height)
+                                                    @if ($visit->tfu)
                                                         <p><span class="font-medium">TFU:</span>
-                                                            {{ $visit->fundal_height }} cm</p>
+                                                            {{ $visit->tfu }} cm</p>
                                                     @endif
-                                                    @if ($visit->fetal_heart_rate)
+                                                    @if ($visit->djj)
                                                         <p><span class="font-medium">DJJ:</span>
-                                                            {{ $visit->fetal_heart_rate }} bpm</p>
+                                                            {{ $visit->djj }} bpm</p>
                                                     @endif
                                                 </div>
                                             </div>
@@ -477,13 +503,21 @@
                                                     Catatan Klinis
                                                 </h4>
                                                 <div class="space-y-2 text-sm">
-                                                    @if ($visit->anamnesis)
-                                                        <p><span class="font-medium">Anamnesis:</span>
-                                                            {{ $visit->anamnesis }}</p>
+                                                    @if ($visit->diagnosis)
+                                                        <p><span class="font-medium">Diagnosis:</span>
+                                                            {{ $visit->diagnosis }}</p>
                                                     @endif
-                                                    @if ($visit->clinical_notes)
-                                                        <p><span class="font-medium">Catatan:</span>
-                                                            {{ $visit->clinical_notes }}</p>
+                                                    @if ($visit->risk_level)
+                                                        <p><span class="font-medium">Analisa Resiko:</span>
+                                                            {{ $visit->risk_level }}</p>
+                                                    @endif
+                                                    @if ($visit->follow_up)
+                                                        <p><span class="font-medium">Tindak Lanjut:</span>
+                                                            {{ $visit->follow_up }}</p>
+                                                    @endif
+                                                    @if ($visit->midwife_name)
+                                                        <p><span class="font-medium">Pemeriksa:</span>
+                                                            {{ $visit->midwife_name }}</p>
                                                     @endif
                                                 </div>
                                             </div>
@@ -524,32 +558,28 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
-    @if($showDeleteModal)
+    @if ($showDeleteModal)
         <div class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50"
-            x-data="{ show: @entangle('showDeleteModal') }"
-            x-show="show"
-            x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
-            x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start="opacity-100"
+            x-data="{ show: @entangle('showDeleteModal') }" x-show="show" x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
             x-transition:leave-end="opacity-0">
-            
+
             <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4"
                 x-transition:enter="transition ease-out duration-300"
                 x-transition:enter-start="opacity-0 transform scale-90"
                 x-transition:enter-end="opacity-100 transform scale-100"
                 x-transition:leave="transition ease-in duration-200"
                 x-transition:leave-start="opacity-100 transform scale-100"
-                x-transition:leave-end="opacity-0 transform scale-90"
-                @click.away="$wire.cancelDelete()">
-                
+                x-transition:leave-end="opacity-0 transform scale-90" @click.away="$wire.cancelDelete()">
+
                 <!-- Header -->
                 <div class="bg-red-50 px-6 py-4 rounded-t-lg border-b border-red-100">
                     <div class="flex items-start gap-4">
                         <div class="flex-shrink-0">
                             <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
                                     </path>
@@ -565,27 +595,32 @@
 
                 <!-- Body -->
                 <div class="px-6 py-4 space-y-4">
-                    @if($visitToDelete)
+                    @if ($visitToDelete)
                         <!-- Visit Info -->
                         <div class="bg-gray-50 rounded-lg p-4 space-y-2">
                             <div class="flex justify-between items-center">
                                 <span class="text-sm text-gray-600">Kode Kunjungan:</span>
-                                <span class="text-sm font-semibold text-gray-900">{{ $visitToDelete->visit_code }}</span>
+                                <span
+                                    class="text-sm font-semibold text-gray-900">{{ $visitToDelete->visit_code }}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-sm text-gray-600">Tanggal:</span>
-                                <span class="text-sm font-semibold text-gray-900">{{ $visitToDelete->visit_date->format('d M Y') }}</span>
+                                <span
+                                    class="text-sm font-semibold text-gray-900">{{ $visitToDelete->visit_date->format('d M Y') }}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-sm text-gray-600">Usia Kehamilan:</span>
-                                <span class="text-sm font-semibold text-gray-900">{{ $visitToDelete->gestational_age }} minggu</span>
+                                <span
+                                    class="text-sm font-semibold text-gray-900">{{ $visitToDelete->gestational_age }}
+                                    minggu</span>
                             </div>
                         </div>
 
                         <!-- Warning Message -->
                         <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                             <p class="text-sm text-yellow-800">
-                                <strong>Perhatian:</strong> Data akan di-soft delete dan dapat dipulihkan oleh admin jika diperlukan.
+                                <strong>Perhatian:</strong> Data akan di-soft delete dan dapat dipulihkan oleh admin
+                                jika diperlukan.
                             </p>
                         </div>
 
@@ -594,9 +629,7 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 Alasan Penghapusan <span class="text-gray-400">(Opsional)</span>
                             </label>
-                            <textarea 
-                                wire:model="deleteReason"
-                                rows="3"
+                            <textarea wire:model="deleteReason" rows="3"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm"
                                 placeholder="Contoh: Data duplikat, kesalahan input, dll."></textarea>
                         </div>
@@ -605,15 +638,11 @@
 
                 <!-- Footer -->
                 <div class="bg-gray-50 px-6 py-4 rounded-b-lg flex items-center justify-end gap-3">
-                    <button 
-                        type="button"
-                        wire:click="cancelDelete"
+                    <button type="button" wire:click="cancelDelete"
                         class="px-4 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
                         Batal
                     </button>
-                    <button 
-                        type="button"
-                        wire:click="confirmDelete"
+                    <button type="button" wire:click="confirmDelete"
                         class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors flex items-center gap-2">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
