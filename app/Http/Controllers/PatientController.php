@@ -131,7 +131,7 @@ class PatientController extends Controller
     {
         // Eager load relationships
         $patient->load([
-            'pregnancies.ancVisits.labResult',
+            'pregnancies.ancVisits',
             'pregnancies' => function ($query) {
                 $query->orderBy('created_at', 'desc');
             }

@@ -110,6 +110,43 @@ class AncVisitWizard extends Component
         return $rules;
     }
 
+    protected function messages()
+    {
+        return [
+            'visit_date.required' => 'Tanggal kunjungan harus diisi.',
+            'visit_date.before_or_equal' => 'Tanggal kunjungan tidak boleh lebih dari hari ini.',
+            'gestational_age_weeks.required' => 'Usia kehamilan harus diisi.',
+            'gestational_age_weeks.min' => 'Usia kehamilan minimal 1 minggu.',
+            'gestational_age_weeks.max' => 'Usia kehamilan maksimal 42 minggu.',
+
+            'weight.min' => 'Berat badan minimal 30 kg.',
+            'weight.max' => 'Berat badan maksimal 200 kg.',
+            'height.min' => 'Tinggi badan minimal 130 cm.',
+            'height.max' => 'Tinggi badan maksimal 200 cm.',
+            'lila.min' => 'LILA minimal 15 cm.',
+            'lila.max' => 'LILA maksimal 50 cm.',
+            'tfu.min' => 'TFU minimal 10 cm (usia kehamilan < 12 minggu biasanya tidak terukur).',
+            'tfu.max' => 'TFU maksimal 50 cm.',
+            'djj.min' => 'DJJ minimal 100 bpm.',
+            'djj.max' => 'DJJ maksimal 180 bpm.',
+
+            'systolic.required' => 'Tekanan darah sistolik harus diisi.',
+            'systolic.min' => 'Tekanan sistolik minimal 80 mmHg.',
+            'systolic.max' => 'Tekanan sistolik maksimal 250 mmHg.',
+            'diastolic.required' => 'Tekanan darah diastolik harus diisi.',
+            'diastolic.min' => 'Tekanan diastolik minimal 50 mmHg.',
+            'diastolic.max' => 'Tekanan diastolik maksimal 150 mmHg.',
+
+            'hb.min' => 'Hemoglobin minimal 5 g/dL.',
+            'hb.max' => 'Hemoglobin maksimal 20 g/dL.',
+            'hiv_status.required' => 'Status HIV harus dipilih.',
+            'syphilis_status.required' => 'Status Sifilis harus dipilih.',
+            'hbsag_status.required' => 'Status HBsAg harus dipilih.',
+            'fe_tablets.min' => 'Jumlah tablet Fe tidak boleh negatif.',
+            'fe_tablets.max' => 'Jumlah tablet Fe maksimal 200.',
+        ];
+    }
+
     public function mount($pregnancy_id, $visit_id = null)
     {
         $this->pregnancy_id = $pregnancy_id;
@@ -291,67 +328,88 @@ class AncVisitWizard extends Component
 
     public function save()
     {
-        $this->validate();
+        try {
+            $this->validate();
 
-        // Calculate trimester based on gestational age
-        $trimester = $this->gestational_age_weeks <= 12 ? 1 : ($this->gestational_age_weeks <= 28 ? 2 : 3);
+            // Calculate trimester based on gestational age
+            $trimester = $this->gestational_age_weeks <= 12 ? 1 : ($this->gestational_age_weeks <= 28 ? 2 : 3);
 
-        $data = [
-            'visit_date' => $this->visit_date,
-            'trimester' => $trimester,
-            'anc_12t' => $this->anc_12t ?? false,
-            'gestational_age' => $this->gestational_age_weeks,
-            'weight' => $this->weight ?: null,
-            'height' => $this->height ?: null,
-            'lila' => $this->lila ?: null,
-            'bmi' => $this->bmi ?: null,
-            'systolic' => $this->systolic,
-            'diastolic' => $this->diastolic,
-            'map_score' => $this->map_score,
-            'tfu' => $this->tfu ?: null,
-            'djj' => $this->djj ?: null,
-            'fetal_presentation' => $this->fetal_presentation ?: null,
-            'usg_check' => $this->usg_check ?? false,
-            'counseling_check' => $this->counseling_check ?? false,
-            'hb' => $this->hb ?: null,
-            'protein_urine' => $this->protein_urine ?: null,
-            'hiv_status' => $this->hiv_status,
-            'syphilis_status' => $this->syphilis_status,
-            'hbsag_status' => $this->hbsag_status,
-            'tt_immunization' => $this->tt_immunization ?: null,
-            'fe_tablets' => $this->fe_tablets ?: null,
-            'risk_category' => $this->risk_category,
-            'risk_level' => $this->risk_level ?: null,
-            'diagnosis' => $this->diagnosis ?: null,
-            'referral_target' => $this->referral_target ?: null,
-            'follow_up' => $this->follow_up ?: null,
-            'midwife_name' => $this->midwife_name ?: null,
-        ];
+            $data = [
+                'visit_date' => $this->visit_date,
+                'trimester' => $trimester,
+                'anc_12t' => (bool) $this->anc_12t,
+                'gestational_age' => (int) $this->gestational_age_weeks,
+                'weight' => $this->weight ? (float) $this->weight : null,
+                'height' => $this->height ? (float) $this->height : null,
+                'lila' => $this->lila ? (float) $this->lila : null,
+                'bmi' => $this->bmi ? (float) $this->bmi : null,
+                'systolic' => (int) $this->systolic,
+                'diastolic' => (int) $this->diastolic,
+                'map_score' => $this->map_score ? (float) $this->map_score : null,
+                'tfu' => $this->tfu ? (float) $this->tfu : null,
+                'djj' => $this->djj ? (int) $this->djj : null,
+                'fetal_presentation' => $this->fetal_presentation ?: null,
+                'usg_check' => (bool) $this->usg_check,
+                'counseling_check' => (bool) $this->counseling_check,
+                'hb' => $this->hb ? (float) $this->hb : null,
+                'protein_urine' => $this->protein_urine ?: null,
+                'blood_sugar' => $this->blood_sugar ? (float) $this->blood_sugar : null,
+                'hiv_status' => $this->hiv_status,
+                'syphilis_status' => $this->syphilis_status,
+                'hbsag_status' => $this->hbsag_status,
+                'tt_immunization' => $this->tt_immunization ?: null,
+                'fe_tablets' => $this->fe_tablets ? (int) $this->fe_tablets : null,
+                'risk_category' => $this->risk_category,
+                'risk_level' => $this->risk_level ?: null,
+                'diagnosis' => $this->diagnosis ?: null,
+                'referral_target' => $this->referral_target ?: null,
+                'follow_up' => $this->follow_up ?: null,
+                'midwife_name' => $this->midwife_name ?: null,
+            ];
 
-        if ($this->isEditMode) {
-            // Update existing visit - preserve original visit_code
-            $visit = AncVisit::findOrFail($this->visitId);
-            $data['visit_code'] = $this->originalVisitCode; // Preserve original visit code
-            $visit->update($data);
+            if ($this->isEditMode) {
+                // Update existing visit - preserve original visit_code
+                $visit = AncVisit::findOrFail($this->visitId);
+                $data['visit_code'] = $this->originalVisitCode; // Preserve original visit code
+                $visit->update($data);
 
-            session()->flash('success', 'Kunjungan ANC berhasil diperbarui');
-            return redirect()->route('anc-visits.show', $this->visitId);
-        } else {
-            // Determine visit code based on existing visits
-            $visitCount = AncVisit::where('pregnancy_id', $this->pregnancy_id)->count();
-            $visitCodes = ['K1', 'K2', 'K3', 'K4', 'K5', 'K6', 'K7', 'K8'];
-            $visitCode = $visitCodes[min($visitCount, 7)] ?? 'K8';
+                session()->flash('success', 'Kunjungan ANC berhasil diperbarui');
+                return redirect()->route('anc-visits.show', $this->visitId);
+            } else {
+                // Determine visit code based on existing visits
+                $visitCount = AncVisit::where('pregnancy_id', $this->pregnancy_id)->count();
+                $visitCodes = ['K1', 'K2', 'K3', 'K4', 'K5', 'K6', 'K7', 'K8'];
+                $visitCode = $visitCodes[min($visitCount, 7)] ?? 'K8';
 
-            $data['pregnancy_id'] = $this->pregnancy_id;
-            $data['visit_code'] = $visitCode;
+                $data['pregnancy_id'] = $this->pregnancy_id;
+                $data['visit_code'] = $visitCode;
 
-            $visit = AncVisit::create($data);
+                $visit = AncVisit::create($data);
 
-            // Create notifications for high-risk conditions
-            $this->createNotificationsIfNeeded($visit);
+                // Create notifications for high-risk conditions
+                $this->createNotificationsIfNeeded($visit);
 
-            session()->flash('success', 'Kunjungan ANC berhasil dicatat');
-            return redirect()->route('patients.show', $this->pregnancy->patient_id);
+                session()->flash('success', 'Kunjungan ANC berhasil dicatat');
+                return redirect()->route('patients.show', $this->pregnancy->patient_id);
+            }
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Validation errors are automatically handled by Livewire
+            throw $e;
+        } catch (\Exception $e) {
+            // Log the error and show a user-friendly message
+            \Log::error('ANC Visit Save Error: ' . $e->getMessage(), [
+                'user_id' => auth()->id(),
+                'pregnancy_id' => $this->pregnancy_id,
+                'data' => $data ?? [],
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            session()->flash('error', 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.');
+            $this->dispatch('show-toast', ['message' => 'Gagal menyimpan kunjungan ANC', 'type' => 'error']);
+
+            // Reset loading state
+            $this->dispatch('loading-finished');
+            return;
         }
     }
 
@@ -409,5 +467,10 @@ class AncVisitWizard extends Component
     public function render()
     {
         return view('livewire.anc-visit-wizard');
+    }
+
+    public function showToast($message, $type = 'success')
+    {
+        $this->dispatch('show-toast', ['message' => $message, 'type' => $type]);
     }
 }

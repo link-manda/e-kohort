@@ -4,182 +4,225 @@ namespace App\Exports;
 
 use App\Models\AncVisit;
 use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Events\AfterSheet;
+use Maatwebsite\Excel\Events\BeforeExport;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Carbon\Carbon;
 
 class AncRegisterExport implements WithEvents
 {
     protected $filters;
 
-    /**
-     * @param array $filters  Filter untuk query data ANC
-     */
     public function __construct(array $filters = [])
     {
         $this->filters = $filters;
     }
 
-    /**
-     * Get data ANC berdasarkan filter
-     */
-    protected function getData()
-    {
-        $query = AncVisit::with(['pregnancy.patient', 'labResult'])
-            ->orderBy('visit_date', 'asc');
-
-        if (!empty($this->filters['date_from'])) {
-            $query->whereDate('visit_date', '>=', $this->filters['date_from']);
-        }
-
-        if (!empty($this->filters['date_to'])) {
-            $query->whereDate('visit_date', '<=', $this->filters['date_to']);
-        }
-
-        if (!empty($this->filters['risk_category'])) {
-            $query->where('risk_category', $this->filters['risk_category']);
-        }
-
-        if (!empty($this->filters['pregnancy_status'])) {
-            $query->whereHas('pregnancy', function ($q) {
-                $q->where('status', $this->filters['pregnancy_status']);
-            });
-        }
-
-        return $query->get();
-    }
-
-    /**
-     * Register Laravel Excel events
-     */
     public function registerEvents(): array
     {
-        $templatePath = storage_path('app/templates/Template_Export_Anc.xlsx');
-
         return [
-            AfterSheet::class => function (AfterSheet $event) use ($templatePath) {
+            BeforeExport::class => function (BeforeExport $event) {
+                // 1. Load Template Excel dari Storage
+                $templatePath = storage_path('app/templates/Register_ANC_Terintegrasi.xlsx');
+
                 if (!file_exists($templatePath)) {
-                    throw new \RuntimeException("Template not found: {$templatePath}");
+                    throw new \Exception("File template tidak ditemukan di: " . $templatePath);
                 }
 
-                /** @var Worksheet $sheet */
-                $sheet = $event->sheet->getDelegate();
-
-                // Load template dan copy struktur ke sheet output
+                // Load Template ke memory
                 $templateSpreadsheet = IOFactory::load($templatePath);
                 $templateSheet = $templateSpreadsheet->getActiveSheet();
 
-                // Copy content dari template (preserves merged cells & styles)
-                $sheet->fromArray(
-                    $templateSheet->toArray(null, true, true, true),
-                    null,
-                    'A1'
-                );
+                // 2. Akses Spreadsheet Internal Laravel Excel
+                $internalSpreadsheet = $event->writer->getDelegate();
 
-                // Copy merged cells dari template
-                foreach ($templateSheet->getMergeCells() as $mergeRange) {
-                    $sheet->mergeCells($mergeRange);
+                // 3. Teknik SWAPPING (Updated - Safer)
+                // Masukkan dulu sheet dari template kita
+                $internalSpreadsheet->addExternalSheet($templateSheet);
+
+                // Cek jumlah sheet sekarang
+                // Jika > 1, berarti ada sheet kosong default yang harus dibuang (biasanya di index 0)
+                if ($internalSpreadsheet->getSheetCount() > 1) {
+                    $internalSpreadsheet->removeSheetByIndex(0);
                 }
 
-                // Fetch data berdasarkan filter
-                $data = $this->getData();
+                // Set sheet aktif ke sheet pertama (sheet template kita)
+                $internalSpreadsheet->setActiveSheetIndex(0);
 
-                // Data starts on row 4 (after three header rows in template)
-                $startRow = 4;
-                $rowCounter = 0;
+                // Ambil referensi sheet aktif untuk mulai mengisi data
+                $sheet = $internalSpreadsheet->getActiveSheet();
 
-                foreach ($data as $visit) {
-                    $excelRow = $startRow + $rowCounter;
+                // 4. Ambil Data
+                $visits = $this->getQueryData();
 
-                    $patient = $visit->pregnancy->patient ?? null;
-                    $pregnancy = $visit->pregnancy ?? null;
-                    $lab = $visit->labResult ?? null;
+                // 5. Mulai Mengisi Data (Mulai Baris 4)
+                $row = 4;
+                $no = 1;
 
-                    if (!$patient || !$pregnancy) continue;
+                foreach ($visits as $visit) {
+                    $patient = $visit->pregnancy->patient;
+                    $preg = $visit->pregnancy;
 
-                    // Kolom A-L: Data Pasien & Kehamilan
-                    $sheet->setCellValue("A{$excelRow}", $rowCounter + 1);
-                    $sheet->setCellValue("B{$excelRow}", $visit->visit_date ? $visit->visit_date->format('d/m/Y') : '-');
-                    $sheet->setCellValue("C{$excelRow}", $patient->no_rm ?? '-');
-                    $sheet->setCellValue("D{$excelRow}", $patient->name ?? '-');
-                    $sheet->setCellValue("E{$excelRow}", $patient->nik ?? '-');
-                    $sheet->setCellValue("F{$excelRow}", $patient->husband_occupation ?? '-');
-                    $sheet->setCellValue("G{$excelRow}", $patient->education ?? '-');
-                    $sheet->setCellValue("H{$excelRow}", $patient->dob ? $patient->dob->format('d/m/Y') : '-');
-                    $sheet->setCellValue("I{$excelRow}", $patient->phone ?? '-');
-                    $sheet->setCellValue("J{$excelRow}", $patient->address ?? '-');
-                    $sheet->setCellValue("K{$excelRow}", $pregnancy->gravida ?? '-');
-                    $sheet->setCellValue("L{$excelRow}", $visit->gestational_age_weeks ?? '-');
+                    // --- KOLOM A: No ---
+                    $sheet->setCellValue('A' . $row, $no++);
 
-                    // Kolom M-S: Kunjungan K1-K6, K8
-                    $visitCode = $visit->visit_code;
-                    $sheet->setCellValue("M{$excelRow}", $visitCode == 'K1' ? '✓' : '');
-                    $sheet->setCellValue("N{$excelRow}", $visitCode == 'K2' ? '✓' : '');
-                    $sheet->setCellValue("O{$excelRow}", $visitCode == 'K3' ? '✓' : '');
-                    $sheet->setCellValue("P{$excelRow}", $visitCode == 'K4' ? '✓' : '');
-                    $sheet->setCellValue("Q{$excelRow}", $visitCode == 'K5' ? '✓' : '');
-                    $sheet->setCellValue("R{$excelRow}", $visitCode == 'K6' ? '✓' : '');
-                    $sheet->setCellValue("S{$excelRow}", $visitCode == 'K8' ? '✓' : '');
+                    // --- KOLOM B: Tanggal Kunjungan ---
+                    $sheet->setCellValue('B' . $row, $visit->visit_date ? Carbon::parse($visit->visit_date)->format('d/m/Y') : '');
 
-                    // Kolom T: ANC 12T (cek total visits >= 12)
-                    $totalVisits = $pregnancy->ancVisits ? $pregnancy->ancVisits()->count() : 0;
-                    $sheet->setCellValue("T{$excelRow}", $totalVisits >= 12 ? '✓' : '');
+                    // --- KOLOM C: No RM / KK / BPJS (Bertumpuk) ---
+                    $colC = ($patient->no_rm ?? '') . "\n" .
+                        ($patient->no_kk ?? '') . "\n" .
+                        ($patient->no_bpjs ?? '');
+                    $sheet->setCellValue('C' . $row, $colC);
 
-                    // Kolom U-V: Berat Badan
-                    $sheet->setCellValue("U{$excelRow}", $visit->weight_before_pregnancy ?? '-');
-                    $sheet->setCellValue("V{$excelRow}", $visit->current_weight ?? '-');
+                    // --- KOLOM D: Nama Ibu / Suami ---
+                    $colD = ($patient->name ?? '') . "/" .
+                        ($patient->husband_name ?? '');
+                    $sheet->setCellValue('D' . $row, $colD);
 
-                    // Kolom W: TB (Tinggi Badan)
-                    $sheet->setCellValue("W{$excelRow}", $visit->height ?? '-');
+                    // --- KOLOM E: NIK Ibu / Suami ---
+                    $colE = ($patient->nik ?? '-') . "/" .
+                        ($patient->husband_nik ?? '-');
+                    $sheet->setCellValue('E' . $row, $colE);
 
-                    // Kolom X-AA: Status Gizi
-                    $sheet->setCellValue("X{$excelRow}", $visit->imt ?? '-');
-                    $sheet->setCellValue("Y{$excelRow}", $visit->muac ?? '-');
-                    $sheet->setCellValue("Z{$excelRow}", ($visit->muac && $visit->muac < 23.5) ? '✓' : '');
-                    $sheet->setCellValue("AA{$excelRow}", ($visit->muac && $visit->muac >= 23.5) ? '✓' : '');
+                    // --- KOLOM F: Pekerjaan ---
+                    $colF = ($patient->job ?? '') . "/" .
+                        ($patient->husband_job ?? '');
+                    $sheet->setCellValue('F' . $row, $colF);
 
-                    // Kolom AB-AE: Pemeriksaan Fisik
-                    $sheet->setCellValue("AB{$excelRow}", $visit->blood_pressure ?? '-');
-                    $sheet->setCellValue("AC{$excelRow}", $visit->fundal_height ?? '-');
-                    $sheet->setCellValue("AD{$excelRow}", $visit->fetal_heart_rate ?? '-');
-                    $sheet->setCellValue("AE{$excelRow}", $visit->fetal_position ?? '-');
+                    // --- KOLOM G: Pendidikan ---
+                    $colG = ($patient->education ?? '') . "|" .
+                        ($patient->husband_education ?? '');
+                    $sheet->setCellValue('G' . $row, $colG);
 
-                    // Kolom AF-AH: Imunisasi & TTD
-                    $sheet->setCellValue("AF{$excelRow}", $visit->tt_immunization ?? '-');
-                    $sheet->setCellValue("AG{$excelRow}", $visit->ttd_given ? '✓' : '');
-                    $sheet->setCellValue("AH{$excelRow}", $visit->ttd_amount ?? '-');
+                    // --- KOLOM H: Umur / TTL ---
+                    $age = $patient->dob ? Carbon::parse($patient->dob)->age . ' Thn' : '-';
+                    $ttl = ($patient->pob ?? '-') . ', ' . ($patient->dob ? Carbon::parse($patient->dob)->format('d-m-Y') : '');
+                    $sheet->setCellValue('H' . $row, $age . "/" . $ttl);
 
-                    // Kolom AI-AM: Laboratorium
-                    $sheet->setCellValue("AI{$excelRow}", $lab->hiv_test_result ?? '-');
-                    $sheet->setCellValue("AJ{$excelRow}", $lab->syphilis_test_result ?? '-');
-                    $sheet->setCellValue("AK{$excelRow}", $lab->hbsag_test_result ?? '-');
-                    $sheet->setCellValue("AL{$excelRow}", $lab->hemoglobin ?? '-');
-                    $sheet->setCellValue("AM{$excelRow}", $lab->protein_urine ?? '-');
+                    // --- KOLOM I: No HP ---
+                    $sheet->setCellValue('I' . $row, $patient->phone ?? '-');
 
-                    // Kolom AN: Golongan Darah
-                    $sheet->setCellValue("AN{$excelRow}", $patient->blood_type ?? '-');
+                    // --- KOLOM J: Alamat (Domisili) ---
+                    $sheet->setCellValue('J' . $row, $patient->address ?? '-');
 
-                    // Kolom AO-AR: Status Anemia (Tidak/Ringan/Sedang/Berat)
-                    $hb = $lab->hemoglobin ?? 0;
-                    $sheet->setCellValue("AO{$excelRow}", $hb >= 11 ? '✓' : '');
-                    $sheet->setCellValue("AP{$excelRow}", ($hb >= 10 && $hb < 11) ? '✓' : '');
-                    $sheet->setCellValue("AQ{$excelRow}", ($hb >= 8 && $hb < 10) ? '✓' : '');
-                    $sheet->setCellValue("AR{$excelRow}", ($hb < 8 && $hb > 0) ? '✓' : '');
+                    // --- KOLOM K: Gravida ---
+                    $sheet->setCellValue('K' . $row, $preg->gestational_age ?? '-');
 
-                    // Kolom AS-AW: USG, Konseling, Deteksi Risiko, Rujukan, Diagnosa
-                    $sheet->setCellValue("AS{$excelRow}", $visit->usg_done ? 'Ya' : 'Tidak');
-                    $sheet->setCellValue("AT{$excelRow}", $visit->counseling_done ? '✓' : '');
-                    $sheet->setCellValue("AU{$excelRow}", $visit->risk_category ?? '-');
-                    $sheet->setCellValue("AV{$excelRow}", $visit->referral_needed ? 'Ya' : 'Tidak');
-                    $sheet->setCellValue("AW{$excelRow}", $visit->diagnosis ?? '-');
+                    // --- KOLOM L: HPHT ---
+                    $sheet->setCellValue('L' . $row, $preg->pregnancy_gap);
 
-                    // Kolom AX-AY: Tindak Lanjut & Nama Nakes
-                    $sheet->setCellValue("AX{$excelRow}", $visit->follow_up_plan ?? '-');
-                    $sheet->setCellValue("AY{$excelRow}", $visit->created_by ?? '-');
+                    // --- KOLOM O - U: Checklis Kunjungan (K1-K6) ---
+                    $sheet->setCellValue('M' . $row, $visit->visit_code == 'K1' ? '✔' : '');
+                    $sheet->setCellValue('N' . $row, $visit->visit_code == 'K2' ? '✔' : '');
+                    $sheet->setCellValue('O' . $row, $visit->visit_code == 'K3' ? '✔' : '');
+                    $sheet->setCellValue('P' . $row, $visit->visit_code == 'K4' ? '✔' : '');
+                    $sheet->setCellValue('Q' . $row, $visit->visit_code == 'K5' ? '✔' : '');
+                    $sheet->setCellValue('R' . $row, $visit->visit_code == 'K6' ? '✔' : '');
+                    $sheet->setCellValue('S' . $row, $visit->visit_code == 'K8' ? '✔' : '');
+                    // --- KOLOM V: ANC 12T ---
+                    $sheet->setCellValue('T' . $row, $visit->anc_12t ? '✔' : '');
 
-                    $rowCounter++;
+                    // --- KOLOM M: UK (Minggu) ---
+                    $sheet->setCellValue('U' . $row, $preg->weight_before);
+
+                    // --- KOLOM N: Jarak Kehamilan (Tahun) ---
+                    $sheet->setCellValue('V' . $row, $visit->weight);
+
+                    // --- KOLOM W: BB Sebelum Hamil ---
+                    $sheet->setCellValue('W' . $row, $visit->height);
+
+                    // --- KOLOM X: BB Saat Ini ---
+                    $sheet->setCellValue('X' . $row, $visit->bmi);
+
+                    // --- KOLOM AB-AC: Status Gizi (KEK/Normal) ---
+                    $isKek = ($visit->lila && $visit->lila < 23.5);
+                    $sheet->setCellValue('Y' . $row, $isKek ? '✔' : '');
+                    $sheet->setCellValue('Z' . $row, !$isKek && $visit->lila ? '✔' : '');
+
+                    // --- KOLOM AD: TD (Tensi) ---
+                    $sheet->setCellValue('AB' . $row, ($visit->systolic ?? '-') . '/' . ($visit->diastolic ?? '-'));
+
+                    // --- KOLOM AA: LILA ---
+                    $sheet->setCellValue('AC' . $row, $visit->tfu ?? '-');
+
+
+                    // --- KOLOM AD: TD (Tensi) ---
+                    $sheet->setCellValue('AD' . $row, $visit->djj ?? '-');
+
+                    // --- KOLOM AE: MAP SCORE (New) ---
+                    $sheet->setCellValue('AE' . $row, $visit->fetal_presentation ?? '-');
+
+                    // --- KOLOM AF: TFU ---
+                    $sheet->setCellValue('AF' . $row, $visit->tt_immunization ?? '-');
+
+                    // --- KOLOM AG: DJJ ---
+                    $sheet->setCellValue('AG' . $row, $visit->fe_tablets ?? '-');
+
+                    // --- KOLOM AH: Letak Janin ---
+                    $sheet->setCellValue('AH' . $row, $visit->hiv_status ?? '-');
+
+                    // --- KOLOM AI: Imunisasi TT ---
+                    $sheet->setCellValue('AI' . $row, $visit->syphilis_status ?? '-');
+
+                    // --- KOLOM AJ: TTD ---
+                    $sheet->setCellValue('AJ' . $row, $visit->hbsag_status ?? '-');
+
+                    // --- KOLOM AK-AM: Lab Results (from anc_visits) ---
+                    $sheet->setCellValue('AK' . $row, $visit->hb ?? '-');
+                    $sheet->setCellValue('AL' . $row, $visit->protein_urine ?? '-');
+                    $sheet->setCellValue('AM' . $row, ($patient->blood_type ?? '-') . '/' . ($patient->husband_blood_type ?? '-'));
+
+
+                    // --- KOLOM AQ-AT: Status Anemia ---
+                    $hbVal = $visit->hb ?? 0;
+                    $sheet->setCellValue('AN' . $row, $hbVal >= 11 ? '✔' : ''); // Normal
+                    $sheet->setCellValue('AO' . $row, ($hbVal >= 9 && $hbVal < 11) ? '✔' : ''); // Ringan
+                    $sheet->setCellValue('AP' . $row, ($hbVal >= 7 && $hbVal < 9) ? '✔' : ''); // Sedang
+                    $sheet->setCellValue('AQ' . $row, ($hbVal > 0 && $hbVal < 7) ? '✔' : ''); // Berat
+
+                    // --- KOLOM AU: USG ---
+                    $sheet->setCellValue('AR' . $row, $visit->usg_check ? 'Ya' : 'Tidak');
+
+                    // --- KOLOM AV: Konseling ---
+                    $sheet->setCellValue('AS' . $row, $visit->counseling_check ? '✔' : '');
+
+                    // --- KOLOM AW: Resiko ---
+                    $sheet->setCellValue('AT' . $row, $visit->risk_level ?? '-');
+
+                    // --- KOLOM AX: Rujukan ---
+                    $sheet->setCellValue('AU' . $row, $visit->referral_target ? 'Ya' : 'Tidak');
+
+                    // --- KOLOM AY: Diagnosa ---
+                    $sheet->setCellValue('AV' . $row, $visit->diagnosis ?? '-');
+
+                    // --- KOLOM AZ: Tindak Lanjut ---
+                    $sheet->setCellValue('AW' . $row, $visit->follow_up ?? '-');
+
+                    // --- KOLOM BA: Nama Nakes ---
+                    $sheet->setCellValue('AX' . $row, $visit->midwife_name ?? '-');
+
+                    $row++;
                 }
             },
         ];
+    }
+
+    /**
+     * Query Data Logic
+     */
+    protected function getQueryData()
+    {
+        $query = AncVisit::query()
+            ->with(['pregnancy.patient'])
+            ->whereHas('pregnancy.patient');
+
+        if (!empty($this->filters['date_from'])) {
+            $query->where('visit_date', '>=', $this->filters['date_from']);
+        }
+        if (!empty($this->filters['date_to'])) {
+            $query->where('visit_date', '<=', $this->filters['date_to']);
+        }
+
+        return $query->orderBy('visit_date', 'asc')->get();
     }
 }

@@ -77,13 +77,7 @@ class AncVisit extends Model
         return $this->belongsTo(Pregnancy::class);
     }
 
-    /**
-     * Get the lab result for this ANC visit.
-     */
-    public function labResult(): HasOne
-    {
-        return $this->hasOne(LabResult::class);
-    }
+
 
     /**
      * Calculate MAP (Mean Arterial Pressure).

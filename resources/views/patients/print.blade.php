@@ -452,7 +452,7 @@
                                 <td class="text-center">{{ $visit->systolic }}/{{ $visit->diastolic }}</td>
                                 <td class="text-center">{{ number_format($visit->map_score, 1) }}</td>
                                 <td class="text-center">{{ $visit->lila }} cm</td>
-                                <td class="text-center">{{ $visit->labResult->hb ?? '-' }}</td>
+                                <td class="text-center">{{ $visit->hb ?? '-' }}</td>
                                 <td class="text-center">
                                     <span
                                         class="badge {{ $visit->risk_level == 'Tinggi' ? 'badge-high' : 'badge-normal' }}">

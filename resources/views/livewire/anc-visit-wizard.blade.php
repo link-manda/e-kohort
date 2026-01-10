@@ -133,7 +133,10 @@
                             Berat Badan (kg)
                         </label>
                         <input type="number" wire:model.live="weight" min="30" max="200" step="0.1"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('weight') border-red-500 @enderror">
+                        @error('weight')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -141,7 +144,10 @@
                             Tinggi Badan (cm)
                         </label>
                         <input type="number" wire:model.live="height" min="130" max="200" step="0.1"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('height') border-red-500 @enderror">
+                        @error('height')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -150,11 +156,13 @@
                         </label>
                         <input type="number" wire:model.live="lila" min="15" max="50" step="0.1"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('lila') border-red-500 @enderror">
-                        @if ($has_kek)
+                        @error('lila')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @elseif($has_kek)
                             <p class="text-red-500 text-xs mt-1 font-semibold">⚠️ KEK Terdeteksi (LILA < 23.5 cm)</p>
                                 @elseif($lila && $lila >= 23.5)
                                     <p class="text-green-500 text-xs mt-1">✓ Normal</p>
-                        @endif
+                                @enderror
                     </div>
 
                     <div>
@@ -162,8 +170,12 @@
                             TFU (cm)
                         </label>
                         <input type="number" wire:model.live="tfu" min="10" max="50" step="0.1"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <p class="text-xs text-gray-500 mt-1">Tinggi Fundus Uteri</p>
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tfu') border-red-500 @enderror">
+                        @error('tfu')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @else
+                            <p class="text-xs text-gray-500 mt-1">Tinggi Fundus Uteri (minimal 10 cm)</p>
+                        @enderror
                     </div>
 
                     <div>
@@ -171,8 +183,12 @@
                             DJJ (bpm)
                         </label>
                         <input type="number" wire:model.live="djj" min="100" max="180"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <p class="text-xs text-gray-500 mt-1">Denyut Jantung Janin (Normal: 120-160 bpm)</p>
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('djj') border-red-500 @enderror">
+                        @error('djj')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @else
+                            <p class="text-xs text-gray-500 mt-1">Denyut Jantung Janin (Normal: 120-160 bpm)</p>
+                        @enderror
                     </div>
 
                     <div class="md:col-span-2">
@@ -285,12 +301,14 @@
                             Hemoglobin (g/dL)
                         </label>
                         <input type="number" wire:model.live="hb" min="5" max="20" step="0.1"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        @if ($has_anemia)
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('hb') border-red-500 @enderror">
+                        @error('hb')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @elseif($has_anemia)
                             <p class="text-red-500 text-xs mt-1 font-semibold">⚠️ Anemia (Hb < 11 g/dL)</p>
                                 @elseif($hb && $hb >= 11)
                                     <p class="text-green-500 text-xs mt-1">✓ Normal</p>
-                        @endif
+                                @enderror
                     </div>
 
                     <div>
@@ -406,7 +424,8 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <!-- ANC 12T Checkbox -->
                         <div class="flex items-center space-x-3 p-3 bg-white rounded-lg border border-indigo-200">
-                            <input type="checkbox" wire:model="anc_12t" id="anc_12t"
+                            <input type="hidden" name="anc_12t" value="0">
+                            <input type="checkbox" wire:model="anc_12t" id="anc_12t" value="1"
                                 class="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
                             <label for="anc_12t" class="text-sm font-semibold text-gray-700 cursor-pointer">
                                 ANC 12T Lengkap
@@ -415,7 +434,8 @@
 
                         <!-- USG Check -->
                         <div class="flex items-center space-x-3 p-3 bg-white rounded-lg border border-indigo-200">
-                            <input type="checkbox" wire:model="usg_check" id="usg_check"
+                            <input type="hidden" name="usg_check" value="0">
+                            <input type="checkbox" wire:model="usg_check" id="usg_check" value="1"
                                 class="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
                             <label for="usg_check" class="text-sm font-semibold text-gray-700 cursor-pointer">
                                 Sudah USG
@@ -424,7 +444,9 @@
 
                         <!-- Counseling Check -->
                         <div class="flex items-center space-x-3 p-3 bg-white rounded-lg border border-indigo-200">
+                            <input type="hidden" name="counseling_check" value="0">
                             <input type="checkbox" wire:model="counseling_check" id="counseling_check"
+                                value="1"
                                 class="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-2 focus:ring-indigo-500">
                             <label for="counseling_check" class="text-sm font-semibold text-gray-700 cursor-pointer">
                                 Sudah Konseling

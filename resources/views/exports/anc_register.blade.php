@@ -248,19 +248,19 @@
                     <td class="center">{{ $visit->tt_imunization }}</td>
                     <td class="center">{{ $visit->fe_tablets }}</td>
 
-                    <!-- Lab Results -->
-                    <td class="center">{{ $visit->labResult->hiv_status ?? '-' }}</td>
-                    <td class="center">{{ $visit->labResult->syphilis_status ?? '-' }}</td>
-                    <td class="center">{{ $visit->labResult->hbsag_status ?? '-' }}</td>
-                    <td class="center">{{ $visit->labResult->hb ?? '-' }}</td>
-                    <td class="center">{{ $visit->labResult->protein_urine ?? '-' }}</td>
+                    <!-- Lab Results (from anc_visits) -->
+                    <td class="center">{{ $visit->hiv_status ?? '-' }}</td>
+                    <td class="center">{{ $visit->syphilis_status ?? '-' }}</td>
+                    <td class="center">{{ $visit->hbsag_status ?? '-' }}</td>
+                    <td class="center">{{ $visit->hb ?? '-' }}</td>
+                    <td class="center">{{ $visit->protein_urine ?? '-' }}</td>
                     <td class="center">
                         {{ $visit->pregnancy->patient->blood_type ?? '-' }} /
                         {{ $visit->pregnancy->patient->husband_blood_type ?? '-' }}
                     </td>
 
                     <!-- Anemia Status (Logic dari HB) -->
-                    @php $hb = $visit->labResult->hb ?? 0; @endphp
+                    @php $hb = $visit->hb ?? 0; @endphp
                     <td class="center">{{ $hb >= 11 ? 'V' : '' }}</td>
                     <td class="center">{{ $hb >= 9 && $hb < 11 ? 'V' : '' }}</td>
                     <td class="center">{{ $hb >= 7 && $hb < 9 ? 'V' : '' }}</td>
