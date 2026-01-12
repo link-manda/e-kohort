@@ -16,12 +16,26 @@ class GlobalSearch extends Component
         $this->search = trim($value);
 
         if (strlen($this->search) >= 2) {
+            $keyword = $this->search;
+
+            // SMART SEARCH LOGIC dengan prioritas
             $this->results = Patient::query()
-                ->where(function ($query) {
-                    $query->where('name', 'like', '%' . $this->search . '%')
-                        ->orWhere('nik', 'like', '%' . $this->search . '%')
-                        ->orWhere('no_rm', 'like', '%' . $this->search . '%')
-                        ->orWhere('phone', 'like', '%' . $this->search . '%');
+                ->where(function ($query) use ($keyword) {
+                    // Prioritas 1: Cek pola RM (case insensitive)
+                    if (stripos($keyword, 'RM-') !== false || stripos($keyword, 'rm-') !== false) {
+                        $query->where('no_rm', 'like', '%' . $keyword . '%');
+                    }
+                    // Prioritas 2: Cek numerik (phone atau nik)
+                    elseif (is_numeric($keyword)) {
+                        // Prioritas utama: Phone
+                        $query->where('phone', 'like', '%' . $keyword . '%')
+                            // Prioritas kedua: NIK
+                            ->orWhere('nik', 'like', '%' . $keyword . '%');
+                    }
+                    // Prioritas 3: Default string (nama)
+                    else {
+                        $query->where('name', 'like', '%' . $keyword . '%');
+                    }
                 })
                 ->limit(8)
                 ->get(['id', 'no_rm', 'name', 'nik', 'phone']);

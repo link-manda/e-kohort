@@ -91,7 +91,7 @@ class DemoDataSeeder extends Seeder
                 'patient_id' => $patient->id,
                 'gravida' => "G{$gravida_g}P{$gravida_p}A{$gravida_a}",
                 'hpht' => $hpht,
-                'hpl' => $hpht->copy()->addMonths(9),
+                'hpl' => $hpht->copy()->addDays(7)->subMonths(3)->addYear(), // Rumus Naegele: +7 -3 +1
                 'pregnancy_gap' => $gravida_g > 1 ? rand(1, 10) : null,
                 'weight_before' => rand(450, 700) / 10,
                 'height' => rand(145, 170),

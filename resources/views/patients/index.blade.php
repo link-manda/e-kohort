@@ -100,7 +100,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 text-sm text-gray-700 font-mono">{{ $patient->nik }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-700 font-mono">{{ $patient->nik ?? '-' }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-700">{{ $patient->age }} tahun</td>
                                 <td class="px-6 py-4">
                                     <span class="px-2 py-1 text-xs font-semibold text-blue-700 bg-blue-100 rounded">

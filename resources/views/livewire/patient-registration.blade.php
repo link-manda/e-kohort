@@ -92,7 +92,7 @@
                         <!-- NIK -->
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                NIK (Nomor Induk Kependudukan) <span class="text-red-500">*</span>
+                                NIK (Nomor Induk Kependudukan) <span class="text-gray-400 text-xs">(Opsional)</span>
                             </label>
                             <input type="text" wire:model.live="nik" maxlength="16"
                                 class="w-full px-4 py-3 border-2 rounded-lg font-mono text-lg
@@ -109,7 +109,9 @@
                                     {{ $message }}
                                 </p>
                             @else
-                                <p class="mt-1 text-xs text-gray-500">16 digit sesuai KTP</p>
+                                <p class="mt-1 text-xs text-gray-500">16 digit sesuai KTP - <span
+                                        class="text-blue-600 font-medium">Kosongkan jika pasien tidak memiliki/enggan
+                                        memberikan NIK</span></p>
                             @enderror
                         </div>
 
@@ -279,13 +281,26 @@
                         <!-- Phone -->
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                No. Telepon / WhatsApp
+                                No. Telepon / WhatsApp <span class="text-red-500">*</span>
                             </label>
                             <input type="text" wire:model.live="phone"
-                                class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg
+                                class="w-full px-4 py-3 border-2 rounded-lg
+                                              @error('phone') border-red-500 @else border-gray-300 @enderror
                                               focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
                                 placeholder="08123456789">
-                            <p class="mt-1 text-xs text-gray-500">Format: 08xxx atau 628xxx (auto-format)</p>
+                            @error('phone')
+                                <p class="mt-2 text-sm text-red-600 flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                    {{ $message }}
+                                </p>
+                            @else
+                                <p class="mt-1 text-xs text-gray-500">Format: 08xxx atau 628xxx (auto-format) • <span
+                                        class="text-blue-600 font-medium">Wajib untuk identifikasi pasien</span></p>
+                            @enderror
                         </div>
 
                         <!-- Address -->

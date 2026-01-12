@@ -41,7 +41,7 @@ class PatientRegistration extends Component
     {
         $rules = [
             'nik' => [
-                'required',
+                'nullable',
                 'digits:16',
                 Rule::unique('patients', 'nik'),
             ],
@@ -52,7 +52,7 @@ class PatientRegistration extends Component
             'job' => 'nullable|string|max:100',
             'education' => 'nullable|string|max:100',
             'blood_type' => 'required|in:A,B,AB,O',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'required|string|max:20',
             'address' => 'required|string',
             'no_kk' => 'nullable|string|max:16',
             'no_bpjs' => 'nullable|string|max:13|regex:/^[0-9]*$/',
@@ -69,13 +69,13 @@ class PatientRegistration extends Component
     }
 
     protected $messages = [
-        'nik.required' => 'NIK wajib diisi',
         'nik.digits' => 'NIK harus 16 digit',
         'nik.unique' => 'NIK sudah terdaftar di sistem',
         'name.required' => 'Nama lengkap wajib diisi',
         'dob.required' => 'Tanggal lahir wajib diisi',
         'dob.before' => 'Tanggal lahir harus sebelum hari ini',
         'blood_type.required' => 'Golongan darah wajib dipilih',
+        'phone.required' => 'Nomor WhatsApp wajib diisi (menggantikan NIK untuk identifikasi)',
         'address.required' => 'Alamat wajib diisi',
         'husband_nik.digits' => 'NIK suami harus 16 digit',
         'no_bpjs.max' => 'No. BPJS maksimal 13 digit',
@@ -121,6 +121,7 @@ class PatientRegistration extends Component
                 'name' => $this->rules()['name'],
                 'dob' => $this->rules()['dob'],
                 'blood_type' => $this->rules()['blood_type'],
+                'phone' => $this->rules()['phone'],
                 'address' => $this->rules()['address'],
             ]);
         }
@@ -149,7 +150,7 @@ class PatientRegistration extends Component
 
         // Convert empty strings to NULL for optional fields
         $data = [
-            'nik' => $this->nik,
+            'nik' => $this->nik ?: null, // Convert empty string to NULL for unique constraint
             'no_rm' => $this->no_rm,
             'no_kk' => $this->no_kk ?: null,
             'no_bpjs' => $this->no_bpjs ?: null,

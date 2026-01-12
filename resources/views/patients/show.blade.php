@@ -163,7 +163,17 @@
                 <div class="space-y-4 text-sm">
                     <div>
                         <p class="text-gray-500 text-xs font-medium mb-1">NIK</p>
-                        <p class="font-mono font-semibold text-gray-900 text-base">{{ $patient->nik }}</p>
+                        @if ($patient->nik)
+                            <p class="font-mono font-semibold text-gray-900 text-base">{{ $patient->nik }}</p>
+                        @else
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    Tidak ada NIK
+                                </span>
+                                <span class="text-xs text-gray-500">Pasien tidak memiliki NIK</span>
+                            </div>
+                        @endif
                     </div>
                     @if ($patient->no_kk)
                         <div>

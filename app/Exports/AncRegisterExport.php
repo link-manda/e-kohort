@@ -69,8 +69,8 @@ class AncRegisterExport implements WithEvents
                     $sheet->setCellValue('B' . $row, $visit->visit_date ? Carbon::parse($visit->visit_date)->format('d/m/Y') : '');
 
                     // --- KOLOM C: No RM / KK / BPJS (Bertumpuk) ---
-                    $colC = ($patient->no_rm ?? '') . "\n" .
-                        ($patient->no_kk ?? '') . "\n" .
+                    $colC = ($patient->no_rm ?? '') . "/" .
+                        ($patient->no_kk ?? '') . "/" .
                         ($patient->no_bpjs ?? '');
                     $sheet->setCellValue('C' . $row, $colC);
 
@@ -134,10 +134,13 @@ class AncRegisterExport implements WithEvents
                     // --- KOLOM X: BB Saat Ini ---
                     $sheet->setCellValue('X' . $row, $visit->bmi);
 
-                    // --- KOLOM AB-AC: Status Gizi (KEK/Normal) ---
+                    // --- KOLOM Y: LILA (Angka Lingkar Lengan) ---
+                    $sheet->setCellValue('Y' . $row, $visit->lila ?? '-');
+
+                    // --- KOLOM Z-AA: Status Gizi (KEK/Normal) ---
                     $isKek = ($visit->lila && $visit->lila < 23.5);
-                    $sheet->setCellValue('Y' . $row, $isKek ? '✔' : '');
-                    $sheet->setCellValue('Z' . $row, !$isKek && $visit->lila ? '✔' : '');
+                    $sheet->setCellValue('Z' . $row, $isKek ? '✔' : '');
+                    $sheet->setCellValue('AA' . $row, ($visit->lila && $visit->lila >= 23.5) ? '✔' : '');
 
                     // --- KOLOM AD: TD (Tensi) ---
                     $sheet->setCellValue('AB' . $row, ($visit->systolic ?? '-') . '/' . ($visit->diastolic ?? '-'));
@@ -181,7 +184,7 @@ class AncRegisterExport implements WithEvents
                     $sheet->setCellValue('AQ' . $row, ($hbVal > 0 && $hbVal < 7) ? '✔' : ''); // Berat
 
                     // --- KOLOM AU: USG ---
-                    $sheet->setCellValue('AR' . $row, $visit->usg_check ? 'Ya' : 'Tidak');
+                    $sheet->setCellValue('AR' . $row, $visit->usg_check ? 'Sudah' : 'Belum');
 
                     // --- KOLOM AV: Konseling ---
                     $sheet->setCellValue('AS' . $row, $visit->counseling_check ? '✔' : '');

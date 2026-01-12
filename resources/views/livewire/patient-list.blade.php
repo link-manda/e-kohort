@@ -174,7 +174,14 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ $patient->nik }}</div>
+                                @if ($patient->nik)
+                                    <div class="text-sm font-medium text-gray-900">{{ $patient->nik }}</div>
+                                @else
+                                    <span
+                                        class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        Tanpa NIK
+                                    </span>
+                                @endif
                                 <div class="text-xs text-gray-500">Umur: {{ $patient->age }} tahun</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">

@@ -54,16 +54,16 @@ class PatientEdit extends Component
     protected function rules()
     {
         $rules = [
-            // NIK cannot be changed, but still validated
+            // NIK can be nullable now
             'nik' => [
-                'required',
+                'nullable',
                 'digits:16',
                 Rule::unique('patients', 'nik')->ignore($this->patient->id),
             ],
             'name' => 'required|string|max:255',
             'dob' => 'required|date|before:today',
             'blood_type' => 'required|in:A,B,AB,O',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'required|string|max:20',
             'address' => 'required|string',
             'no_kk' => 'nullable|string|max:16',
             'no_bpjs' => 'nullable|string|max:13|regex:/^[0-9]*$/',
@@ -78,13 +78,13 @@ class PatientEdit extends Component
     }
 
     protected $messages = [
-        'nik.required' => 'NIK wajib diisi',
         'nik.digits' => 'NIK harus 16 digit',
         'nik.unique' => 'NIK sudah terdaftar di sistem',
         'name.required' => 'Nama lengkap wajib diisi',
         'dob.required' => 'Tanggal lahir wajib diisi',
         'dob.before' => 'Tanggal lahir harus sebelum hari ini',
         'blood_type.required' => 'Golongan darah wajib dipilih',
+        'phone.required' => 'Nomor WhatsApp wajib diisi (menggantikan NIK untuk identifikasi)',
         'address.required' => 'Alamat wajib diisi',
         'husband_nik.digits' => 'NIK suami harus 16 digit',
         'no_bpjs.max' => 'No. BPJS maksimal 13 digit',
@@ -119,6 +119,7 @@ class PatientEdit extends Component
                 'name' => $this->rules()['name'],
                 'dob' => $this->rules()['dob'],
                 'blood_type' => $this->rules()['blood_type'],
+                'phone' => $this->rules()['phone'],
                 'address' => $this->rules()['address'],
             ]);
         }
@@ -142,7 +143,7 @@ class PatientEdit extends Component
 
         // Update patient - convert empty strings to NULL
         $this->patient->update([
-            'nik' => $this->nik,
+            'nik' => $this->nik ?: null, // Convert empty string to NULL for unique constraint
             'no_kk' => $this->no_kk ?: null,
             'no_bpjs' => $this->no_bpjs ?: null,
             'name' => $this->name,

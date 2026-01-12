@@ -9,7 +9,7 @@
                 </div>
                 <div>
                     <h3 class="text-2xl font-bold">{{ $patient->name }}</h3>
-                    <p class="text-blue-100">{{ $patient->age }} tahun • NIK: {{ $patient->nik }}</p>
+                    <p class="text-blue-100">{{ $patient->age }} tahun • NIK: {{ $patient->nik ?? 'Tidak ada NIK' }}</p>
                 </div>
             </div>
         </div>
@@ -109,7 +109,7 @@
                     @error('hpl')
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
-                    <p class="text-xs text-green-600 mt-1">✓ Otomatis dihitung (HPHT + 9 bulan)</p>
+                    <p class="text-xs text-green-600 mt-1">✓ Otomatis dihitung (HPHT +7 -3 +1)</p>
                 </div>
             </div>
 

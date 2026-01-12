@@ -60,7 +60,13 @@ class PregnancyRegistration extends Component
         if ($this->hpht) {
             try {
                 $hpht = Carbon::parse($this->hpht);
-                $this->hpl = $hpht->copy()->addMonths(9)->format('Y-m-d');
+
+                // Rumus Naegele: +7 hari, -3 bulan, +1 tahun
+                $this->hpl = $hpht->copy()
+                    ->addDays(7)      // +7 hari
+                    ->subMonths(3)    // -3 bulan
+                    ->addYear()       // +1 tahun
+                    ->format('Y-m-d');
             } catch (\Exception $e) {
                 $this->hpl = '';
             }

@@ -287,7 +287,7 @@
                 <tr>
                     <td>NIK</td>
                     <td>:</td>
-                    <td>{{ $patient->nik }}</td>
+                    <td>{{ $patient->nik ?? 'Tidak ada NIK' }}</td>
                 </tr>
                 <tr>
                     <td>No. KK</td>

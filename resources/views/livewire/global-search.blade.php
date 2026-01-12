@@ -45,14 +45,26 @@
 
                             <!-- Patient Info -->
                             <div class="ml-3 flex-1 min-w-0">
-                                <p class="text-sm font-medium text-gray-900 truncate">
-                                    {{ $patient->name }}
-                                </p>
+                                <div class="flex items-center gap-2">
+                                    <p class="text-sm font-medium text-gray-900 truncate">
+                                        {{ $patient->name }}
+                                    </p>
+                                    <!-- Badge Tanpa NIK -->
+                                    @if (empty($patient->nik))
+                                        <span
+                                            class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                                            Tanpa NIK
+                                        </span>
+                                    @endif
+                                </div>
                                 <p class="text-xs text-gray-500">
-                                    No. RM: {{ $patient->no_rm }} • NIK: {{ $patient->nik }}
+                                    No. RM: {{ $patient->no_rm }}
+                                    @if ($patient->nik)
+                                        • NIK: {{ $patient->nik }}
+                                    @endif
                                 </p>
                                 @if ($patient->phone)
-                                    <p class="text-xs text-gray-400">
+                                    <p class="text-xs text-gray-600 font-medium">
                                         📱 {{ $patient->phone }}
                                     </p>
                                 @endif
