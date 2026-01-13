@@ -37,16 +37,16 @@
                         <!-- NIK -->
                         <div class="md:col-span-2">
                             <label for="nik" class="block text-sm font-semibold text-gray-700 mb-2">
-                                NIK <span class="text-red-500">*</span>
+                                NIK
+                                <span class="text-xs text-gray-500">(opsional)</span>
                             </label>
                             <input type="text" id="nik" name="nik" value="{{ old('nik') }}"
-                                maxlength="16" placeholder="Masukkan NIK 16 digit"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('nik') border-red-500 @enderror"
-                                required>
+                                maxlength="16" placeholder="Masukkan NIK 16 digit (opsional)"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('nik') border-red-500 @enderror">
                             @error('nik')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
-                            <p class="text-xs text-gray-500 mt-1">Format: 16 digit angka</p>
+                            <p class="text-xs text-gray-500 mt-1">Format: 16 digit angka (kosongkan jika tidak ada)</p>
                         </div>
 
                         <!-- Nama Lengkap -->
@@ -127,11 +127,12 @@
                         <!-- Nomor Telepon -->
                         <div class="md:col-span-2">
                             <label for="phone" class="block text-sm font-semibold text-gray-700 mb-2">
-                                Nomor Telepon / WhatsApp
+                                Nomor Telepon / WhatsApp <span class="text-red-500">*</span>
                             </label>
                             <input type="text" id="phone" name="phone" value="{{ old('phone') }}"
                                 maxlength="15" placeholder="Contoh: 081234567890"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('phone') border-red-500 @enderror">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('phone') border-red-500 @enderror"
+                                required>
                             @error('phone')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror

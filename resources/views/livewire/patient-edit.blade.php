@@ -135,23 +135,27 @@
                             Data Pribadi Pasien
                         </h3>
 
-                        <!-- NIK (Read-only) -->
+                        <!-- NIK (Editable) -->
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                 NIK (Nomor Induk Kependudukan) <span class="text-gray-400 text-xs">(Opsional)</span>
                             </label>
-                            <div class="flex items-center gap-2">
-                                <input type="text" value="{{ $nik ?? 'Tidak ada NIK' }}" readonly
-                                    class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg font-mono text-lg bg-gray-100 text-gray-600 cursor-not-allowed">
-                                <div class="text-xs text-gray-500 whitespace-nowrap">
-                                    <svg class="w-4 h-4 inline text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <input type="text" wire:model="nik" maxlength="16"
+                                class="w-full px-4 py-3 border-2 rounded-lg font-mono text-lg
+                                          @error('nik') border-red-500 @else border-gray-300 @enderror
+                                          focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                                placeholder="Masukkan NIK 16 digit (opsional)">
+                            @error('nik')
+                                <p class="mt-2 text-sm text-red-600 flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd"
-                                            d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
                                             clip-rule="evenodd"></path>
                                     </svg>
-                                    Tidak dapat diubah
-                                </div>
-                            </div>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                            <p class="text-xs text-gray-500 mt-1">Kosongkan jika pasien tidak memiliki NIK</p>
                         </div>
 
                         <!-- Name -->

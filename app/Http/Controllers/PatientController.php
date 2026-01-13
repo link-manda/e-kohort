@@ -48,13 +48,13 @@ class PatientController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nik' => 'required|string|size:16|unique:patients,nik',
+            'nik' => 'nullable|string|size:16|unique:patients,nik',
             'no_kk' => 'nullable|string|size:16',
             'no_bpjs' => 'nullable|string|max:13',
             'name' => 'required|string|max:255',
             'dob' => 'required|date|before:today',
             'address' => 'required|string',
-            'phone' => 'nullable|string|max:15',
+            'phone' => 'required|string|max:15',
             'blood_type' => 'required|in:A,B,AB,O,Unknown',
             'husband_name' => 'nullable|string|max:255',
             'husband_nik' => 'nullable|string|size:16',
@@ -92,13 +92,13 @@ class PatientController extends Controller
     public function update(Request $request, Patient $patient)
     {
         $validated = $request->validate([
-            'nik' => 'required|string|size:16|unique:patients,nik,' . $patient->id,
+            'nik' => 'nullable|string|size:16|unique:patients,nik,' . $patient->id,
             'no_kk' => 'nullable|string|size:16',
             'no_bpjs' => 'nullable|string|max:13',
             'name' => 'required|string|max:255',
             'dob' => 'required|date|before:today',
             'address' => 'required|string',
-            'phone' => 'nullable|string|max:15',
+            'phone' => 'required|string|max:15',
             'blood_type' => 'required|in:A,B,AB,O,Unknown',
             'husband_name' => 'nullable|string|max:255',
             'husband_nik' => 'nullable|string|size:16',
