@@ -57,6 +57,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('anc-visits.show')
         ->middleware('permission:view-all-anc-visits|view-own-anc-visits');
 
+    // Delivery Entry (Livewire) - Record delivery data
+    Route::get('/pregnancies/{pregnancy}/delivery', App\Livewire\DeliveryEntry::class)->name('pregnancies.delivery')
+        ->middleware('permission:create-pregnancies');
+
+    // Postnatal Visit Entry (Livewire) - Record postnatal visits
+    Route::get('/pregnancies/{pregnancy}/postnatal', App\Livewire\PostnatalEntry::class)->name('pregnancies.postnatal')
+        ->middleware('permission:create-anc-visits');
+
     // ANC Visits Index (All visits)
     Route::get('/anc-visits', App\Livewire\AncVisitIndex::class)->name('anc-visits.index')
         ->middleware('permission:view-all-anc-visits|view-own-anc-visits');

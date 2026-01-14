@@ -52,11 +52,11 @@ class Patient extends Model
     }
 
     /**
-     * Get the active pregnancy for this patient.
+     * Get the active pregnancy for this patient (includes both active and delivered pregnancies).
      */
     public function activePregnancy()
     {
-        return $this->hasOne(Pregnancy::class)->where('status', 'Aktif');
+        return $this->hasOne(Pregnancy::class)->whereIn('status', ['Aktif', 'Lahir']);
     }
 
     /**

@@ -152,6 +152,12 @@ class AncVisitWizard extends Component
         $this->pregnancy_id = $pregnancy_id;
         $this->pregnancy = Pregnancy::with('patient')->findOrFail($pregnancy_id);
 
+        // Check if pregnancy is still active (not delivered)
+        if ($this->pregnancy->status === 'Lahir') {
+            session()->flash('error', 'Tidak dapat menambah kunjungan ANC karena kehamilan sudah selesai (sudah lahir). Silakan lakukan kunjungan nifas.');
+            return redirect()->route('patients.show', $this->pregnancy->patient_id);
+        }
+
         // Check if edit mode
         if ($visit_id) {
             $this->isEditMode = true;

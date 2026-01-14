@@ -24,6 +24,13 @@ class Pregnancy extends Model
         'height',
         'status',
         'risk_score_initial',
+        'delivery_date',
+        'delivery_method',
+        'birth_attendant',
+        'place_of_birth',
+        'outcome',
+        'baby_gender',
+        'complications',
     ];
 
     /**
@@ -34,6 +41,7 @@ class Pregnancy extends Model
         return [
             'hpht' => 'date',
             'hpl' => 'date',
+            'delivery_date' => 'datetime',
         ];
     }
 
@@ -51,6 +59,14 @@ class Pregnancy extends Model
     public function ancVisits(): HasMany
     {
         return $this->hasMany(AncVisit::class);
+    }
+
+    /**
+     * Get all postnatal visits for this pregnancy.
+     */
+    public function postnatalVisits(): HasMany
+    {
+        return $this->hasMany(PostnatalVisit::class);
     }
 
     /**

@@ -31,7 +31,7 @@
                     Cetak
                 </a>
 
-                @if ($patient->activePregnancy)
+                @if ($patient->activePregnancy && $patient->activePregnancy->status === 'Aktif')
                     <a href="{{ route('anc-visits.create', $patient->activePregnancy->id) }}"
                         class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors shadow-sm">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,7 +40,7 @@
                         </svg>
                         Tambah Kunjungan
                     </a>
-                @else
+                @elseif (!$patient->activePregnancy)
                     <a href="{{ route('pregnancies.create', $patient->id) }}"
                         class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors shadow-sm">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -256,10 +256,12 @@
         <!-- Right Column - Pregnancy & Visits -->
         <div class="lg:col-span-2 space-y-6">
             @if ($patient->activePregnancy)
-                <!-- Active Pregnancy Card -->
-                <div class="bg-white rounded-xl shadow-sm border-2 border-green-500 overflow-hidden">
-                    <div class="bg-gradient-to-r from-green-500 to-green-600 p-6 text-white">
-                        <div class="flex items-center justify-between">
+                <!-- Pregnancy Card (Active or Delivered) -->
+                <div
+                    class="bg-white rounded-xl shadow-sm border-2 {{ $patient->activePregnancy->status === 'Aktif' ? 'border-green-500' : 'border-blue-500' }} overflow-hidden">
+                    <div
+                        class="bg-gradient-to-r {{ $patient->activePregnancy->status === 'Aktif' ? 'from-green-500 to-green-600' : 'from-blue-500 to-blue-600' }} p-6 text-white">
+                        <div class="flex items-center justify-between mb-4">
                             <h3 class="font-bold text-xl flex items-center gap-2">
                                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
@@ -267,11 +269,39 @@
                                         d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                                         clip-rule="evenodd"></path>
                                 </svg>
-                                Kehamilan Aktif
+                                {{ $patient->activePregnancy->status === 'Aktif' ? 'Kehamilan Aktif' : 'Perawatan Nifas' }}
                             </h3>
-                            <span class="px-3 py-1 text-sm font-semibold bg-white text-green-700 rounded-full">
-                                {{ $patient->activePregnancy->status }}
+                            <span
+                                class="px-3 py-1 text-sm font-semibold bg-white {{ $patient->activePregnancy->status === 'Aktif' ? 'text-green-700' : 'text-blue-700' }} rounded-full">
+                                {{ $patient->activePregnancy->status === 'Aktif' ? 'Aktif' : 'Lahir' }}
                             </span>
+                        </div>
+
+                        <!-- Quick Action Buttons -->
+                        <div class="flex gap-2 flex-wrap">
+                            @if (in_array($patient->activePregnancy->status, ['Aktif']))
+                                <a href="{{ route('pregnancies.delivery', $patient->activePregnancy->id) }}"
+                                    class="inline-flex items-center gap-2 px-4 py-2 bg-white text-green-700 font-semibold rounded-lg hover:bg-green-50 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                        </path>
+                                    </svg>
+                                    Catat Persalinan
+                                </a>
+                            @endif
+
+                            @if ($patient->activePregnancy->status === 'Lahir' && $patient->activePregnancy->delivery_date)
+                                <a href="{{ route('pregnancies.postnatal', $patient->activePregnancy->id) }}"
+                                    class="inline-flex items-center gap-2 px-4 py-2 bg-white text-blue-700 font-semibold rounded-lg hover:bg-blue-50 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                        </path>
+                                    </svg>
+                                    Kunjungan Nifas
+                                </a>
+                            @endif
                         </div>
                     </div>
 
@@ -300,6 +330,51 @@
                                     {{ $patient->activePregnancy->hpl->format('d/m/Y') }}</p>
                             </div>
                         </div>
+
+                        @if ($patient->activePregnancy->status === 'Lahir' && $patient->activePregnancy->delivery_date)
+                            <!-- Delivery Information -->
+                            <div class="mb-6 p-5 bg-blue-50 border-2 border-blue-300 rounded-lg">
+                                <h4 class="font-bold text-blue-900 flex items-center gap-2 mb-4">
+                                    <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                                        </path>
+                                    </svg>
+                                    Informasi Persalinan
+                                </h4>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    <div class="text-center">
+                                        <p class="text-xs text-blue-600 font-medium mb-1">Tanggal Lahir</p>
+                                        <p class="text-sm font-bold text-blue-900">
+                                            {{ $patient->activePregnancy->delivery_date->format('d/m/Y H:i') }}</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="text-xs text-blue-600 font-medium mb-1">Cara Persalinan</p>
+                                        <p class="text-sm font-bold text-blue-900">
+                                            {{ $patient->activePregnancy->delivery_method }}</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="text-xs text-blue-600 font-medium mb-1">Penolong</p>
+                                        <p class="text-sm font-bold text-blue-900">
+                                            {{ $patient->activePregnancy->birth_attendant }}</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="text-xs text-blue-600 font-medium mb-1">Kondisi Bayi</p>
+                                        <p class="text-sm font-bold text-blue-900">
+                                            {{ $patient->activePregnancy->outcome }}</p>
+                                    </div>
+                                </div>
+                                @if ($patient->activePregnancy->baby_gender)
+                                    <div class="mt-3 text-center">
+                                        <p class="text-xs text-blue-600 font-medium mb-1">Jenis Kelamin Bayi</p>
+                                        <p class="text-sm font-bold text-blue-900">
+                                            {{ $patient->activePregnancy->baby_gender === 'L' ? 'Laki-laki' : 'Perempuan' }}
+                                        </p>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
 
                         @php
                             $latestVisit = $patient->activePregnancy->ancVisits->sortByDesc('visit_date')->first();

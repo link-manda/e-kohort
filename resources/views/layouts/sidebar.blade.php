@@ -66,6 +66,54 @@
             </a>
         @endcan
 
+        <!-- Persalinan & Nifas (Dropdown) -->
+        @can('create', App\Models\Pregnancy::class)
+            <div x-data="{ postnatalOpen: false }">
+                <button @click="postnatalOpen = !postnatalOpen"
+                    class="w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('pregnancies.delivery') || request()->routeIs('pregnancies.postnatal') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
+                    <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                        </path>
+                    </svg>
+                    <span x-show="open" class="font-medium flex-1 text-left">Persalinan & Nifas</span>
+                    <svg x-show="open" :class="{ 'rotate-180': postnatalOpen }" class="w-4 h-4 transition-transform"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+
+                <!-- Dropdown Items -->
+                <div x-show="postnatalOpen && open" x-transition:enter="transition ease-out duration-200"
+                    x-transition:enter-start="opacity-0 transform -translate-y-2"
+                    x-transition:enter-end="opacity-100 transform translate-y-0"
+                    x-transition:leave="transition ease-in duration-150"
+                    x-transition:leave-start="opacity-100 transform translate-y-0"
+                    x-transition:leave-end="opacity-0 transform -translate-y-2" class="ml-9 mt-1 space-y-1">
+                    <a href="{{ route('patients.index') }}"
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm hover:bg-green-600/40">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        <span>Catat Persalinan</span>
+                    </a>
+                    <a href="{{ route('patients.index') }}"
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm hover:bg-green-600/40">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                            </path>
+                        </svg>
+                        <span>Kunjungan Nifas</span>
+                    </a>
+                    <div class="border-t border-blue-700/30 my-1"></div>
+                    <p class="px-3 py-1 text-xs text-blue-200 italic">Pilih dari halaman pasien</p>
+                </div>
+            </div>
+        @endcan
+
         <!-- Divider -->
         <div x-show="open" class="border-t border-blue-700 my-4"></div>
 
