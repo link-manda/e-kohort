@@ -66,6 +66,20 @@
             </a>
         @endcan
 
+        <!-- Imunisasi Anak -->
+        @can('viewAny', App\Models\Patient::class)
+            <a href="{{ route('imunisasi.index') }}"
+                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('imunisasi.*') || request()->routeIs('children.*') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
+                <!-- Baby Icon -->
+                <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 2c1.657 0 3 1.343 3 3 0 .513-.139.994-.379 1.407C17.36 7.17 20 9.97 20 14v3a1 1 0 01-1 1h-1v3a1 1 0 01-1 1H7a1 1 0 01-1-1v-3H5a1 1 0 01-1-1v-3c0-4.03 2.64-6.83 6.379-7.593A2.99 2.99 0 0012 5c0-1.657 1.343-3 3-3z">
+                    </path>
+                </svg>
+                <span x-show="open" class="font-medium">Imunisasi Anak</span>
+            </a>
+        @endcan
+
         <!-- Persalinan & Nifas (Dropdown) -->
         @can('create', App\Models\Pregnancy::class)
             <div x-data="{ postnatalOpen: false }">
@@ -159,6 +173,16 @@
                         </svg>
                         <span>Data Pasien</span>
                     </a>
+
+                    <a href="{{ route('export.immunization.page') }}"
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.immunization.page') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
+                        </svg>
+                        <span>Imunisasi</span>
+                    </a>
                 </div>
             </div>
         @endcan
@@ -235,6 +259,24 @@
                             </path>
                         </svg>
                         <span>Kelola User</span>
+                    </a>
+
+                    <a href="{{ route('admin.vaccines') }}"
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.vaccines') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4m0 0v4m0-4h4m-4 0H8" />
+                        </svg>
+                        <span>Master Vaksin</span>
+                    </a>
+
+                    <a href="{{ route('admin.icd10') }}"
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.icd10') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 7h18M3 12h18M3 17h18" />
+                        </svg>
+                        <span>Master ICD-10</span>
                     </a>
                 </div>
             </div>

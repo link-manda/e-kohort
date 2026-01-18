@@ -33,6 +33,12 @@ class PostnatalEntry extends Component
     public $showSuccessModal = false;
     public $existingVisits;
 
+    // Real-time validation feedback
+    public $blood_pressure_status = '';
+    public $blood_pressure_category = '';
+    public $temperature_status = '';
+    public $temperature_category = '';
+
     protected function rules()
     {
         return [
@@ -107,6 +113,74 @@ class PostnatalEntry extends Component
     public function updatedVisitCode()
     {
         $this->checkVisitDateValidity();
+    }
+
+    public function updated($propertyName)
+    {
+        // Real-time blood pressure validation
+        if (in_array($propertyName, ['td_systolic', 'td_diastolic'])) {
+            $this->validateBloodPressure();
+        }
+
+        // Real-time temperature validation
+        if ($propertyName === 'temperature') {
+            $this->validateTemperature();
+        }
+    }
+
+    public function validateBloodPressure()
+    {
+        if ($this->td_systolic && $this->td_diastolic) {
+            $systolic = (int) $this->td_systolic;
+            $diastolic = (int) $this->td_diastolic;
+
+            // Check for hypertension
+            if ($systolic >= 140 || $diastolic >= 90) {
+                $this->blood_pressure_category = 'danger';
+                if ($systolic >= 160 || $diastolic >= 110) {
+                    $this->blood_pressure_status = '⚠️ BAHAYA! Hipertensi Berat - Rujuk segera ke fasilitas kesehatan!';
+                } else {
+                    $this->blood_pressure_status = '⚠️ WASPADA! Hipertensi Ringan - Monitoring ketat diperlukan';
+                }
+            }
+            // Check for hypotension
+            elseif ($systolic < 90 || $diastolic < 60) {
+                $this->blood_pressure_category = 'warning';
+                $this->blood_pressure_status = '⚠️ Tekanan darah rendah - Perhatikan tanda-tanda syok';
+            }
+            // Normal
+            else {
+                $this->blood_pressure_category = 'normal';
+                $this->blood_pressure_status = '✓ Tekanan darah normal (Sistol: 90-139, Diastol: 60-89 mmHg)';
+            }
+        } else {
+            $this->blood_pressure_status = '';
+            $this->blood_pressure_category = '';
+        }
+    }
+
+    public function validateTemperature()
+    {
+        if ($this->temperature) {
+            $temp = (float) $this->temperature;
+
+            if ($temp >= 38) {
+                $this->temperature_category = 'danger';
+                $this->temperature_status = '⚠️ Demam terdeteksi! Waspadai infeksi nifas';
+            } elseif ($temp >= 37.5 && $temp < 38) {
+                $this->temperature_category = 'warning';
+                $this->temperature_status = '⚠️ Suhu sedikit meningkat (subfebris)';
+            } elseif ($temp < 36) {
+                $this->temperature_category = 'warning';
+                $this->temperature_status = '⚠️ Suhu tubuh rendah (hipotermia)';
+            } else {
+                $this->temperature_category = 'normal';
+                $this->temperature_status = '✓ Suhu tubuh normal (36-37.4°C)';
+            }
+        } else {
+            $this->temperature_status = '';
+            $this->temperature_category = '';
+        }
     }
 
     public function editVisit($visitId)

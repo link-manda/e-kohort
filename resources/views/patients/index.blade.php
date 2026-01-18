@@ -109,10 +109,17 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     @if ($patient->activePregnancy)
-                                        <span
-                                            class="px-2 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded">
-                                            Hamil Aktif
-                                        </span>
+                                        @if ($patient->activePregnancy->status === 'Lahir')
+                                            <span
+                                                class="px-2 py-1 text-xs font-semibold text-blue-700 bg-blue-100 rounded">
+                                                Lahir
+                                            </span>
+                                        @else
+                                            <span
+                                                class="px-2 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded">
+                                                Hamil Aktif
+                                            </span>
+                                        @endif
                                     @else
                                         <span class="px-2 py-1 text-xs font-semibold text-gray-600 bg-gray-100 rounded">
                                             Tidak Aktif

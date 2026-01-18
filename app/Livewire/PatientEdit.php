@@ -20,6 +20,9 @@ class PatientEdit extends Component
     public $no_bpjs = '';
     public $name = '';
     public $dob = '';
+    public $pob = '';
+    public $job = '';
+    public $education = '';
     public $blood_type = '';
     public $phone = '';
     public $address = '';
@@ -28,6 +31,8 @@ class PatientEdit extends Component
     public $husband_name = '';
     public $husband_nik = '';
     public $husband_job = '';
+    public $husband_education = '';
+    public $husband_blood_type = '';
 
     // UI state
     public $showSuccess = false;
@@ -43,12 +48,17 @@ class PatientEdit extends Component
         $this->no_bpjs = $patient->no_bpjs;
         $this->name = $patient->name;
         $this->dob = $patient->dob->format('Y-m-d');
+        $this->pob = $patient->pob;
+        $this->job = $patient->job;
+        $this->education = $patient->education;
         $this->blood_type = $patient->blood_type;
         $this->phone = $patient->phone;
         $this->address = $patient->address;
         $this->husband_name = $patient->husband_name;
         $this->husband_nik = $patient->husband_nik;
         $this->husband_job = $patient->husband_job;
+        $this->husband_education = $patient->husband_education;
+        $this->husband_blood_type = $patient->husband_blood_type;
     }
 
     protected function rules()
@@ -62,6 +72,9 @@ class PatientEdit extends Component
             ],
             'name' => 'required|string|max:255',
             'dob' => 'required|date|before:today',
+            'pob' => 'nullable|string|max:255',
+            'job' => 'nullable|string|max:100',
+            'education' => 'nullable|string|max:100',
             'blood_type' => 'required|in:A,B,AB,O',
             'phone' => 'required|string|max:20',
             'address' => 'required|string',
@@ -72,6 +85,8 @@ class PatientEdit extends Component
             'husband_name' => 'nullable|string|max:255',
             'husband_nik' => 'nullable|digits:16',
             'husband_job' => 'nullable|string|max:100',
+            'husband_education' => 'nullable|string|max:100',
+            'husband_blood_type' => 'nullable|in:A,B,AB,O',
         ];
 
         return $rules;
@@ -141,25 +156,40 @@ class PatientEdit extends Component
         // Final validation
         $validatedData = $this->validate();
 
-        // Update patient - convert empty strings to NULL
-        $this->patient->update([
+        // Prepare update data - only include fields that are in the form
+        $updateData = [
             'nik' => $this->nik ?: null, // Convert empty string to NULL for unique constraint
             'no_kk' => $this->no_kk ?: null,
             'no_bpjs' => $this->no_bpjs ?: null,
             'name' => $this->name,
             'dob' => $this->dob,
-            'pob' => $this->pob ?: null,
-            'job' => $this->job ?: null,
-            'education' => $this->education ?: null,
             'blood_type' => $this->blood_type,
             'phone' => $this->phone,
             'address' => $this->address,
             'husband_name' => $this->husband_name ?: null,
             'husband_nik' => $this->husband_nik ?: null,
             'husband_job' => $this->husband_job ?: null,
-            'husband_education' => $this->husband_education ?: null,
-            'husband_blood_type' => $this->husband_blood_type ?: null,
-        ]);
+        ];
+
+        // Only include optional fields if they have been set (not null)
+        if ($this->pob !== null) {
+            $updateData['pob'] = $this->pob ?: null;
+        }
+        if ($this->job !== null) {
+            $updateData['job'] = $this->job ?: null;
+        }
+        if ($this->education !== null) {
+            $updateData['education'] = $this->education ?: null;
+        }
+        if ($this->husband_education !== null) {
+            $updateData['husband_education'] = $this->husband_education ?: null;
+        }
+        if ($this->husband_blood_type !== null) {
+            $updateData['husband_blood_type'] = $this->husband_blood_type ?: null;
+        }
+
+        // Update patient
+        $this->patient->update($updateData);
 
         $this->showSuccess = true;
 

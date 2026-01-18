@@ -174,7 +174,7 @@
                             </label>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <input type="number" wire:model="td_systolic"
+                                    <input type="number" wire:model.live="td_systolic"
                                         class="w-full px-4 py-3 border-2 rounded-lg
                                               @error('td_systolic') border-red-500 @else border-gray-300 @enderror
                                               focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
@@ -184,7 +184,7 @@
                                     @enderror
                                 </div>
                                 <div>
-                                    <input type="number" required wire:model="td_diastolic"
+                                    <input type="number" required wire:model.live="td_diastolic"
                                         class="w-full px-4 py-3 border-2 rounded-lg
                                               @error('td_diastolic') border-red-500 @else border-gray-300 @enderror
                                               focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
@@ -194,6 +194,25 @@
                                     @enderror
                                 </div>
                             </div>
+
+                            @if ($blood_pressure_status)
+                                <div
+                                    class="mt-3 p-3 rounded-lg border-2
+                                        {{ $blood_pressure_category === 'danger' ? 'bg-red-50 border-red-500' : '' }}
+                                        {{ $blood_pressure_category === 'warning' ? 'bg-yellow-50 border-yellow-500' : '' }}
+                                        {{ $blood_pressure_category === 'normal' ? 'bg-green-50 border-green-500' : '' }}">
+                                    <p
+                                        class="text-sm font-semibold
+                                            {{ $blood_pressure_category === 'danger' ? 'text-red-700' : '' }}
+                                            {{ $blood_pressure_category === 'warning' ? 'text-yellow-700' : '' }}
+                                            {{ $blood_pressure_category === 'normal' ? 'text-green-700' : '' }}">
+                                        {{ $blood_pressure_status }}
+                                    </p>
+                                </div>
+                            @else
+                                <p class="mt-2 text-xs text-gray-500">Normal: Sistol 90-139 mmHg, Diastol 60-89 mmHg
+                                </p>
+                            @endif
                         </div>
 
                         <!-- Suhu Tubuh -->
@@ -201,19 +220,31 @@
                             <label class="block text-sm font-semibold text-gray-700 mb-2">
                                 Suhu Tubuh (°C) <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" step="0.1" wire:model="temperature"
+                            <input type="number" step="0.1" wire:model.live="temperature"
                                 class="w-full px-4 py-3 border-2 rounded-lg
-                                      {{ $temperature !== '' && (float) $temperature < 35 ? 'border-red-500' : ($errors->has('temperature') ? 'border-red-500' : 'border-gray-300') }}
+                                      {{ $errors->has('temperature') ? 'border-red-500' : 'border-gray-300' }}
                                       focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
                                 placeholder="Contoh: 36.5" min="35" max="42">
-                            @if ($temperature !== '' && (float) $temperature < 35)
-                                <p class="mt-2 text-sm text-red-600">Catatan: Suhu harus sama dengan atau lebih besar
-                                    dari <strong>35°C</strong>.</p>
+
+                            @if ($temperature_status)
+                                <div
+                                    class="mt-3 p-3 rounded-lg border-2
+                                        {{ $temperature_category === 'danger' ? 'bg-red-50 border-red-500' : '' }}
+                                        {{ $temperature_category === 'warning' ? 'bg-yellow-50 border-yellow-500' : '' }}
+                                        {{ $temperature_category === 'normal' ? 'bg-green-50 border-green-500' : '' }}">
+                                    <p
+                                        class="text-sm font-semibold
+                                            {{ $temperature_category === 'danger' ? 'text-red-700' : '' }}
+                                            {{ $temperature_category === 'warning' ? 'text-yellow-700' : '' }}
+                                            {{ $temperature_category === 'normal' ? 'text-green-700' : '' }}">
+                                        {{ $temperature_status }}
+                                    </p>
+                                </div>
                             @else
-                                <p class="mt-2 text-sm text-gray-500">Catatan: Suhu tidak boleh di bawah
-                                    <strong>35°C</strong>.
-                                </p>
+                                <p class="mt-2 text-xs text-gray-500">Normal: 36.0 - 37.4°C | Demam: ≥ 38°C | Minimal:
+                                    35°C</p>
                             @endif
+
                             @error('temperature')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -246,6 +277,10 @@
                             </select>
                             @error('lochea')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @else
+                                <p class="mt-2 text-xs text-gray-500">
+                                    💡 Tip: Jenis lochea menunjukkan tahap penyembuhan rahim pasca persalinan
+                                </p>
                             @enderror
                         </div>
 
@@ -258,6 +293,9 @@
                                 class="w-full px-4 py-3 border-2 rounded-lg border-gray-300
                                       focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
                                 placeholder="Contoh: 2 jari di bawah pusat atau Normal">
+                            <p class="mt-2 text-xs text-gray-500">
+                                💡 Tip: Tinggi fundus uteri (TFU) menurun sekitar 1 cm/hari pasca persalinan
+                            </p>
                             @error('uterine_involution')
                                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                             @enderror
@@ -296,6 +334,9 @@
                                     class="w-full px-4 py-3 border-2 rounded-lg border-gray-300
                                           focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
                                     placeholder="Jumlah tablet" min="0">
+                                <p class="mt-2 text-xs text-gray-500">
+                                    💡 Rekomendasi: 40 tablet untuk masa nifas (42 hari)
+                                </p>
                                 @error('fe_tablets')
                                     <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -333,14 +374,34 @@
 
                         <!-- Action Buttons -->
                         <div class="flex gap-4 pt-6 border-t border-gray-200">
-                            <button type="submit"
+                            <button type="submit" wire:loading.attr="disabled" wire:target="save"
                                 class="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg
-                                       transition-colors shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                       transition-colors shadow-lg hover:shadow-xl flex items-center justify-center gap-2
+                                       disabled:opacity-50 disabled:cursor-not-allowed">
+                                <!-- Loading Spinner -->
+                                <svg wire:loading wire:target="save" class="animate-spin h-5 w-5 text-white"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                        stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                    </path>
+                                </svg>
+
+                                <!-- Default Icon -->
+                                <svg wire:loading.remove wire:target="save" class="w-5 h-5" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M5 13l4 4L19 7"></path>
                                 </svg>
-                                {{ $isEditMode ? 'Update Kunjungan' : 'Simpan Kunjungan' }}
+
+                                <!-- Button Text -->
+                                <span wire:loading.remove wire:target="save">
+                                    {{ $isEditMode ? 'Update Kunjungan' : 'Simpan Kunjungan' }}
+                                </span>
+                                <span wire:loading wire:target="save">
+                                    Menyimpan...
+                                </span>
                             </button>
 
                             @if ($isEditMode)

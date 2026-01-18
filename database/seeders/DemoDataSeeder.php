@@ -27,10 +27,11 @@ class DemoDataSeeder extends Seeder
         $user->assignRole('Admin');
 
         // Data configuration untuk generate 50+ pasien
-        $firstNames = ['Ketut', 'Wayan', 'Made', 'Nyoman', 'Kadek', 'Putu', 'Komang', 'Gede'];
-        $lastNames = ['Sari', 'Dewi', 'Ayu', 'Sri', 'Wati', 'Ningsih', 'Puspita', 'Lestari', 'Widyani', 'Suartini'];
-        $maleFirstNames = ['Made', 'Wayan', 'Ketut', 'Nyoman', 'Komang', 'Putu', 'Gede'];
-        $maleLastNames = ['Budi', 'Agus', 'Susila', 'Arta', 'Wirawan', 'Putra', 'Jaya', 'Ngurah', 'Sudana', 'Artha'];
+        // Nama Bali asli untuk ibu
+        $firstNames = ['Ni Luh', 'Ni Nyoman', 'Ni Ketut', 'Ni Komang', 'Ni Made', 'Ni Putu', 'Ni Kadek', 'Ni Nengah', 'Ni Rai', 'Ni Gusti'];
+        $lastNames = ['Suarni', 'Sukerti', 'Suarmini', 'Suarniyani', 'Suarwati', 'Suarini', 'Suarastini', 'Suarwati', 'Suarini', 'Suarastini'];
+        $maleFirstNames = ['I Wayan', 'I Made', 'I Nyoman', 'I Ketut', 'I Komang', 'I Putu', 'I Kadek', 'I Nengah', 'I Gusti'];
+        $maleLastNames = ['Sudiana', 'Sutama', 'Suarjana', 'Suarjaya', 'Suarmaja', 'Suarjana', 'Suarjaya', 'Suarmaja', 'Suarjana', 'Suarjaya'];
         $bloodTypes = ['A', 'B', 'AB', 'O'];
         $educations = ['SD', 'SMP', 'SMA', 'D3', 'S1'];
         $jobs = ['Ibu Rumah Tangga', 'Karyawan Swasta', 'Wiraswasta', 'PNS', 'Guru', 'Pedagang'];
@@ -42,11 +43,11 @@ class DemoDataSeeder extends Seeder
         for ($i = 1; $i <= 55; $i++) {
             $firstName = $firstNames[array_rand($firstNames)];
             $lastName = $lastNames[array_rand($lastNames)];
-            $patientName = "Ni {$firstName} {$lastName} " . ($i > 10 ? $i : '');
+            $patientName = "$firstName $lastName" . ($i > 10 ? " $i" : '');
 
             $maleFirst = $maleFirstNames[array_rand($maleFirstNames)];
             $maleLast = $maleLastNames[array_rand($maleLastNames)];
-            $husbandName = "I {$maleFirst} {$maleLast}";
+            $husbandName = "$maleFirst $maleLast";
 
             // Generate realistic NIK (16 digit)
             $nikPrefix = '5103' . str_pad(rand(1, 31), 2, '0', STR_PAD_LEFT);
@@ -149,10 +150,73 @@ class DemoDataSeeder extends Seeder
                     'diagnosis' => $riskCategory === 'Rendah' ? 'Pemeriksaan rutin ANC' : 'Kehamilan risiko ' . strtolower($riskCategory),
                 ]);
             }
+
+            // Tambah data anak untuk pasien ini
+            $childCount = rand(1, 2);
+            for ($c = 1; $c <= $childCount; $c++) {
+                $childGender = rand(0, 1) ? 'L' : 'P';
+                $childName = $childGender === 'L'
+                    ? 'I ' . ['Wayan', 'Made', 'Nyoman', 'Ketut', 'Komang', 'Putu'][array_rand(['Wayan', 'Made', 'Nyoman', 'Ketut', 'Komang', 'Putu'])] . ' ' . $lastNames[array_rand($lastNames)]
+                    : 'Ni ' . ['Luh', 'Komang', 'Made', 'Putu', 'Kadek', 'Nengah'][array_rand(['Luh', 'Komang', 'Made', 'Putu', 'Kadek', 'Nengah'])] . ' ' . $lastNames[array_rand($lastNames)];
+                $childDob = now()->subYears(rand(0, 5))->subMonths(rand(0, 11))->subDays(rand(0, 28));
+                $child = \App\Models\Child::create([
+                    'patient_id' => $patient->id,
+                    'nik' => '5103' . rand(100000000000, 999999999999),
+                    'no_rm' => 'C' . str_pad($i, 4, '0', STR_PAD_LEFT) . str_pad($c, 2, '0', STR_PAD_LEFT),
+                    'name' => $childName,
+                    'gender' => $childGender,
+                    'dob' => $childDob,
+                    'pob' => $cities[array_rand($cities)],
+                    'birth_weight' => rand(25, 40) / 10,
+                    'birth_height' => rand(45, 55),
+                    'status' => 'Hidup',
+                ]);
+
+                // Tambah 1-3 kunjungan imunisasi untuk anak ini
+                $visitCount = rand(1, 3);
+                for ($v = 1; $v <= $visitCount; $v++) {
+                    $visitDate = $childDob->copy()->addMonths($v * rand(1, 4))->addDays(rand(0, 28));
+                    $ageMonth = $visitDate->diffInMonths($childDob);
+                    $childVisit = \App\Models\ChildVisit::create([
+                        'child_id' => $child->id,
+                        'visit_date' => $visitDate,
+                        'age_month' => $ageMonth,
+                        'complaint' => rand(0, 1) ? 'Demam ringan' : 'Sehat',
+                        'weight' => rand(30, 60) / 10 + $ageMonth * 0.3,
+                        'height' => rand(50, 80) + $ageMonth * 1.2,
+                        'temperature' => rand(360, 380) / 10,
+                        'heart_rate' => rand(90, 140),
+                        'respiratory_rate' => rand(20, 40),
+                        'head_circumference' => rand(30, 50) + $ageMonth * 0.1,
+                        'development_notes' => rand(0, 1) ? 'Tumbuh kembang baik' : 'Perlu stimulasi motorik',
+                        'icd_code' => 'Z24.0',
+                        'diagnosis_name' => 'Imunisasi rutin',
+                        'nutritional_status' => ['Gizi Baik', 'Gizi Kurang', 'Gizi Buruk', 'Gizi Lebih', 'Obesitas'][rand(0, 4)],
+                        'informed_consent' => true,
+                        'medicine_given' => ['Parasetamol Drop', 'Parasetamol Sirup', 'Tidak Ada'][rand(0, 2)],
+                        'medicine_dosage' => rand(0, 1) ? '3x0.5ml' : null,
+                        'notes' => rand(0, 1) ? 'Tidak ada KIPI' : 'Reaksi ringan',
+                    ]);
+
+                    // Tambah 1-2 tindakan imunisasi untuk kunjungan ini
+                    $vaksinList = ['HB0', 'BCG', 'POLIO_1', 'POLIO_2', 'POLIO_3', 'POLIO_4', 'HEXAVALEN_1', 'HEXAVALEN_2', 'HEXAVALEN_3', 'IPV_1', 'IPV_2', 'PCV_1', 'PCV_2', 'PCV_3', 'MR_1', 'MR_2', 'ROTA_1', 'ROTA_2', 'ROTA_3'];
+                    shuffle($vaksinList);
+                    $actionCount = rand(1, 2);
+                    for ($a = 0; $a < $actionCount; $a++) {
+                        \App\Models\ImmunizationAction::create([
+                            'child_visit_id' => $childVisit->id,
+                            'vaccine_type' => $vaksinList[$a],
+                            'batch_number' => 'BATCH-' . rand(1000, 9999),
+                            'body_part' => ['Paha Kiri', 'Paha Kanan', 'Lengan', 'Mulut'][rand(0, 3)],
+                            'provider_name' => $patientName,
+                        ]);
+                    }
+                }
+            }
         }
 
-        $this->command->info('✅ 55 patients with realistic pregnancy data created!');
-        $this->command->info('📊 Varied risk levels, multiple visits per patient');
+        $this->command->info('✅ 55 patients dengan data anak & imunisasi berhasil dibuat!');
+        $this->command->info('📊 Termasuk data anak, kunjungan imunisasi, dan tindakan vaksin.');
         $this->command->info('');
         $this->command->info('Login credentials:');
         $this->command->info('Email: bidan@demo.com');

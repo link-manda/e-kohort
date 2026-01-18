@@ -50,6 +50,10 @@ class RolePermissionSeeder extends Seeder
             'edit-anc-visits',
             'delete-anc-visits',
 
+            // Immunization Management (new)
+            'manage-vaccines',
+            'manage-icd10',
+
             // Reports & Export
             'view-reports',
             'export-data',
@@ -61,18 +65,19 @@ class RolePermissionSeeder extends Seeder
             'view-own-statistics',
         ];
 
+        // Create or get permissions (idempotent)
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission]);
         }
 
-        // Create Roles and Assign Permissions
+        // Create Roles and Assign Permissions (idempotent)
 
         // 1. Admin Role - Full Access
-        $adminRole = Role::create(['name' => 'Admin']);
+        $adminRole = Role::firstOrCreate(['name' => 'Admin']);
         $adminRole->givePermissionTo(Permission::all());
 
         // 2. Bidan Koordinator Role - View all, manage reports, manage users
-        $koordinatorRole = Role::create(['name' => 'Bidan Koordinator']);
+        $koordinatorRole = Role::firstOrCreate(['name' => 'Bidan Koordinator']);
         $koordinatorRole->givePermissionTo([
             'view-users',
             'manage-users',
@@ -100,7 +105,7 @@ class RolePermissionSeeder extends Seeder
         ]);
 
         // 3. Bidan Desa Role - Only own patients
-        $desaRole = Role::create(['name' => 'Bidan Desa']);
+        $desaRole = Role::firstOrCreate(['name' => 'Bidan Desa']);
         $desaRole->givePermissionTo([
             'view-own-patients',
             'create-patients',

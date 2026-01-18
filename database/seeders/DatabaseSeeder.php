@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RolePermissionSeeder::class,
             DemoDataSeeder::class,
+            VaccineSeeder::class,
+            Icd10Seeder::class,
         ]);
 
         $this->command->info('🎉 All seeders completed successfully!');

@@ -60,10 +60,26 @@ class Patient extends Model
     }
 
     /**
+     * Get all children for this patient (mother).
+     */
+    public function children(): HasMany
+    {
+        return $this->hasMany(Child::class);
+    }
+
+    /**
      * Get patient's age.
      */
     public function getAgeAttribute(): int
     {
         return $this->dob->age;
+    }
+
+    /**
+     * Check if patient has delivered (has pregnancy with status 'Lahir').
+     */
+    public function getHasDeliveredAttribute(): bool
+    {
+        return $this->pregnancies()->where('status', 'Lahir')->exists();
     }
 }
