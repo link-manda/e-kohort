@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\Hash;
 
 class DemoDataSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         // Create demo user (Bidan) and assign Admin role
@@ -26,28 +23,220 @@ class DemoDataSeeder extends Seeder
         // Assign Admin role to demo user
         $user->assignRole('Admin');
 
-        // Data configuration untuk generate 50+ pasien
-        // Nama Bali asli untuk ibu
-        $firstNames = ['Ni Luh', 'Ni Nyoman', 'Ni Ketut', 'Ni Komang', 'Ni Made', 'Ni Putu', 'Ni Kadek', 'Ni Nengah', 'Ni Rai', 'Ni Gusti'];
-        $lastNames = ['Suarni', 'Sukerti', 'Suarmini', 'Suarniyani', 'Suarwati', 'Suarini', 'Suarastini', 'Suarwati', 'Suarini', 'Suarastini'];
-        $maleFirstNames = ['I Wayan', 'I Made', 'I Nyoman', 'I Ketut', 'I Komang', 'I Putu', 'I Kadek', 'I Nengah', 'I Gusti'];
-        $maleLastNames = ['Sudiana', 'Sutama', 'Suarjana', 'Suarjaya', 'Suarmaja', 'Suarjana', 'Suarjaya', 'Suarmaja', 'Suarjana', 'Suarjaya'];
+        /**
+         * ===============================
+         * DATA NAMA BALI REALISTIS (UNIK)
+         * ===============================
+         */
+
+        // Nama perempuan Bali (tanpa angka) - dibuat banyak & bervariasi
+        $femaleFullNames = [
+            'Ni Luh Suartini',
+            'Ni Luh Sulastri',
+            'Ni Luh Suryani',
+            'Ni Luh Widiastuti',
+            'Ni Luh Purnami',
+            'Ni Luh Saraswati',
+            'Ni Luh Puspawati',
+            'Ni Luh Astini',
+            'Ni Luh Wulandari',
+            'Ni Luh Yuliani',
+            'Ni Made Suryani',
+            'Ni Made Sartini',
+            'Ni Made Ariani',
+            'Ni Made Purnami',
+            'Ni Made Sriani',
+            'Ni Made Lestari',
+            'Ni Made Indrayani',
+            'Ni Made Kusumawati',
+            'Ni Made Pratiwi',
+            'Ni Made Puspaningrum',
+            'Ni Nyoman Suartini',
+            'Ni Nyoman Wati',
+            'Ni Nyoman Cahyani',
+            'Ni Nyoman Arini',
+            'Ni Nyoman Astuti',
+            'Ni Nyoman Widiani',
+            'Ni Nyoman Sari Dewi',
+            'Ni Nyoman Puspitawati',
+            'Ni Nyoman Kumalasari',
+            'Ni Nyoman Rahayuni',
+            'Ni Ketut Wati',
+            'Ni Ketut Sriani',
+            'Ni Ketut Suryani',
+            'Ni Ketut Ariastini',
+            'Ni Ketut Widiastini',
+            'Ni Ketut Paramita',
+            'Ni Ketut Rahayu',
+            'Ni Ketut Laksmiwati',
+            'Ni Ketut Pertiwi',
+            'Ni Ketut Mulyani',
+            'Ni Komang Sriani',
+            'Ni Komang Cahyani',
+            'Ni Komang Purnami',
+            'Ni Komang Arini',
+            'Ni Komang Suartini',
+            'Ni Komang Lestari',
+            'Ni Komang Andayani',
+            'Ni Komang Puspaningrum',
+            'Ni Komang Saraswati',
+            'Ni Komang Pradnyawati',
+            'Ni Putu Suryani',
+            'Ni Putu Widiastuti',
+            'Ni Putu Purnami',
+            'Ni Putu Lestari',
+            'Ni Putu Suartini',
+            'Ni Putu Saraswati',
+            'Ni Putu Sriyani',
+            'Ni Putu Pratiwi',
+        ];
+
+        // Nama laki-laki Bali realistis (tanpa angka)
+        $maleFullNames = [
+            'I Wayan Sudiana',
+            'I Wayan Sutarma',
+            'I Wayan Suarjana',
+            'I Wayan Suarjaya',
+            'I Wayan Supartha',
+            'I Wayan Putrawan',
+            'I Wayan Pradana',
+            'I Wayan Aryawan',
+            'I Made Sudiana',
+            'I Made Sutrisna',
+            'I Made Suarjana',
+            'I Made Adnyana',
+            'I Made Sutama',
+            'I Made Pramana',
+            'I Made Mahendra',
+            'I Made Wirawan',
+            'I Nyoman Sudiana',
+            'I Nyoman Sutrisna',
+            'I Nyoman Suardika',
+            'I Nyoman Sutama',
+            'I Nyoman Ardana',
+            'I Nyoman Gunawan',
+            'I Nyoman Kurniawan',
+            'I Nyoman Mahayasa',
+            'I Ketut Sudiana',
+            'I Ketut Sutama',
+            'I Ketut Suardika',
+            'I Ketut Adnyana',
+            'I Ketut Putra',
+            'I Ketut Wiratha',
+            'I Ketut Mahendra',
+            'I Ketut Pranata',
+            'I Komang Sudiana',
+            'I Komang Sutarma',
+            'I Komang Suardana',
+            'I Komang Sutama',
+            'I Komang Ardika',
+            'I Komang Surya',
+            'I Komang Wirawan',
+            'I Komang Saputra',
+            'I Putu Sudiana',
+            'I Putu Sutarma',
+            'I Putu Suardika',
+            'I Putu Sutama',
+            'I Putu Mahendra',
+            'I Putu Pramana',
+            'I Putu Wirawan',
+            'I Putu Adnyana',
+        ];
+
+        // Nama anak laki-laki & perempuan (unik, Bali style)
+        $childBoyNames = [
+            'I Wayan Mahesa',
+            'I Wayan Pradipta',
+            'I Wayan Mahardika',
+            'I Made Aditya',
+            'I Made Satya',
+            'I Made Mahendra',
+            'I Nyoman Arta',
+            'I Nyoman Dhana',
+            'I Nyoman Wijaya',
+            'I Ketut Arya',
+            'I Ketut Surya',
+            'I Ketut Dharma',
+            'I Komang Bagus',
+            'I Komang Guna',
+            'I Komang Pramana',
+            'I Putu Bayu',
+            'I Putu Yoga',
+            'I Putu Wira',
+            'I Kadek Satria',
+            'I Kadek Mahardika',
+            'I Nengah Danu',
+            'I Nengah Mahesa',
+            'I Gusti Agung Putra',
+            'I Gusti Ngurah Rai',
+        ];
+
+        $childGirlNames = [
+            'Ni Luh Putri',
+            'Ni Luh Ayu',
+            'Ni Luh Kirana',
+            'Ni Made Dwi',
+            'Ni Made Saras',
+            'Ni Made Laksmi',
+            'Ni Nyoman Intan',
+            'Ni Nyoman Puspita',
+            'Ni Nyoman Maharani',
+            'Ni Ketut Citra',
+            'Ni Ketut Sari',
+            'Ni Ketut Indah',
+            'Ni Komang Devi',
+            'Ni Komang Ratih',
+            'Ni Komang Jelita',
+            'Ni Putu Melati',
+            'Ni Putu Sekar',
+            'Ni Putu Nirmala',
+            'Ni Kadek Bintang',
+            'Ni Kadek Anggreni',
+            'Ni Nengah Pradnyani',
+            'Ni Nengah Wulandari',
+            'Ni Gusti Ayu Lestari',
+            'Ni Gusti Ayu Manik',
+        ];
+
         $bloodTypes = ['A', 'B', 'AB', 'O'];
         $educations = ['SD', 'SMP', 'SMA', 'D3', 'S1'];
         $jobs = ['Ibu Rumah Tangga', 'Karyawan Swasta', 'Wiraswasta', 'PNS', 'Guru', 'Pedagang'];
         $husbandJobs = ['Petani', 'Wiraswasta', 'PNS', 'Karyawan Swasta', 'Pedagang', 'Driver', 'Guru', 'Buruh'];
         $cities = ['Denpasar', 'Gianyar', 'Badung', 'Tabanan', 'Klungkung', 'Bangli', 'Karangasem', 'Buleleng'];
-        $streets = ['Jl. Raya Denpasar', 'Jl. Sunset Road', 'Jl. Gatot Subroto', 'Jl. Diponegoro', 'Jl. Hayam Wuruk', 'Jl. Teuku Umar', 'Jl. Gajah Mada', 'Br. Kuta', 'Br. Legian', 'Br. Seminyak'];
+        $streets = [
+            'Jl. Raya Denpasar',
+            'Jl. Sunset Road',
+            'Jl. Gatot Subroto',
+            'Jl. Diponegoro',
+            'Jl. Hayam Wuruk',
+            'Jl. Teuku Umar',
+            'Jl. Gajah Mada',
+            'Br. Kuta',
+            'Br. Legian',
+            'Br. Seminyak',
+            'Br. Celuk',
+            'Br. Ubud',
+            'Br. Sukawati',
+            'Br. Sanur',
+            'Br. Renon',
+        ];
 
-        // Generate 55 pasien
-        for ($i = 1; $i <= 55; $i++) {
-            $firstName = $firstNames[array_rand($firstNames)];
-            $lastName = $lastNames[array_rand($lastNames)];
-            $patientName = "$firstName $lastName" . ($i > 10 ? " $i" : '');
+        /**
+         * ===============================
+         * GENERATE PASIEN (55 ORANG)
+         * ===============================
+         */
 
-            $maleFirst = $maleFirstNames[array_rand($maleFirstNames)];
-            $maleLast = $maleLastNames[array_rand($maleLastNames)];
-            $husbandName = "$maleFirst $maleLast";
+        shuffle($femaleFullNames);
+        shuffle($maleFullNames);
+
+        $totalPatients = 55;
+
+        for ($i = 1; $i <= $totalPatients; $i++) {
+
+            // Pastikan tidak ada nama yang diulang (tanpa angka)
+            $patientName = $femaleFullNames[($i - 1) % count($femaleFullNames)];
+            $husbandName = $maleFullNames[($i - 1) % count($maleFullNames)];
 
             // Generate realistic NIK (16 digit)
             $nikPrefix = '5103' . str_pad(rand(1, 31), 2, '0', STR_PAD_LEFT);
@@ -58,7 +247,7 @@ class DemoDataSeeder extends Seeder
 
             // Generate DOB (age 20-35 years old)
             $age = rand(20, 35);
-            $dob = now()->subYears($age)->subMonths(rand(0, 11))->format('Y-m-d');
+            $dob = now()->subYears($age)->subMonths(rand(0, 11))->subDays(rand(0, 28))->format('Y-m-d');
 
             $patient = Patient::create([
                 'no_rm' => 'RM-' . str_pad($i, 6, '0', STR_PAD_LEFT),
@@ -80,7 +269,11 @@ class DemoDataSeeder extends Seeder
                 'husband_blood_type' => $bloodTypes[array_rand($bloodTypes)],
             ]);
 
-            // Create active pregnancy with varied data
+            /**
+             * ===============================
+             * PREGNANCY AKTIF
+             * ===============================
+             */
             $weeksPregnant = rand(8, 32); // 2-8 months pregnant
             $hpht = now()->subWeeks($weeksPregnant);
 
@@ -92,7 +285,7 @@ class DemoDataSeeder extends Seeder
                 'patient_id' => $patient->id,
                 'gravida' => "G{$gravida_g}P{$gravida_p}A{$gravida_a}",
                 'hpht' => $hpht,
-                'hpl' => $hpht->copy()->addDays(7)->subMonths(3)->addYear(), // Rumus Naegele: +7 -3 +1
+                'hpl' => $hpht->copy()->addDays(7)->subMonths(3)->addYear(),
                 'pregnancy_gap' => $gravida_g > 1 ? rand(1, 10) : null,
                 'weight_before' => rand(450, 700) / 10,
                 'height' => rand(145, 170),
@@ -100,17 +293,20 @@ class DemoDataSeeder extends Seeder
                 'status' => 'Aktif',
             ]);
 
-            // Create ANC visits based on gestational age
+            /**
+             * ===============================
+             * ANC VISITS
+             * ===============================
+             */
             $currentWeeks = $hpht->diffInWeeks(now());
-            $visitCount = min(6, max(1, floor($currentWeeks / 4))); // 1 visit per month
+            $visitCount = min(6, max(1, floor($currentWeeks / 4)));
 
             for ($v = 0; $v < $visitCount; $v++) {
-                $weeksAgo = ($visitCount - $v) * 4; // Space visits 4 weeks apart
+                $weeksAgo = ($visitCount - $v) * 4;
                 $visitDate = now()->subWeeks($weeksAgo)->addDays(rand(-3, 3));
                 $gestationalAge = $hpht->diffInWeeks($visitDate);
 
-                // Varied vital signs - some with risk factors
-                $hasRisk = rand(1, 100) <= 20; // 20% chance of risk factors
+                $hasRisk = rand(1, 100) <= 20;
                 $systolic = $hasRisk ? rand(130, 160) : rand(100, 130);
                 $diastolic = $hasRisk ? rand(80, 100) : rand(60, 85);
                 $map = round($diastolic + (($systolic - $diastolic) / 3), 2);
@@ -124,7 +320,7 @@ class DemoDataSeeder extends Seeder
                 }
 
                 $trimester = min(3, floor($gestationalAge / 13) + 1);
-                $weightGain = ($gestationalAge / 40) * rand(80, 150) / 10; // Progressive weight gain
+                $weightGain = ($gestationalAge / 40) * rand(80, 150) / 10;
 
                 AncVisit::create([
                     'pregnancy_id' => $pregnancy->id,
@@ -137,7 +333,7 @@ class DemoDataSeeder extends Seeder
                     'systolic' => $systolic,
                     'diastolic' => $diastolic,
                     'map_score' => $map,
-                    'tfu' => max(0, $gestationalAge - 12), // TFU ≈ gestational age after 12 weeks
+                    'tfu' => max(0, $gestationalAge - 12),
                     'djj' => $gestationalAge >= 12 ? rand(120, 160) : null,
                     'hb' => $hb,
                     'protein_urine' => $hasRisk ? ['+1', '+2', 'Negatif'][rand(0, 2)] : 'Negatif',
@@ -147,18 +343,38 @@ class DemoDataSeeder extends Seeder
                     'tt_immunization' => ['T1', 'T2', 'T3', 'T4', 'T5'][min($v, 4)],
                     'fe_tablets' => rand(30, 90),
                     'risk_category' => $riskCategory,
-                    'diagnosis' => $riskCategory === 'Rendah' ? 'Pemeriksaan rutin ANC' : 'Kehamilan risiko ' . strtolower($riskCategory),
+                    'diagnosis' => $riskCategory === 'Rendah'
+                        ? 'Pemeriksaan rutin ANC'
+                        : 'Kehamilan risiko ' . strtolower($riskCategory),
                 ]);
             }
 
-            // Tambah data anak untuk pasien ini
+            /**
+             * ===============================
+             * DATA ANAK + KUNJUNGAN IMUNISASI
+             * ===============================
+             */
             $childCount = rand(1, 2);
+
+            // agar anak-anak pada 1 keluarga tidak berulang
+            shuffle($childBoyNames);
+            shuffle($childGirlNames);
+
             for ($c = 1; $c <= $childCount; $c++) {
+
                 $childGender = rand(0, 1) ? 'L' : 'P';
-                $childName = $childGender === 'L'
-                    ? 'I ' . ['Wayan', 'Made', 'Nyoman', 'Ketut', 'Komang', 'Putu'][array_rand(['Wayan', 'Made', 'Nyoman', 'Ketut', 'Komang', 'Putu'])] . ' ' . $lastNames[array_rand($lastNames)]
-                    : 'Ni ' . ['Luh', 'Komang', 'Made', 'Putu', 'Kadek', 'Nengah'][array_rand(['Luh', 'Komang', 'Made', 'Putu', 'Kadek', 'Nengah'])] . ' ' . $lastNames[array_rand($lastNames)];
-                $childDob = now()->subYears(rand(0, 5))->subMonths(rand(0, 11))->subDays(rand(0, 28));
+
+                if ($childGender === 'L') {
+                    $childName = $childBoyNames[array_rand($childBoyNames)];
+                } else {
+                    $childName = $childGirlNames[array_rand($childGirlNames)];
+                }
+
+                $childDob = now()
+                    ->subYears(rand(0, 5))
+                    ->subMonths(rand(0, 11))
+                    ->subDays(rand(0, 28));
+
                 $child = \App\Models\Child::create([
                     'patient_id' => $patient->id,
                     'nik' => '5103' . rand(100000000000, 999999999999),
@@ -172,11 +388,13 @@ class DemoDataSeeder extends Seeder
                     'status' => 'Hidup',
                 ]);
 
-                // Tambah 1-3 kunjungan imunisasi untuk anak ini
-                $visitCount = rand(1, 3);
-                for ($v = 1; $v <= $visitCount; $v++) {
+                // Tambah 1-3 kunjungan imunisasi
+                $visitCountChild = rand(1, 3);
+
+                for ($v = 1; $v <= $visitCountChild; $v++) {
                     $visitDate = $childDob->copy()->addMonths($v * rand(1, 4))->addDays(rand(0, 28));
                     $ageMonth = $visitDate->diffInMonths($childDob);
+
                     $childVisit = \App\Models\ChildVisit::create([
                         'child_id' => $child->id,
                         'visit_date' => $visitDate,
@@ -198,10 +416,18 @@ class DemoDataSeeder extends Seeder
                         'notes' => rand(0, 1) ? 'Tidak ada KIPI' : 'Reaksi ringan',
                     ]);
 
-                    // Tambah 1-2 tindakan imunisasi untuk kunjungan ini
-                    $vaksinList = ['HB0', 'BCG', 'POLIO_1', 'POLIO_2', 'POLIO_3', 'POLIO_4', 'HEXAVALEN_1', 'HEXAVALEN_2', 'HEXAVALEN_3', 'IPV_1', 'IPV_2', 'PCV_1', 'PCV_2', 'PCV_3', 'MR_1', 'MR_2', 'ROTA_1', 'ROTA_2', 'ROTA_3'];
+                    // Tambah 1-2 tindakan imunisasi
+                    $vaksinList = [
+                        'HB0', 'BCG', 'POLIO_1', 'POLIO_2', 'POLIO_3', 'POLIO_4',
+                        'HEXAVALEN_1', 'HEXAVALEN_2', 'HEXAVALEN_3',
+                        'IPV_1', 'IPV_2', 'PCV_1', 'PCV_2', 'PCV_3',
+                        'MR_1', 'MR_2',
+                        'ROTA_1', 'ROTA_2', 'ROTA_3'
+                    ];
+
                     shuffle($vaksinList);
                     $actionCount = rand(1, 2);
+
                     for ($a = 0; $a < $actionCount; $a++) {
                         \App\Models\ImmunizationAction::create([
                             'child_visit_id' => $childVisit->id,
@@ -215,8 +441,8 @@ class DemoDataSeeder extends Seeder
             }
         }
 
-        $this->command->info('✅ 55 patients dengan data anak & imunisasi berhasil dibuat!');
-        $this->command->info('📊 Termasuk data anak, kunjungan imunisasi, dan tindakan vaksin.');
+        $this->command->info("✅ {$totalPatients} pasien Bali dengan nama asli (tanpa angka) berhasil dibuat!");
+        $this->command->info('📊 Termasuk data ibu, suami, kehamilan aktif, ANC visit, anak, kunjungan imunisasi, dan tindakan vaksin.');
         $this->command->info('');
         $this->command->info('Login credentials:');
         $this->command->info('Email: bidan@demo.com');
