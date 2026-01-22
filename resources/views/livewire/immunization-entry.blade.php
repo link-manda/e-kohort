@@ -123,7 +123,7 @@
                             </label>
                             <input id="weight" type="number" wire:model="weight" step="0.1" min="1"
                                 max="100"
-                                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('weight') border-red-500 @enderror"
+                                class="w-full px-4 py-2 border rounded-lg border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 @error('weight') border-red-500 @enderror"
                                 placeholder="kg">
                             <p id="client-weight-error" class="text-red-500 text-xs mt-1 hidden"></p>
                             @error('weight')
@@ -137,7 +137,7 @@
                             </label>
                             <input id="height" type="number" wire:model="height" step="0.1" min="20"
                                 max="200"
-                                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('height') border-red-500 @enderror"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('height') border-red-500 @enderror"
                                 placeholder="cm">
                             <p id="client-height-error" class="text-red-500 text-xs mt-1 hidden"></p>
                             @error('height')
@@ -151,7 +151,7 @@
                             </label>
                             <input id="head_circumference" type="number" wire:model="head_circumference" step="0.1"
                                 min="20" max="100"
-                                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('head_circumference') border-red-500 @enderror"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('head_circumference') border-red-500 @enderror"
                                 placeholder="cm">
                             <p id="client-head_circumference-error" class="text-red-500 text-xs mt-1 hidden"></p>
                             @error('head_circumference')
@@ -166,7 +166,7 @@
                             Suhu Tubuh (°C) <span class="text-red-500">*</span>
                         </label>
                         <input type="number" wire:model.live="temperature" step="0.1" min="35" max="42"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('temperature') border-red-500 @enderror {{ $temperature_category === 'danger' ? 'border-red-500 bg-red-50' : ($temperature_category === 'warning' ? 'border-yellow-500 bg-yellow-50' : ($temperature_category === 'normal' ? 'border-green-500 bg-green-50' : 'border-gray-300')) }}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('temperature') border-red-500 @enderror {{ $temperature_category === 'danger' ? 'border-red-500 bg-red-50' : ($temperature_category === 'warning' ? 'border-yellow-500 bg-yellow-50' : ($temperature_category === 'normal' ? 'border-green-500 bg-green-50' : 'border-gray-300')) }}"
                             placeholder="Contoh: 36.5">
 
                         @if ($temperature_warning)
@@ -198,7 +198,7 @@
                             </label>
                             <input id="heart_rate" type="number" wire:model="heart_rate" min="60"
                                 max="200"
-                                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('heart_rate') border-red-500 @enderror"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('heart_rate') border-red-500 @enderror"
                                 placeholder="Denyut per menit">
                             <p id="client-heart_rate-error" class="text-red-500 text-xs mt-1 hidden"></p>
                             @error('heart_rate')
@@ -212,7 +212,7 @@
                             </label>
                             <input id="respiratory_rate" type="number" wire:model="respiratory_rate" min="10"
                                 max="80"
-                                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('respiratory_rate') border-red-500 @enderror"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('respiratory_rate') border-red-500 @enderror"
                                 placeholder="Frekuensi napas">
                             <p id="client-respiratory_rate-error" class="text-red-500 text-xs mt-1 hidden"></p>
                             @error('respiratory_rate')
@@ -237,7 +237,7 @@
                             Status Gizi (BB/U) <span class="text-red-500">*</span>
                         </label>
                         <select wire:model="nutritional_status"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('nutritional_status') border-red-500 @enderror">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('nutritional_status') border-red-500 @enderror">
                             <option value="">-- Pilih Status Gizi --</option>
                             <option value="Gizi Buruk">Gizi Buruk</option>
                             <option value="Gizi Kurang">Gizi Kurang</option>
@@ -304,7 +304,7 @@
                             Obat yang Diberikan
                         </label>
                         <select wire:model.live="medicine_given"
-                            class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('medicine_given') border-red-500 @enderror">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('medicine_given') border-red-500 @enderror">
                             <option value="">-- Pilih Obat --</option>
                             <option value="Parasetamol Drop">Parasetamol Drop</option>
                             <option value="Parasetamol Sirup">Parasetamol Sirup</option>

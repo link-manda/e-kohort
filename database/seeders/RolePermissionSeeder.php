@@ -54,10 +54,19 @@ class RolePermissionSeeder extends Seeder
             'manage-vaccines',
             'manage-icd10',
 
+            // KB Management
+            'manage-kb',
+            'view-kb',
+            'create-kb',
+            'edit-kb',
+
             // Reports & Export
             'view-reports',
             'export-data',
             'generate-monthly-reports',
+
+            // Role & Permission Management
+            'manage-roles',
 
             // Dashboard
             'view-dashboard',
@@ -99,6 +108,11 @@ class RolePermissionSeeder extends Seeder
             'view-reports',
             'export-data',
             'generate-monthly-reports',
+
+            'manage-kb',
+            'view-kb',
+            'create-kb',
+            'edit-kb',
 
             'view-dashboard',
             'view-all-statistics',

@@ -94,6 +94,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/icd10', App\Livewire\Admin\Icd10Management::class)->name('admin.icd10')
         ->middleware('permission:manage-icd10');
 
+    // Admin: Role & Permission Management
+    Route::get('/admin/roles', App\Livewire\RoleManagement::class)->name('admin.roles')
+        ->middleware('permission:manage-roles');
+    Route::get('/admin/user-roles', App\Livewire\UserRoleManagement::class)->name('admin.user-roles')
+        ->middleware('permission:manage-roles');
+
     // === IMMUNIZATION MODULE (Child & Vaccination) ===
 
     // Child Registration
@@ -138,6 +144,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/alerts', function () {
         return redirect()->route('dashboard')->with('info', 'Fitur alert risiko akan segera hadir.');
     })->name('alerts.index');
+
+    // KB Module
+    Route::get('/kb/entry', App\Livewire\KbEntry::class)->name('kb.entry')
+        ->middleware('permission:create-kb');
+
+    // KB Index (List of visits)
+    Route::get('/kb', App\Livewire\KbIndex::class)->name('kb.index')
+        ->middleware('permission:view-kb');
+
+    // Export: KB Reports
+    Route::get('/export/kb', App\Livewire\ExportKb::class)->name('export.kb')
+        ->middleware('permission:export-data');
 
     // Admin Routes - User Management
     Route::get('/admin/users', App\Livewire\UserManagement::class)->name('admin.users')

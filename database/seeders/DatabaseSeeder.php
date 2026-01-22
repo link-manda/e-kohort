@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             DemoDataSeeder::class,
             VaccineSeeder::class,
             Icd10Seeder::class,
+            KbMethodSeeder::class,
         ]);
 
         $this->command->info('🎉 All seeders completed successfully!');

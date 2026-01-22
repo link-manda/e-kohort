@@ -1,5 +1,5 @@
 <aside x-data="{ open: true }" :class="open ? 'w-64' : 'w-20'"
-    class="bg-gradient-to-b from-blue-600 to-blue-800 text-white transition-all duration-300 flex-shrink-0
+    class="bg-gradient-to-b from-blue-600 to-blue-800 text-white transition-all duration-300 flex-shrink-0 flex flex-col
            fixed lg:sticky lg:top-0 lg:h-screen inset-y-0 left-0 z-50 lg:z-auto
            transform lg:transform-none"
     :class="{ 'translate-x-0': $parent.sidebarOpen, '-translate-x-full': !$parent.sidebarOpen }" x-init="open = window.innerWidth >= 1024">
@@ -28,7 +28,7 @@
     </div>
 
     <!-- Navigation Menu -->
-    <nav class="px-3 py-6 space-y-2">
+    <nav class="px-3 py-6 space-y-2 flex-1 overflow-y-auto pr-3">
         <!-- Dashboard -->
         <a href="{{ route('dashboard') }}"
             class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('dashboard') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
@@ -77,6 +77,19 @@
                     </path>
                 </svg>
                 <span x-show="open" class="font-medium">Imunisasi Anak</span>
+            </a>
+        @endcan
+
+        <!-- KB (Keluarga Berencana) -->
+        @can('create', App\Models\KbVisit::class)
+            <a href="{{ route('kb.index') }}"
+                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('kb.*') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
+                <svg class="w-6 h-6 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                    </path>
+                </svg>
+                <span x-show="open" class="font-medium">KB (Keluarga Berencana)</span>
             </a>
         @endcan
 
@@ -183,6 +196,16 @@
                         </svg>
                         <span>Imunisasi</span>
                     </a>
+
+                    <a href="{{ route('export.kb') }}"
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.kb') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                            </path>
+                        </svg>
+                        <span>Laporan KB</span>
+                    </a>
                 </div>
             </div>
         @endcan
@@ -277,6 +300,26 @@
                                 d="M3 7h18M3 12h18M3 17h18" />
                         </svg>
                         <span>Master ICD-10</span>
+                    </a>
+
+                    <div class="border-t border-blue-700/30 my-2"></div>
+
+                    <a href="{{ route('admin.roles') }}"
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.roles') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        <span>Kelola Role & Permission</span>
+                    </a>
+
+                    <a href="{{ route('admin.user-roles') }}"
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.user-roles') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        <span>Assign Role ke User</span>
                     </a>
                 </div>
             </div>

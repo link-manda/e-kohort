@@ -7,9 +7,11 @@ use Illuminate\Support\Facades\Gate;
 use App\Models\Patient;
 use App\Models\Pregnancy;
 use App\Models\AncVisit;
+use App\Models\KbVisit;
 use App\Policies\PatientPolicy;
 use App\Policies\PregnancyPolicy;
 use App\Policies\AncVisitPolicy;
+use App\Policies\KbVisitPolicy;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
         Patient::class => PatientPolicy::class,
         Pregnancy::class => PregnancyPolicy::class,
         AncVisit::class => AncVisitPolicy::class,
+        KbVisit::class => KbVisitPolicy::class,
     ];
 
     /**

@@ -15,7 +15,7 @@ class DemoDataSeeder extends Seeder
     {
         // Create demo user (Bidan) and assign Admin role
         $user = User::create([
-            'name' => 'Bidan Demo',
+            'name' => 'Lestari Yanti',
             'email' => 'bidan@demo.com',
             'password' => Hash::make('password'),
         ]);

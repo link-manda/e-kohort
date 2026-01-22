@@ -52,6 +52,14 @@ class Patient extends Model
     }
 
     /**
+     * Get all KB visits for this patient.
+     */
+    public function kbVisits(): HasMany
+    {
+        return $this->hasMany(KbVisit::class);
+    }
+
+    /**
      * Get the active pregnancy for this patient (includes both active and delivered pregnancies).
      */
     public function activePregnancy()
