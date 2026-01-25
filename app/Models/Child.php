@@ -52,6 +52,14 @@ class Child extends Model
     }
 
     /**
+     * Get all growth records for this child.
+     */
+    public function growthRecords(): HasMany
+    {
+        return $this->hasMany(ChildGrowthRecord::class);
+    }
+
+    /**
      * Get child's age in months.
      */
     public function getAgeInMonthsAttribute(): int

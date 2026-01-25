@@ -112,6 +112,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // === END IMMUNIZATION MODULE ===
 
+    // === GROWTH/KMS MODULE ===
+    // Growth Entry (KMS Digital)
+    Route::get('/children/{childId}/growth', App\Livewire\GrowthEntry::class)->name('children.growth')
+        ->middleware('permission:create-anc-visits');
+
+    // === END GROWTH MODULE ===
+
     // Export: ANC Register
     Route::get('/export/anc-register', App\Livewire\ExportAncRegister::class)->name('export.anc-register')
         ->middleware('permission:export-data');
