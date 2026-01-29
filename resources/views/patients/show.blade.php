@@ -306,7 +306,7 @@
                                 </a>
                             @endif
 
-                            @if ($patient->activePregnancy->status === 'Lahir' && $patient->activePregnancy->delivery_date)
+                            @if ($patient->activePregnancy->status === 'Lahir' && $patient->activePregnancy->deliveryRecord)
                                 <a href="{{ route('pregnancies.postnatal', $patient->activePregnancy->id) }}"
                                     class="inline-flex items-center gap-2 px-4 py-2 bg-white text-blue-700 font-semibold rounded-lg hover:bg-blue-50 transition-colors">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -346,7 +346,7 @@
                             </div>
                         </div>
 
-                        @if ($patient->activePregnancy->status === 'Lahir' && $patient->activePregnancy->delivery_date)
+                        @if ($patient->activePregnancy->status === 'Lahir' && $patient->activePregnancy->deliveryRecord)
                             <!-- Delivery Information -->
                             <div class="mb-6 p-5 bg-blue-50 border-2 border-blue-300 rounded-lg">
                                 <h4 class="font-bold text-blue-900 flex items-center gap-2 mb-4">
@@ -362,29 +362,59 @@
                                     <div class="text-center">
                                         <p class="text-xs text-blue-600 font-medium mb-1">Tanggal Lahir</p>
                                         <p class="text-sm font-bold text-blue-900">
-                                            {{ $patient->activePregnancy->delivery_date->format('d/m/Y H:i') }}</p>
+                                            {{ $patient->activePregnancy->deliveryRecord->delivery_date_time->format('d/m/Y H:i') }}
+                                        </p>
                                     </div>
                                     <div class="text-center">
                                         <p class="text-xs text-blue-600 font-medium mb-1">Cara Persalinan</p>
                                         <p class="text-sm font-bold text-blue-900">
-                                            {{ $patient->activePregnancy->delivery_method }}</p>
+                                            {{ $patient->activePregnancy->deliveryRecord->delivery_method }}</p>
                                     </div>
                                     <div class="text-center">
                                         <p class="text-xs text-blue-600 font-medium mb-1">Penolong</p>
                                         <p class="text-sm font-bold text-blue-900">
-                                            {{ $patient->activePregnancy->birth_attendant }}</p>
+                                            {{ $patient->activePregnancy->deliveryRecord->birth_attendant }}</p>
                                     </div>
                                     <div class="text-center">
                                         <p class="text-xs text-blue-600 font-medium mb-1">Kondisi Bayi</p>
                                         <p class="text-sm font-bold text-blue-900">
-                                            {{ $patient->activePregnancy->outcome }}</p>
+                                            {{ $patient->activePregnancy->deliveryRecord->condition }}</p>
                                     </div>
                                 </div>
-                                @if ($patient->activePregnancy->baby_gender)
-                                    <div class="mt-3 text-center">
+
+                                <!-- Additional Delivery Details -->
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 pt-4 border-t border-blue-200">
+                                    <div class="text-center">
                                         <p class="text-xs text-blue-600 font-medium mb-1">Jenis Kelamin Bayi</p>
                                         <p class="text-sm font-bold text-blue-900">
-                                            {{ $patient->activePregnancy->baby_gender === 'L' ? 'Laki-laki' : 'Perempuan' }}
+                                            {{ $patient->activePregnancy->deliveryRecord->gender === 'L' ? '👦 Laki-laki' : '👧 Perempuan' }}
+                                        </p>
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="text-xs text-blue-600 font-medium mb-1">Berat Lahir</p>
+                                        <p class="text-sm font-bold text-blue-900">
+                                            {{ number_format($patient->activePregnancy->deliveryRecord->birth_weight, 0) }}
+                                            gram</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="text-xs text-blue-600 font-medium mb-1">Panjang Lahir</p>
+                                        <p class="text-sm font-bold text-blue-900">
+                                            {{ number_format($patient->activePregnancy->deliveryRecord->birth_length, 1) }}
+                                            cm</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="text-xs text-blue-600 font-medium mb-1">APGAR Score</p>
+                                        <p class="text-sm font-bold text-blue-900">
+                                            {{ $patient->activePregnancy->deliveryRecord->apgar_score_1 }}/{{ $patient->activePregnancy->deliveryRecord->apgar_score_5 }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                @if ($patient->activePregnancy->deliveryRecord->baby_name)
+                                    <div class="mt-3 text-center">
+                                        <p class="text-xs text-blue-600 font-medium mb-1">Nama Bayi</p>
+                                        <p class="text-sm font-bold text-blue-900">
+                                            {{ $patient->activePregnancy->deliveryRecord->baby_name }}
                                         </p>
                                     </div>
                                 @endif

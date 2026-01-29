@@ -8,10 +8,12 @@ use App\Models\Patient;
 use App\Models\Pregnancy;
 use App\Models\AncVisit;
 use App\Models\KbVisit;
+use App\Models\DeliveryRecord;
 use App\Policies\PatientPolicy;
 use App\Policies\PregnancyPolicy;
 use App\Policies\AncVisitPolicy;
 use App\Policies\KbVisitPolicy;
+use App\Observers\DeliveryRecordObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -40,6 +42,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register Observer untuk auto-create child & HB0
+        DeliveryRecord::observe(DeliveryRecordObserver::class);
+
         // Register policies
         foreach ($this->policies as $model => $policy) {
             Gate::policy($model, $policy);

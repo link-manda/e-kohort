@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Pregnancy extends Model
 {
@@ -67,6 +68,14 @@ class Pregnancy extends Model
     public function postnatalVisits(): HasMany
     {
         return $this->hasMany(PostnatalVisit::class);
+    }
+
+    /**
+     * Get the delivery record for this pregnancy (One-to-One).
+     */
+    public function deliveryRecord(): HasOne
+    {
+        return $this->hasOne(DeliveryRecord::class);
     }
 
     /**
