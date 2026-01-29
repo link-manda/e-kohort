@@ -68,11 +68,11 @@ class ChildIndex extends Component
                 ->whereColumn('child_visits.child_id', 'children.id');
 
             if ($this->immunizationFilter === 'complete') {
-                $query->whereRaw("({$subquery->toSql()}) >= 10");
+                $query->whereRaw("({$subquery->toSql()}) >= 10", $subquery->getBindings());
             } elseif ($this->immunizationFilter === 'partial') {
-                $query->whereRaw("({$subquery->toSql()}) BETWEEN 1 AND 9");
+                $query->whereRaw("({$subquery->toSql()}) BETWEEN 1 AND 9", $subquery->getBindings());
             } elseif ($this->immunizationFilter === 'none') {
-                $query->whereRaw("({$subquery->toSql()}) = 0");
+                $query->whereRaw("({$subquery->toSql()}) = 0", $subquery->getBindings());
             }
         }
 
