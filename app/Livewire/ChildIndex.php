@@ -62,13 +62,19 @@ class ChildIndex extends Component
 
         // Filter by immunization status - simplified for now
         // TODO: Implement proper immunization filtering with subqueries
-        // if ($this->immunizationFilter === 'complete') {
-        //     // Complex query needed
-        // } elseif ($this->immunizationFilter === 'partial') {
-        //     // Complex query needed
-        // } elseif ($this->immunizationFilter === 'none') {
-        //     $query->doesntHave('childVisits.immunizationActions');
-        // }
+        if ($this->immunizationFilter !== 'all') {
+            $subquery = \App\Models\ImmunizationAction::selectRaw('count(distinct vaccine_type)')
+                ->join('child_visits', 'immunization_actions.child_visit_id', '=', 'child_visits.id')
+                ->whereColumn('child_visits.child_id', 'children.id');
+
+            if ($this->immunizationFilter === 'complete') {
+                $query->whereRaw("({$subquery->toSql()}) >= 10");
+            } elseif ($this->immunizationFilter === 'partial') {
+                $query->whereRaw("({$subquery->toSql()}) BETWEEN 1 AND 9");
+            } elseif ($this->immunizationFilter === 'none') {
+                $query->whereRaw("({$subquery->toSql()}) = 0");
+            }
+        }
 
         // Filter by age
         if ($this->ageFilter === 'under1') {

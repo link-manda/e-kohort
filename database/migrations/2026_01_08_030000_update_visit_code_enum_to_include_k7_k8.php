@@ -12,6 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
+
         // Ubah enum visit_code dari K1-K6 menjadi K1-K8
         DB::statement("ALTER TABLE anc_visits MODIFY visit_code ENUM('K1', 'K2', 'K3', 'K4', 'K5', 'K6', 'K7', 'K8') NOT NULL COMMENT 'Kode Kunjungan ANC'");
     }
@@ -21,6 +25,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (DB::getDriverName() === 'sqlite') {
+            return;
+        }
+
         // Kembalikan ke K1-K6 (data K7 dan K8 akan error jika ada)
         DB::statement("ALTER TABLE anc_visits MODIFY visit_code ENUM('K1', 'K2', 'K3', 'K4', 'K5', 'K6') NOT NULL COMMENT 'Kode Kunjungan ANC'");
     }
