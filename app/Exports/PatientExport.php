@@ -94,8 +94,8 @@ class PatientExport implements FromView, ShouldAutoSize, WithStyles, WithTitle
             ],
         ]);
 
-        // Header rows (1-3) - Bold and centered
-        $sheet->getStyle('A1:' . $highestColumn . '3')->applyFromArray([
+        // Header row (1) - Bold and centered
+        $sheet->getStyle('A1:' . $highestColumn . '1')->applyFromArray([
             'font' => [
                 'bold' => true,
             ],
@@ -107,7 +107,7 @@ class PatientExport implements FromView, ShouldAutoSize, WithStyles, WithTitle
         ]);
 
         // All data cells - wrap text and vertical center
-        $sheet->getStyle('A4:' . $highestColumn . $highestRow)->applyFromArray([
+        $sheet->getStyle('A2:' . $highestColumn . $highestRow)->applyFromArray([
             'alignment' => [
                 'vertical' => Alignment::VERTICAL_CENTER,
                 'wrapText' => true,
@@ -119,7 +119,7 @@ class PatientExport implements FromView, ShouldAutoSize, WithStyles, WithTitle
         $centerColumns = ['A', 'B', 'C', 'D', 'E', 'H', 'I', 'L', 'P', 'S', 'U'];
         foreach ($centerColumns as $col) {
             if ($col <= $highestColumn) {
-                $sheet->getStyle($col . '4:' . $col . $highestRow)->applyFromArray([
+                $sheet->getStyle($col . '2:' . $col . $highestRow)->applyFromArray([
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
                     ],
@@ -128,9 +128,7 @@ class PatientExport implements FromView, ShouldAutoSize, WithStyles, WithTitle
         }
 
         // Set row heights
-        $sheet->getRowDimension(1)->setRowHeight(30); // Title
-        $sheet->getRowDimension(2)->setRowHeight(25); // Parent Headers
-        $sheet->getRowDimension(3)->setRowHeight(20); // Child Headers
+        $sheet->getRowDimension(1)->setRowHeight(40); // Header
 
         return [];
     }
