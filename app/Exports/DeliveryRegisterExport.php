@@ -7,11 +7,12 @@ use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 
-class DeliveryRegisterExport implements FromView, ShouldAutoSize, WithStyles
+class DeliveryRegisterExport implements FromView, ShouldAutoSize, WithStyles, WithTitle
 {
     protected $month;
     protected $year;
@@ -20,6 +21,11 @@ class DeliveryRegisterExport implements FromView, ShouldAutoSize, WithStyles
     {
         $this->month = $month ?? now()->month;
         $this->year = $year ?? now()->year;
+    }
+
+    public function title(): string
+    {
+        return 'Reg. Persalinan ' . \Carbon\Carbon::createFromDate($this->year, $this->month, 1)->locale('id')->isoFormat('MMMM YYYY');
     }
 
     public function view(): View
