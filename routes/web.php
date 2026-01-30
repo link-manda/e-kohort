@@ -138,15 +138,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('permission:export-data');
 
     // Export: Delivery Register (Register Persalinan)
-    Route::get('/export/delivery-register', function (Illuminate\Http\Request $request) {
-        $month = $request->input('month', now()->month);
-        $year = $request->input('year', now()->year);
-
-        return \Maatwebsite\Excel\Facades\Excel::download(
-            new \App\Exports\DeliveryRegisterExport($month, $year),
-            'Register_Persalinan_' . str_pad($month, 2, '0', STR_PAD_LEFT) . '_' . $year . '.xlsx'
-        );
-    })->name('export.delivery-register')
+    Route::get('/export/delivery-register', App\Livewire\ExportDeliveryRegister::class)->name('export.delivery-register')
         ->middleware('permission:export-data');
 
     // Reports: Monthly Summary
