@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Register Persalinan -
-        {{ \Carbon\Carbon::createFromDate($year, $month, 1)->locale('id')->isoFormat('MMMM YYYY') }}</title>
+    <title>Reg. Persalinan {{ \Carbon\Carbon::createFromDate($year, $month, 1)->locale('id')->isoFormat('MMMM YYYY') }}</title>
 </head>
 
 <body>
