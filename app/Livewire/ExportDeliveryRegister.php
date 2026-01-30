@@ -37,6 +37,6 @@ class ExportDeliveryRegister extends Component
     public function render()
     {
         return view('livewire.export-delivery-register')
-            ->layout('layouts.app');
+            ->layout('layouts.dashboard');
     }
 }

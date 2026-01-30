@@ -11,7 +11,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Bulan *</label>
                     <select wire:model="month" required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500">
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
                         <option value="1">Januari</option>
                         <option value="2">Februari</option>
                         <option value="3">Maret</option>
@@ -34,7 +34,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Tahun *</label>
                     <select wire:model="year" required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-pink-500">
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500">
                         @for ($y = now()->year; $y >= 2020; $y--)
                             <option value="{{ $y }}">{{ $y }}</option>
                         @endfor
@@ -46,7 +46,7 @@
             </div>
 
             <!-- Statistics Preview -->
-            <div class="bg-pink-50 border border-pink-200 rounded-lg p-4 mb-6">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
                 <h3 class="font-semibold text-gray-800 mb-2">Laporan akan mencakup:</h3>
                 <ul class="text-sm text-gray-700 space-y-1">
                     <li>✓ Data persalinan bulan
@@ -66,7 +66,7 @@
                     Kembali
                 </button>
                 <button type="submit" wire:loading.attr="disabled" wire:target="export"
-                    class="px-6 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition shadow-sm flex items-center disabled:opacity-50">
+                    class="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition shadow-sm flex items-center disabled:opacity-50">
                     <svg wire:loading.remove wire:target="export" class="w-5 h-5 mr-2" fill="none"
                         stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
