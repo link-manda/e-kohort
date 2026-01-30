@@ -3,21 +3,20 @@
 namespace App\Exports;
 
 use App\Models\ChildVisit;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithMapping;
+use Illuminate\Contracts\View\View;
+use Maatwebsite\Excel\Concerns\FromView;
+use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use Carbon\Carbon;
 
-class MonthlyImmunizationExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithColumnWidths
+class MonthlyImmunizationExport implements FromView, WithTitle, ShouldAutoSize, WithStyles
 {
     protected $month;
     protected $year;
-    protected $rowNumber = 1;
 
     public function __construct($month, $year)
     {
@@ -25,134 +24,83 @@ class MonthlyImmunizationExport implements FromCollection, WithHeadings, WithMap
         $this->year = $year;
     }
 
-    /**
-     * Ambil data visit berdasarkan bulan dan tahun (eager load relasi penting)
-     */
-    public function collection()
+    public function view(): View
     {
-        return ChildVisit::with(['child.patient', 'immunizationActions.vaccine'])
+        $visits = ChildVisit::with(['child.patient', 'immunizationActions.vaccine'])
             ->whereYear('visit_date', $this->year)
             ->whereMonth('visit_date', $this->month)
             ->orderBy('visit_date', 'asc')
             ->get();
+
+        return view('exports.monthly_immunization', [
+            'visits' => $visits,
+            'month' => $this->month,
+            'year' => $this->year,
+            'dateFormatted' => Carbon::createFromDate($this->year, $this->month, 1)->locale('id')->isoFormat('MMMM YYYY'),
+        ]);
     }
 
-    /**
-     * Header sesuai permintaan user
-     */
-    public function headings(): array
+    public function title(): string
     {
-        return [
-            'NO',
-            'NAMA BAYI',
-            'NIK ANAK',
-            'HP',
-            'IDENTITAS IBU (Nama / NIK)',
-            'TTL BAYI',
-            'BERAT BADAN (kg)',
-            'PANJANG (cm)',
-            'LINGKAR KEPALA (cm)',
-            'STATUS GIZI',
-            'JENIS IMUNISASI',
-            'PARASETAMOL DROP (DOSIS)',
-            'PARASETAMOL SIRUP (DOSIS)',
-            'KETERANGAN',
-        ];
+        return 'Reg. Imunisasi ' . Carbon::createFromDate($this->year, $this->month, 1)->locale('id')->isoFormat('MMMM YYYY');
     }
 
-    /**
-     * Mapping data per row sesuai header
-     */
-    public function map($visit): array
-    {
-        $child = $visit->child;
-        $patient = $child->patient ?? null;
-
-        // Build vaccine list (comma separated)
-        $vaccines = $visit->immunizationActions->map(function($a) {
-            // Prefer vaccine.name, fallback to vaccine_type normalized
-            if (isset($a->vaccine) && $a->vaccine && isset($a->vaccine->name)) {
-                return $a->vaccine->name;
-            }
-            return $a->vaccine_type ? str_replace('_', ' ', $a->vaccine_type) : null;
-        })->filter()->unique()->values()->toArray();
-
-        $vaccineString = count($vaccines) ? implode(', ', $vaccines) : '-';
-
-        // Medicine columns
-        $medicineGiven = $visit->medicine_given ?? '';
-        $dropDosage = (stripos($medicineGiven, 'Parasetamol Drop') !== false) ? ($visit->medicine_dosage ?? '-') : '';
-        $syrupDosage = (stripos($medicineGiven, 'Parasetamol Sirup') !== false) ? ($visit->medicine_dosage ?? '-') : '';
-
-        return [
-            $this->rowNumber++,
-            // Child name: prefer 'name' attribute (existing model), fallback to full_name if present
-            $child->name ?? ($child->full_name ?? '-'),
-            $child->nik ?? '-',
-            $patient->phone ?? $child->parent_phone ?? '-',
-            ($patient ? ($patient->name ?? '-') : ($child->mother_name ?? '-')) . " / " . ($patient->nik ?? ($child->mother_nik ?? '-')),
-            // TTL: use pob and dob fields from Child model
-            ($child->pob ?? '-') . ( $child->dob ? (', ' . Carbon::parse($child->dob)->format('d/m/Y')) : '' ),
-            $visit->weight ? number_format($visit->weight, 1) : '-',
-            $visit->height ? number_format($visit->height, 1) : '-',
-            $visit->head_circumference ? number_format($visit->head_circumference, 1) : '-',
-            $visit->nutritional_status ?? '-',
-            $vaccineString,
-            $dropDosage,
-            $syrupDosage,
-            $visit->notes ?? '-',
-        ];
-    }
-
-    /**
-     * Styling and header formatting
-     */
     public function styles(Worksheet $sheet)
     {
-        // Header style
-        $sheet->getStyle('A1:N1')->applyFromArray([
+        // Get highest row and column
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
+
+        // Apply borders to all cells
+        $sheet->getStyle('A1:' . $highestColumn . $highestRow)->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000'],
+                ],
+            ],
+        ]);
+
+        // Header rows (1-3) - Bold and centered
+        // Assuming 3 header rows (Title, Parent Headers, Child Headers)
+        $sheet->getStyle('A1:' . $highestColumn . '3')->applyFromArray([
             'font' => [
                 'bold' => true,
-                'color' => ['rgb' => 'FFFFFF'],
-            ],
-            'fill' => [
-                'fillType' => Fill::FILL_SOLID,
-                'startColor' => ['rgb' => '2F75B5'],
             ],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
             ],
         ]);
 
-        // Wrap text for IDENTITAS IBU column
-        $sheet->getStyle('E')->getAlignment()->setWrapText(true);
+        // All data cells - wrap text and vertical center
+        $sheet->getStyle('A4:' . $highestColumn . $highestRow)->applyFromArray([
+            'alignment' => [
+                'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
+        ]);
 
-        // Make header row taller
-        $sheet->getRowDimension(1)->setRowHeight(30);
+        // Center align specific columns
+        // No(A), Tanggal(B), NIK(D), TTL(E), Umur(F), OrtuNIK(H), BB(J), TB(K), LK(L), VitA(O), Obat(P)
+        // Check actual columns in view to be sure
+        $centerColumns = ['A', 'B', 'D', 'E', 'F', 'H', 'J', 'K', 'L', 'O', 'P'];
+        foreach ($centerColumns as $col) {
+            if ($col <= $highestColumn) {
+                $sheet->getStyle($col . '4:' . $col . $highestRow)->applyFromArray([
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    ],
+                ]);
+            }
+        }
+
+        // Set row heights
+        $sheet->getRowDimension(1)->setRowHeight(30); // Title
+        $sheet->getRowDimension(2)->setRowHeight(25); // Parent Headers
+        $sheet->getRowDimension(3)->setRowHeight(20); // Child Headers
 
         return [];
-    }
-
-    /**
-     * Column widths
-     */
-    public function columnWidths(): array
-    {
-        return [
-            'A' => 5,
-            'B' => 30,
-            'C' => 18,
-            'D' => 15,
-            'E' => 35,
-            'F' => 18,
-            'G' => 12,
-            'H' => 12,
-            'I' => 14,
-            'J' => 20,
-            'K' => 20,
-            'L' => 20,
-            'M' => 30,
-        ];
     }
 }
