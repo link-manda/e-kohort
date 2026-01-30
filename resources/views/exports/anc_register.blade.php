@@ -1,281 +1,402 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 
 <head>
     <meta charset="UTF-8">
-    <style>
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        th {
-            border: 1px solid #000000;
-            text-align: center;
-            vertical-align: middle;
-            font-weight: bold;
-            background-color: #f2f2f2;
-        }
-
-        td {
-            border: 1px solid #000000;
-            vertical-align: top;
-            padding: 5px;
-        }
-
-        .center {
-            text-align: center;
-        }
-
-        .bg-grey {
-            background-color: #e0e0e0;
-        }
-    </style>
+    <title>Reg. ANC</title>
 </head>
 
 <body>
-    <table>
+    <table style="border-collapse: collapse; width: 100%;">
+        <!-- Title Row -->
         <thead>
-            <!-- BARIS HEADER 1 -->
             <tr>
-                <th rowspan="3" style="width: 50px;">No</th>
-                <th rowspan="3" style="width: 100px;">Tanggal<br>Kunjungan</th>
-
-                <!-- Identitas Stacked Header Row 1 -->
-                <th>No RM</th>
-                <th>Nama Ibu / Suami</th>
-                <th>NIK Ibu / Suami</th>
-                <th>Pekerjaan Ibu/Suami</th>
-                <th>Pendidikan Ibu/Suami</th>
-                <th>Umur</th>
-                <th>No HP Ibu/Suami</th>
-                <th>Alamat Lengkap (KTP Domisili)</th>
-
-                <!-- Riwayat -->
-                <th rowspan="3">Gravida</th>
-                <th rowspan="3">HPHT</th>
-
-                <!-- Kunjungan Group -->
-                <th colspan="9">KUNJUNGAN DAN HASIL PEMERIKSAAN</th>
-
-                <!-- Fisik Group -->
-                <th colspan="2">Berat Badan</th>
-                <th rowspan="2">TB (cm)</th>
-                <th colspan="4">STATUS GIZI</th>
-
-                <!-- Vital Signs -->
-                <th rowspan="3">TD (mmHg)</th>
-                <th rowspan="3">MAP Score</th> <!-- Kolom Baru -->
-                <th rowspan="3">TFU (cm)</th>
-                <th rowspan="3">DJJ</th>
-                <th rowspan="3">Letak Janin</th>
-
-                <!-- Tindakan -->
-                <th rowspan="3">Imunisasi TT</th>
-                <th rowspan="3">TTD (Jml)</th>
-
-                <!-- Laboratorium -->
-                <th colspan="6">LABORATORIUM</th>
-
-                <!-- Anemia -->
-                <th colspan="4">Status Anemia</th>
-
-                <!-- Akhir -->
-                <th rowspan="3">USG (Ya/Tdk)</th>
-                <th rowspan="3">Konseling/KIE</th>
-                <th rowspan="3">Deteksi Risiko</th>
-                <th rowspan="3">Rujukan (Ya/Tdk)</th>
-                <th rowspan="3">Diagnosa</th>
-                <th rowspan="3">Tindak Lanjut</th>
-                <th rowspan="3">Nama Nakes</th>
+                <th colspan="47"
+                    style="border: 1px solid black; padding: 10px; text-align: center; font-size: 16px; font-weight: bold;">
+                    REGISTER ANTENATAL CARE (ANC) TERINTEGRASI
+                    <br>
+                    PERIODE: {{ strtoupper($period) }}
+                </th>
             </tr>
 
-            <!-- BARIS HEADER 2 -->
+            <!-- Parent Headers (Row 1) -->
             <tr>
-                <!-- Identitas Stacked Header Row 2 -->
-                <th>NO KK</th>
-                <th class="bg-grey">-</th>
-                <th class="bg-grey">-</th>
-                <th class="bg-grey">-</th>
-                <th class="bg-grey">-</th>
-                <th>TTL</th>
-                <th class="bg-grey">-</th>
-                <th>Domisili</th>
+                <th rowspan="2"
+                    style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #f0f0f0;">
+                    NO</th>
+                <th rowspan="2"
+                    style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #f0f0f0;">
+                    TANGGAL</th>
+                <th rowspan="2"
+                    style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #f0f0f0;">
+                    NO RM / KK / BPJS</th>
 
-                <!-- Sub Kunjungan -->
-                <th rowspan="2">UK (Mgg)</th>
-                <th rowspan="2">JARAK (Thn)</th>
-                <th>K1</th>
-                <th>K2</th>
-                <th>K3</th>
-                <th>K4</th>
-                <th>K5</th>
-                <th>K6</th>
-                <th>K8</th> <!-- Jika diperlukan -->
+                <!-- IDENTITAS (Parent Header - Colspan 7) -->
+                <th colspan="7"
+                    style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #ffc0cb;">
+                    IDENTITAS</th>
 
-                <!-- Sub Fisik BB -->
-                <th>Sebelum Hamil</th>
-                <th>Saat Ini</th>
+                <th rowspan="2"
+                    style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #f0f0f0;">
+                    ALAMAT DOMISILI</th>
 
-                <!-- Sub Gizi -->
-                <th rowspan="2">IMT</th>
-                <th rowspan="2">LILA</th>
-                <th rowspan="2">KEK</th>
-                <th rowspan="2">NORMAL</th>
+                <!-- USIA KEHAMILAN (Parent Header - Colspan 2) -->
+                <th colspan="2"
+                    style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #add8e6;">
+                    USIA KEHAMILAN</th>
 
-                <!-- Sub Lab -->
-                <th rowspan="2">HIV</th>
-                <th rowspan="2">SIFILIS</th>
-                <th rowspan="2">HBSAG</th>
-                <th rowspan="2">HB</th>
-                <th rowspan="2">PROTEIN URINE</th>
-                <th rowspan="2">GOLDA Ibu/Suami</th>
+                <!-- RIWAYAT (Parent Header - Colspan 7) -->
+                <th colspan="7"
+                    style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #ffe4b5;">
+                    RIWAYAT & KUNJUNGAN</th>
 
-                <!-- Sub Anemia -->
-                <th rowspan="2">Tidak Anemia</th>
-                <th rowspan="2">Ringan</th>
-                <th rowspan="2">Sedang</th>
-                <th rowspan="2">Berat</th>
+                <!-- 12 T (Parent Header - Colspan 12) -->
+                <th colspan="12"
+                    style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #98fb98;">
+                    PEMERIKSAAN (10 T)</th>
+
+                <!-- LAB (Parent Header - Colspan 7) -->
+                <th colspan="7"
+                    style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #e6e6fa;">
+                    LABORATORIUM & ANALISA</th>
+
+                <!-- TINDAKAN (Parent Header - Colspan 3) -->
+                <th colspan="3"
+                    style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #f0f0f0;">
+                    TINDAKAN</th>
             </tr>
 
-            <!-- BARIS HEADER 3 -->
+            <!-- Child Headers (Row 2) -->
             <tr>
-                <!-- Identitas Stacked Header Row 3 -->
-                <th>NO BPJS</th>
-                <th class="bg-grey">-</th>
-                <th class="bg-grey">-</th>
-                <th class="bg-grey">-</th>
-                <th class="bg-grey">-</th>
-                <th class="bg-grey">-</th>
-                <th class="bg-grey">-</th>
-                <th class="bg-grey">-</th>
+                <!-- IDENTITAS Child Headers -->
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #ffb6c1;">
+                    NAMA IBU / SUAMI</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #ffb6c1;">
+                    NIK IBU / SUAMI</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #ffb6c1;">
+                    PEKERJAAN</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #ffb6c1;">
+                    PENDIDIKAN</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #ffb6c1;">
+                    UMUR / TTL</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #ffb6c1;">
+                    HP</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #ffb6c1;">
+                    GOL. DARAH</th>
 
-                <!-- Kode Kunjungan & 12T -->
-                <th>Trimester 1</th>
-                <th>Trimester 1</th>
-                <th>Trimester 2</th>
-                <th>Trimester 3</th>
-                <th>Trimester 3</th>
-                <th>Trimester 3</th>
-                <th>Lainnya</th>
+                <!-- USIA KEHAMILAN Child Headers -->
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #87ceeb;">
+                    GRAVIDA</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #87ceeb;">
+                    HPHT</th>
 
-                <!-- BB Spacers -->
-                <th class="bg-grey">-</th>
-                <th class="bg-grey">-</th>
-                <th class="bg-grey">-</th> <!-- TB Spacer -->
+                <!-- RIWAYAT Child Headers -->
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #ffd699;">
+                    K1</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #ffd699;">
+                    K2</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #ffd699;">
+                    K3</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #ffd699;">
+                    K4</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #ffd699;">
+                    K5</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #ffd699;">
+                    K6</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #ffd699;">
+                    K8</th>
+
+                <!-- 12 T Child Headers -->
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #c1ffc1;">
+                    ANC 12T</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #c1ffc1;">
+                    UK (Mg)</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #c1ffc1;">
+                    BB (kg)</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #c1ffc1;">
+                    TB (cm)</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #c1ffc1;">
+                    IMT</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #c1ffc1;">
+                    LILA (cm)</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #c1ffc1;">
+                    KEK</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #c1ffc1;">
+                    NORMAL</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #c1ffc1;">
+                    TD (mmHg)</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #c1ffc1;">
+                    TFU (cm)</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #c1ffc1;">
+                    DJJ</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #c1ffc1;">
+                    MAP</th>
+
+                <!-- LAB Child Headers -->
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #d8bfd8;">
+                    IMUN TT</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #d8bfd8;">
+                    TAB FE</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #d8bfd8;">
+                    HIV</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #d8bfd8;">
+                    SIFILIS</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #d8bfd8;">
+                    HBsAg</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #d8bfd8;">
+                    HB (gr/dL)</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #d8bfd8;">
+                    Prot. Urine</th>
+
+                <!-- TINDAKAN Child Headers -->
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #f0f0f0;">
+                    RESIKO</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #f0f0f0;">
+                    DIAGNOSA</th>
+                <th
+                    style="border: 1px solid black; padding: 6px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #f0f0f0;">
+                    NAMA NAKES</th>
             </tr>
         </thead>
+
         <tbody>
-            @foreach ($visits as $index => $visit)
+            @forelse($visits as $index => $visit)
+                @php
+                    $patient = $visit->pregnancy->patient;
+                    $preg = $visit->pregnancy;
+
+                    // Ids
+                    $ids = ($patient->no_rm ?? '-') . '<br>' . ($patient->no_kk ?? '-') . '<br>' . ($patient->no_bpjs ?? '-');
+
+                    // Names
+                    $names = ($patient->name ?? '-') . '<br>' . ($patient->husband_name ?? '-');
+
+                    // NIKs
+                    $niks = ($patient->nik ? "'".$patient->nik : '-') . '<br>' . ($patient->husband_nik ? "'".$patient->husband_nik : '-');
+
+                    // Job
+                    $jobs = ($patient->job ?? '-') . '<br>' . ($patient->husband_job ?? '-');
+
+                    // Edu
+                    $edus = ($patient->education ?? '-') . '<br>' . ($patient->husband_education ?? '-');
+
+                    // Age / TTL
+                    $age = $patient->dob ? \Carbon\Carbon::parse($patient->dob)->age . ' Thn' : '-';
+                    $ttl = ($patient->pob ?? '-') . ', ' . ($patient->dob ? \Carbon\Carbon::parse($patient->dob)->format('d-m-Y') : '-');
+                    $ageTtl = $age . '<br>' . $ttl;
+
+                    // Gol Darah
+                    $bloods = ($patient->blood_type ?? '-') . '<br>' . ($patient->husband_blood_type ?? '-');
+
+                    // KEK Check
+                    $isKek = ($visit->lila && $visit->lila < 23.5) ? '✔' : '-';
+                    $isNormal = ($visit->lila && $visit->lila >= 23.5) ? '✔' : '-';
+
+                    // TD
+                    $td = ($visit->systolic ?? '-') . '/' . ($visit->diastolic ?? '-');
+
+                @endphp
                 <tr>
-                    <td class="center">{{ $index + 1 }}</td>
-                    <td class="center">
-                        {{ $visit->visit_date ? \Carbon\Carbon::parse($visit->visit_date)->format('d/m/Y') : '-' }}</td>
+                    <!-- NO -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $index + 1 }}</td>
 
-                    <!-- Kolom Identitas Bertumpuk (Menggunakan Break Line <br>) -->
-                    <td>
-                        {{ $visit->pregnancy->patient->no_rm ?? '-' }}<br>
-                        {{ $visit->pregnancy->patient->no_kk ?? '-' }}<br>
-                        {{ $visit->pregnancy->patient->no_bpjs ?? '-' }}
-                    </td>
-                    <td>
-                        {{ $visit->pregnancy->patient->name ?? '-' }}<br>
-                        {{ $visit->pregnancy->patient->husband_name ?? '-' }}
-                    </td>
-                    <td>
-                        '{{ $visit->pregnancy->patient->nik ?? '-' }}<br>
-                        <!-- Tanda kutip agar excel tidak format scientific -->
-                        '{{ $visit->pregnancy->patient->husband_nik ?? '-' }}
-                    </td>
-                    <td>
-                        {{ $visit->pregnancy->patient->job ?? '-' }}<br>
-                        {{ $visit->pregnancy->patient->husband_job ?? '-' }}
-                    </td>
-                    <td>
-                        {{ $visit->pregnancy->patient->education ?? '-' }}<br>
-                        {{ $visit->pregnancy->patient->husband_education ?? '-' }}
-                    </td>
-                    <td class="center">
-                        {{ \Carbon\Carbon::parse($visit->pregnancy->patient->dob)->age }} Thn<br>
-                        {{ $visit->pregnancy->patient->pob }}, {{ $visit->pregnancy->patient->dob }}
-                    </td>
-                    <td>
-                        {{ $visit->pregnancy->patient->phone ?? '-' }}
-                    </td>
-                    <td>
-                        {{ $visit->pregnancy->patient->address ?? '-' }}
-                    </td>
+                    <!-- TANGGAL -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->visit_date ? $visit->visit_date->format('d/m/Y') : '-' }}</td>
 
-                    <!-- Riwayat -->
-                    <td class="center">{{ $visit->pregnancy->gravida ?? '-' }}</td>
-                    <td class="center">{{ $visit->pregnancy->hpht ?? '-' }}</td>
+                    <!-- NO RM/KK/BPJS -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {!! $ids !!}</td>
 
-                    <!-- Kunjungan Details -->
-                    <td class="center">{{ $visit->gestational_age }}</td>
-                    <td class="center">{{ $visit->pregnancy->pregnancy_gap ?? '-' }}</td>
+                    <!-- NAMA -->
+                    <td style="border: 1px solid black; padding: 5px; vertical-align: middle;">{!! $names !!}</td>
 
-                    <!-- Checkmark Logic utk K1-K6 -->
-                    <td class="center">{{ $visit->visit_code == 'K1' ? 'V' : '' }}</td>
-                    <td class="center">{{ $visit->visit_code == 'K2' ? 'V' : '' }}</td>
-                    <td class="center">{{ $visit->visit_code == 'K3' ? 'V' : '' }}</td>
-                    <td class="center">{{ $visit->visit_code == 'K4' ? 'V' : '' }}</td>
-                    <td class="center">{{ $visit->visit_code == 'K5' ? 'V' : '' }}</td>
-                    <td class="center">{{ $visit->visit_code == 'K6' ? 'V' : '' }}</td>
-                    <td class="center"></td> <!-- K8/Lainnya -->
+                    <!-- NIK -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {!! $niks !!}</td>
 
-                    <!-- Fisik -->
-                    <td class="center">{{ $visit->pregnancy->weight_before ?? '-' }}</td>
-                    <td class="center">{{ $visit->weight }}</td>
-                    <td class="center">{{ $visit->pregnancy->height ?? '-' }}</td>
+                    <!-- PEKERJAAN -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {!! $jobs !!}</td>
 
-                    <!-- Gizi (IMT / LILA) -->
-                    <td class="center">{{ $visit->bmi }}</td>
-                    <td class="center">{{ $visit->lila }}</td>
-                    <td class="center">{{ $visit->lila < 23.5 ? 'V' : '' }}</td> <!-- KEK Check -->
-                    <td class="center">{{ $visit->lila >= 23.5 ? 'V' : '' }}</td> <!-- Normal Check -->
+                    <!-- PENDIDIKAN -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {!! $edus !!}</td>
 
-                    <!-- Tensi & MAP -->
-                    <td class="center">{{ $visit->systolic }}/{{ $visit->diastolic }}</td>
-                    <td class="center"
-                        style="font-weight: bold; color: {{ $visit->map_score > 100 ? 'red' : 'black' }};">
-                        {{ $visit->map_score }}
-                    </td>
+                    <!-- UMUR/TTL -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {!! $ageTtl !!}</td>
 
-                    <td class="center">{{ $visit->tfu }}</td>
-                    <td class="center">{{ $visit->djj }}</td>
-                    <td class="center">{{ $visit->fetal_presentation }}</td>
+                    <!-- HP -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $patient->phone ? "'".$patient->phone : '-' }}</td>
 
-                    <td class="center">{{ $visit->tt_imunization }}</td>
-                    <td class="center">{{ $visit->fe_tablets }}</td>
+                    <!-- GOL DARAH -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {!! $bloods !!}</td>
 
-                    <!-- Lab Results (from anc_visits) -->
-                    <td class="center">{{ $visit->hiv_status ?? '-' }}</td>
-                    <td class="center">{{ $visit->syphilis_status ?? '-' }}</td>
-                    <td class="center">{{ $visit->hbsag_status ?? '-' }}</td>
-                    <td class="center">{{ $visit->hb ?? '-' }}</td>
-                    <td class="center">{{ $visit->protein_urine ?? '-' }}</td>
-                    <td class="center">
-                        {{ $visit->pregnancy->patient->blood_type ?? '-' }} /
-                        {{ $visit->pregnancy->patient->husband_blood_type ?? '-' }}
-                    </td>
+                    <!-- ALAMAT -->
+                    <td style="border: 1px solid black; padding: 5px; vertical-align: middle;">
+                        {{ $patient->address ?? '-' }}</td>
 
-                    <!-- Anemia Status (Logic dari HB) -->
-                    @php $hb = $visit->hb ?? 0; @endphp
-                    <td class="center">{{ $hb >= 11 ? 'V' : '' }}</td>
-                    <td class="center">{{ $hb >= 9 && $hb < 11 ? 'V' : '' }}</td>
-                    <td class="center">{{ $hb >= 7 && $hb < 9 ? 'V' : '' }}</td>
-                    <td class="center">{{ $hb > 0 && $hb < 7 ? 'V' : '' }}</td>
+                    <!-- GRAVIDA -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $preg->gestational_age ?? '-' }}</td>
 
-                    <!-- Akhir -->
-                    <td class="center">{{ $visit->usg_check ? 'Ya' : 'Tidak' }}</td>
-                    <td class="center">{{ $visit->counseling_check ? 'V' : '' }}</td>
-                    <td class="center">{{ $visit->risk_level }}</td>
-                    <td class="center">{{ $visit->referral_target ? 'Ya' : 'Tidak' }}</td>
-                    <td>{{ $visit->diagnosis }}</td>
-                    <td>{{ $visit->follow_up }}</td>
-                    <td>{{ $visit->midwife_name }}</td>
+                    <!-- HPHT -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $preg->pregnancy_gap ?? '-' }}</td>
+
+                    <!-- K1-K8 -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->visit_code == 'K1' ? '✔' : '' }}</td>
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->visit_code == 'K2' ? '✔' : '' }}</td>
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->visit_code == 'K3' ? '✔' : '' }}</td>
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->visit_code == 'K4' ? '✔' : '' }}</td>
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->visit_code == 'K5' ? '✔' : '' }}</td>
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->visit_code == 'K6' ? '✔' : '' }}</td>
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->visit_code == 'K8' ? '✔' : '' }}</td>
+
+                    <!-- ANC 12T -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->anc_12t ? '✔' : '' }}</td>
+
+                    <!-- UK -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $preg->weight_before ?? '-' }}</td>
+
+                    <!-- BB -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->weight ?? '-' }}</td>
+
+                    <!-- TB -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->height ?? '-' }}</td>
+
+                    <!-- IMT -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->bmi ?? '-' }}</td>
+
+                    <!-- LILA -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->lila ?? '-' }}</td>
+
+                    <!-- KEK -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $isKek }}</td>
+
+                    <!-- NORMAL -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $isNormal }}</td>
+
+                    <!-- TD -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $td }}</td>
+
+                    <!-- TFU -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->tfu ?? '-' }}</td>
+
+                    <!-- DJJ -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->djj ?? '-' }}</td>
+
+                    <!-- MAP -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->fetal_presentation ?? '-' }}</td>
+
+                    <!-- IMUN TT -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->tt_immunization ?? '-' }}</td>
+
+                    <!-- TAB FE -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->fe_tablets ?? '-' }}</td>
+
+                    <!-- HIV -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->hiv_status ?? '-' }}</td>
+
+                    <!-- SIFILIS -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->syphilis_status ?? '-' }}</td>
+
+                    <!-- HBsAg -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->hbsag_status ?? '-' }}</td>
+
+                    <!-- HB -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->hb ?? '-' }}</td>
+
+                    <!-- Prot Urine -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->protein_urine ?? '-' }}</td>
+
+                    <!-- RESIKO -->
+                    <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">
+                        {{ $visit->risk_level ?? '-' }}</td>
+
+                    <!-- DIAGNOSA -->
+                    <td style="border: 1px solid black; padding: 5px; vertical-align: middle;">
+                        {{ $visit->diagnosis ?? '-' }}</td>
+
+                    <!-- NAKES -->
+                    <td style="border: 1px solid black; padding: 5px; vertical-align: middle;">
+                        {{ $visit->midwife_name ?? '-' }}</td>
                 </tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="47"
+                        style="border: 1px solid black; padding: 20px; text-align: center; vertical-align: middle; font-style: italic;">
+                        Tidak ada data kunjungan ANC pada periode ini.
+                    </td>
+                </tr>
+            @endforelse
         </tbody>
     </table>
 </body>
