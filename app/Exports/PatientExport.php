@@ -7,12 +7,14 @@ use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use Carbon\Carbon;
 
-class PatientExport implements FromView, ShouldAutoSize, WithStyles
+class PatientExport implements FromView, ShouldAutoSize, WithStyles, WithTitle
 {
     protected $filters;
 
@@ -60,32 +62,42 @@ class PatientExport implements FromView, ShouldAutoSize, WithStyles
 
         $patients = $query->get();
 
+        $period = 'SEMUA DATA';
+        if (!empty($this->filters['date_from']) && !empty($this->filters['date_to'])) {
+            $period = Carbon::parse($this->filters['date_from'])->format('d/m/Y') . ' - ' . Carbon::parse($this->filters['date_to'])->format('d/m/Y');
+        }
+
         return view('exports.patient_master', [
-            'patients' => $patients
+            'patients' => $patients,
+            'period' => $period,
         ]);
+    }
+
+    public function title(): string
+    {
+        return 'Data Pasien';
     }
 
     public function styles(Worksheet $sheet)
     {
-        // Get last row
-        $lastRow = $sheet->getHighestRow();
+        // Get highest row and column
+        $highestRow = $sheet->getHighestRow();
+        $highestColumn = $sheet->getHighestColumn();
 
-        // Header row - Blue background
-        $sheet->getStyle('A1:U1')->applyFromArray([
-            'font' => [
-                'bold' => true,
-                'size' => 10,
-                'color' => ['rgb' => 'FFFFFF'],
-            ],
-            'fill' => [
-                'fillType' => Fill::FILL_SOLID,
-                'startColor' => ['rgb' => '4472C4'],
-            ],
+        // Apply borders to all cells
+        $sheet->getStyle('A1:' . $highestColumn . $highestRow)->applyFromArray([
             'borders' => [
                 'allBorders' => [
                     'borderStyle' => Border::BORDER_THIN,
                     'color' => ['rgb' => '000000'],
                 ],
+            ],
+        ]);
+
+        // Header row (1) - Bold and centered
+        $sheet->getStyle('A1:' . $highestColumn . '1')->applyFromArray([
+            'font' => [
+                'bold' => true,
             ],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -94,24 +106,29 @@ class PatientExport implements FromView, ShouldAutoSize, WithStyles
             ],
         ]);
 
-        // Data rows - Borders only
-        $sheet->getStyle('A2:U' . $lastRow)->applyFromArray([
-            'borders' => [
-                'allBorders' => [
-                    'borderStyle' => Border::BORDER_THIN,
-                    'color' => ['rgb' => 'CCCCCC'],
-                ],
-            ],
+        // All data cells - wrap text and vertical center
+        $sheet->getStyle('A2:' . $highestColumn . $highestRow)->applyFromArray([
             'alignment' => [
                 'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
             ],
         ]);
 
-        // Set row height for header
-        $sheet->getRowDimension(1)->setRowHeight(35);
+        // Center align specific columns
+        // No(A), NoRM(B), NIK(C), NoKK(D), NoBPJS(E), TglLahir(H), Umur(I), GolDar(L), SuamiNIK(P), SuamiGolda(S), TglReg(U)
+        $centerColumns = ['A', 'B', 'C', 'D', 'E', 'H', 'I', 'L', 'P', 'S', 'U'];
+        foreach ($centerColumns as $col) {
+            if ($col <= $highestColumn) {
+                $sheet->getStyle($col . '2:' . $col . $highestRow)->applyFromArray([
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    ],
+                ]);
+            }
+        }
 
-        // Freeze header row
-        $sheet->freezePane('A2');
+        // Set row heights
+        $sheet->getRowDimension(1)->setRowHeight(40); // Header
 
         return [];
     }
