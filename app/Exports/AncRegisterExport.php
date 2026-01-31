@@ -42,10 +42,12 @@ class AncRegisterExport implements FromView, WithTitle, ShouldAutoSize, WithStyl
             $period = Carbon::parse($this->filters['date_from'])->format('d/m/Y') . ' - ' . Carbon::parse($this->filters['date_to'])->format('d/m/Y');
         }
 
-        return view('exports.anc_register', [
+        $v = view('exports.anc_register', [
             'visits' => $visits,
             'period' => $period,
         ]);
+        // echo $v->render(); exit;
+        return $v;
     }
 
     public function title(): string
@@ -69,8 +71,8 @@ class AncRegisterExport implements FromView, WithTitle, ShouldAutoSize, WithStyl
             ],
         ]);
 
-        // Header rows (1-3) - Bold and centered
-        $sheet->getStyle('A1:' . $highestColumn . '3')->applyFromArray([
+        // Header rows (1-2) - Bold and centered (Title + Column Headers)
+        $sheet->getStyle('A1:' . $highestColumn . '2')->applyFromArray([
             'font' => [
                 'bold' => true,
             ],
@@ -82,7 +84,7 @@ class AncRegisterExport implements FromView, WithTitle, ShouldAutoSize, WithStyl
         ]);
 
         // All data cells - wrap text and vertical center
-        $sheet->getStyle('A4:' . $highestColumn . $highestRow)->applyFromArray([
+        $sheet->getStyle('A3:' . $highestColumn . $highestRow)->applyFromArray([
             'alignment' => [
                 'vertical' => Alignment::VERTICAL_CENTER,
                 'wrapText' => true,
@@ -101,7 +103,7 @@ class AncRegisterExport implements FromView, WithTitle, ShouldAutoSize, WithStyl
 
         foreach ($centerColumns as $col) {
             if ($col <= $highestColumn) { // Check if column exists
-                $sheet->getStyle($col . '4:' . $col . $highestRow)->applyFromArray([
+                $sheet->getStyle($col . '3:' . $col . $highestRow)->applyFromArray([
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
                     ],
@@ -111,8 +113,7 @@ class AncRegisterExport implements FromView, WithTitle, ShouldAutoSize, WithStyl
 
         // Set row heights
         $sheet->getRowDimension(1)->setRowHeight(30); // Title
-        $sheet->getRowDimension(2)->setRowHeight(25); // Parent Headers
-        $sheet->getRowDimension(3)->setRowHeight(25); // Child Headers
+        $sheet->getRowDimension(2)->setRowHeight(40); // Column Headers (Taller to accommodate wrapped text)
 
         return [];
     }
