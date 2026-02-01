@@ -25,6 +25,8 @@ class PatientRegistration extends Component
     public $blood_type = '';
     public $phone = '';
     public $address = '';
+    public $gender = 'P';
+    public $responsible_person = '';
 
     // Step 2: Husband Data (Optional)
     public $husband_name = '';
@@ -56,6 +58,8 @@ class PatientRegistration extends Component
             'address' => 'required|string',
             'no_kk' => 'nullable|string|max:16',
             'no_bpjs' => 'nullable|string|max:13|regex:/^[0-9]*$/',
+            'gender' => 'required|in:L,P',
+            'responsible_person' => 'nullable|string|max:255',
 
             // Step 2 - Optional but validated if provided
             'husband_name' => 'nullable|string|max:255',
@@ -162,6 +166,8 @@ class PatientRegistration extends Component
             'blood_type' => $this->blood_type,
             'phone' => $this->phone,
             'address' => $this->address,
+            'gender' => $this->gender,
+            'responsible_person' => $this->responsible_person ?: null,
             'husband_name' => $this->husband_name ?: null,
             'husband_nik' => $this->husband_nik ?: null,
             'husband_job' => $this->husband_job ?: null,

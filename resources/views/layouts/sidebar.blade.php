@@ -29,6 +29,15 @@
             <span x-show="open" class="font-medium">Dashboard</span>
         </a>
 
+        <!-- Pendaftaran -->
+        @can('viewAny', App\Models\Patient::class)
+            <a href="{{ route('registration-desk') }}"
+                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('registration-desk') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
+                <x-heroicon-o-queue-list class="w-6 h-6 flex-shrink-0" />
+                <span x-show="open" class="font-medium">Pendaftaran</span>
+            </a>
+        @endcan
+
         <!-- Pasien -->
         @can('viewAny', App\Models\Patient::class)
             <a href="{{ route('patients.index') }}"
@@ -94,6 +103,12 @@
                         class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.patient-list') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
                         <x-heroicon-o-user-group class="w-4 h-4" />
                         <span>Data Pasien</span>
+                    </a>
+
+                    <a href="{{ route('export.general-register') }}"
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.general-register') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                        <x-heroicon-o-clipboard-document-list class="w-4 h-4" />
+                        <span>Register Poli Umum</span>
                     </a>
 
                     <a href="{{ route('export.immunization.page') }}"
