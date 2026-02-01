@@ -149,6 +149,24 @@
                             @enderror
                         </div>
 
+                        <!-- Gender -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Jenis Kelamin <span class="text-red-500">*</span>
+                            </label>
+                            <div class="flex gap-4">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" wire:model.live="gender" value="P" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300">
+                                    <span class="text-gray-900">Perempuan</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="radio" wire:model.live="gender" value="L" class="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300">
+                                    <span class="text-gray-900">Laki-laki</span>
+                                </label>
+                            </div>
+                            @error('gender') <p class="mt-2 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+
                         <!-- DOB & Blood Type -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -324,12 +342,32 @@
                                 </p>
                             @enderror
                         </div>
+
+                        <!-- Responsible Person -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Penanggung Jawab (Suami/Ayah/Wali) <span class="text-gray-400 text-xs">(Opsional)</span>
+                            </label>
+                            <input type="text" wire:model="responsible_person"
+                                class="w-full px-4 py-3 border-2 rounded-lg
+                                              @error('responsible_person') border-red-500 @else border-gray-300 @enderror
+                                              focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                                placeholder="Nama Penanggung Jawab">
+                             @error('responsible_person')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
                 @endif
 
                 <!-- Step 2: Husband Data -->
                 @if ($currentStep === 2)
                     <div class="space-y-6">
+                        @if($gender == 'L')
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                                <p class="text-blue-800">Tidak ada data tambahan yang diperlukan untuk pasien laki-laki. Silahkan klik tombol Simpan.</p>
+                            </div>
+                        @else
                         <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                             <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -437,6 +475,7 @@
                                 </select>
                             </div>
                         </div>
+                        @endif
                     </div>
                 @endif
 

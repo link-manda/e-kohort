@@ -17,6 +17,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard (Livewire)
     Route::get('/dashboard', App\Livewire\Dashboard::class)->name('dashboard');
 
+    // Registration Desk (Pendaftaran Harian)
+    Route::get('/registration-desk', App\Livewire\PatientQueueEntry::class)->name('registration-desk')
+        ->middleware('permission:view-all-patients|view-own-patients');
+
     // Patient Management (Livewire List, Registration & Edit)
     Route::get('/patients', App\Livewire\PatientList::class)->name('patients.index')
         ->middleware('permission:view-all-patients|view-own-patients');
@@ -127,6 +131,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/export/patient-list', App\Livewire\ExportPatientList::class)->name('export.patient-list')
         ->middleware('permission:export-data');
 
+    // Export: General Register (Poli Umum)
+    Route::get('/export/general-register', App\Livewire\ExportGeneralRegister::class)->name('export.general-register')
+        ->middleware('permission:export-data');
+
     // Export: Immunization Reports
     Route::get('/export/immunization/monthly', [App\Http\Controllers\ImmunizationExportController::class, 'monthly'])->name('export.immunization.monthly')
         ->middleware('permission:export-data');
@@ -163,6 +171,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // KB Index (List of visits)
     Route::get('/kb', App\Livewire\KbIndex::class)->name('kb.index')
         ->middleware('permission:view-kb');
+
+    // General Visits (Poli Umum)
+    Route::get('/general-visits/create/{patient_id}', App\Livewire\GeneralVisitEntry::class)->name('general-visits.create')
+        ->middleware('permission:create-anc-visits'); // Reusing permission for medical visits
 
     // Export: KB Reports
     Route::get('/export/kb', App\Livewire\ExportKb::class)->name('export.kb')

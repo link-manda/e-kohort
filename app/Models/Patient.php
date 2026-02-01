@@ -23,6 +23,8 @@ class Patient extends Model
         'pob',
         'address',
         'phone',
+        'gender',
+        'responsible_person',
         'job',
         'education',
         'blood_type',
@@ -73,6 +75,14 @@ class Patient extends Model
     public function children(): HasMany
     {
         return $this->hasMany(Child::class);
+    }
+
+    /**
+     * Get all general visits for this patient.
+     */
+    public function generalVisits(): HasMany
+    {
+        return $this->hasMany(GeneralVisit::class);
     }
 
     /**
