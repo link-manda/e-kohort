@@ -149,6 +149,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/export/delivery-register', App\Livewire\ExportDeliveryRegister::class)->name('export.delivery-register')
         ->middleware('permission:export-data');
 
+    // Legacy / alias route for Pendaftaran (kept for sidebar compatibility)
+    Route::get('/registration', function () {
+        return redirect()->route('patients.create');
+    })->name('registration-desk')->middleware('permission:create-patients');
+
     // Reports: Monthly Summary
     Route::get('/reports/monthly-summary', App\Livewire\MonthlySummaryReport::class)->name('reports.monthly-summary')
         ->middleware('permission:view-reports');
