@@ -13,6 +13,14 @@ class PatientQueueEntry extends Component
     public $selectedPatientId = null;
     public $showNifasWarning = false;
 
+    public function mount($patient_id = null)
+    {
+        // Auto-select patient if patient_id provided (from registration redirect)
+        if ($patient_id) {
+            $this->selectPatient($patient_id);
+        }
+    }
+
     public function updatedSearch($value)
     {
         $value = trim($value);
@@ -47,48 +55,133 @@ class PatientQueueEntry extends Component
     public function selectService($service)
     {
         if (!$this->selectedPatient) {
+            session()->flash('error', 'Silakan pilih pasien terlebih dahulu.');
+            return;
+        }
+
+        // Auto-update category based on selected service (Phase 1 Logic)
+        $this->updatePatientCategory($service);
+
+        switch ($service) {
+            case 'general':
+                // Poli Umum - always available
+                return redirect()->route('general-visits.create', ['patient_id' => $this->selectedPatientId]);
+
+            case 'kia':
+                // Poli KIA (ANC) - for pregnant women
+                $activePregnancy = $this->selectedPatient->pregnancies()
+                    ->where('status', 'Aktif')
+                    ->latest()
+                    ->first();
+
+                if ($activePregnancy) {
+                    // Already has active pregnancy, go to ANC visit entry
+                    return redirect()->route('anc-visits.create', ['pregnancy' => $activePregnancy->id]);
+                } else {
+                    // No active pregnancy, create new pregnancy record first
+                    return redirect()->route('pregnancies.create', ['patient' => $this->selectedPatientId]);
+                }
+
+            case 'kb':
+                // KB - always available (can be used by any woman)
+                return redirect()->route('kb.entry') . '?patient_id=' . $this->selectedPatientId;
+
+            case 'child':
+                // Imunisasi Anak - check if there's a child record
+                $child = \App\Models\Child::where('patient_id', $this->selectedPatientId)->first();
+
+                if ($child) {
+                    // Already has child record, go directly to immunization
+                    return redirect()->route('children.immunization', ['child' => $child->id]);
+                } else {
+                    // Need to create child record first
+                    return redirect()->route('children.register') . '?patient_id=' . $this->selectedPatientId;
+                }
+
+            case 'nifas':
+                // Poli Nifas - check if patient has delivered pregnancy
+                $deliveredPregnancy = $this->selectedPatient->pregnancies()
+                    ->where('status', 'Lahir')
+                    ->whereNotNull('delivery_date')
+                    ->latest('delivery_date')
+                    ->first();
+
+                if ($deliveredPregnancy) {
+                    // Has delivery record, proceed to postnatal visit
+                    return redirect()->route('pregnancies.postnatal', ['pregnancy' => $deliveredPregnancy->id]);
+                } else {
+                    // No delivery record found, show warning
+                    $this->showNifasWarning = true;
+                    return;
+                }
+
+            default:
+                session()->flash('error', 'Layanan tidak valid.');
+                return;
+        }
+    }
+
+    /**
+     * Update patient category based on selected service
+     * Phase 1 Logic: Auto-categorize patients when they select a service
+     */
+    private function updatePatientCategory($service)
+    {
+        $patient = $this->selectedPatient;
+        $age = $patient->age;
+
+        // Skip if category is manually set to something other than 'Umum'
+        // (to avoid overriding intentional categorization)
+        if ($patient->category !== 'Umum' && $patient->category !== null) {
             return;
         }
 
         switch ($service) {
-            case 'general':
-                return redirect()->route('general-visits.create', ['patient_id' => $this->selectedPatientId]);
             case 'kia':
-                $activePregnancy = $this->selectedPatient->activePregnancy;
-                if ($activePregnancy) {
-                    return redirect()->route('anc-visits.create', ['pregnancy' => $activePregnancy->id]);
-                } else {
-                    return redirect()->route('pregnancies.create', ['patient' => $this->selectedPatientId]);
-                }
-            case 'kb':
-                return redirect()->route('kb.entry', ['patient_id' => $this->selectedPatientId]);
-            case 'child':
-                // Redirect to Immunization Index with search pre-filled
-                return redirect()->route('imunisasi.index', ['search' => $this->selectedPatient->name]);
             case 'nifas':
-                // Check if patient has any delivered pregnancy
-                $deliveredPregnancy = $this->selectedPatient->pregnancies()->where('status', 'Lahir')->latest()->first();
+                // KIA/Nifas service → categorize as Bumil
+                $patient->update(['category' => 'Bumil']);
+                break;
 
-                if (!$deliveredPregnancy) {
-                    $this->showNifasWarning = true;
-                    return;
+            case 'child':
+                // Child immunization service → categorize as Bayi/Balita
+                $patient->update(['category' => 'Bayi/Balita']);
+                break;
+
+            case 'general':
+            case 'kb':
+                // For general/KB, use age-based logic
+                if ($age < 5) {
+                    $patient->update(['category' => 'Bayi/Balita']);
+                } elseif ($age >= 60) {
+                    $patient->update(['category' => 'Lansia']);
+                } else {
+                    // Keep as 'Umum' (default)
                 }
-                return redirect()->route('pregnancies.postnatal', ['pregnancy' => $deliveredPregnancy->id]);
+                break;
         }
     }
 
     public function proceedToNifas()
     {
-        // Create a placeholder/historical pregnancy record to allow Nifas entry
-        // We use dummy dates since we don't know them, but they are required by schema
+        // Create a historical/placeholder pregnancy record for transferred patients
+        // Use reasonable estimates since exact dates unknown
+        $estimatedDeliveryDate = now()->subDays(7); // Assume delivery was 1 week ago
+        $estimatedHPL = $estimatedDeliveryDate; // HPL = delivery date for completed pregnancy
+
         $pregnancy = \App\Models\Pregnancy::create([
             'patient_id' => $this->selectedPatientId,
             'status' => 'Lahir',
-            'gravida' => 'G1P0A0', // Placeholder
-            'hpht' => now()->subMonths(9), // Approximate
-            'hpl' => now(), // Approximate
-            'delivery_date' => now(), // Assume recent
+            'gravida' => 'G1P1A0', // Assume at least 1 birth (can be updated later)
+            'hpht' => $estimatedDeliveryDate->copy()->subMonths(9), // Approximate HPHT (9 months before delivery)
+            'hpl' => $estimatedHPL,
+            'delivery_date' => $estimatedDeliveryDate,
+            'delivery_method' => 'Normal', // Default assumption (ENUM: Normal, Caesar/Sectio, Vakum)
+            'delivery_location' => 'Luar Faskes Ini', // Indicate this is transferred patient
+            'notes' => 'Data persalinan transfer dari luar. Harap update dengan data yang akurat.',
         ]);
+
+        session()->flash('warning', 'Pasien ini tidak memiliki riwayat persalinan di sistem. Data placeholder telah dibuat. Harap lengkapi data yang sebenarnya.');
 
         return redirect()->route('pregnancies.postnatal', ['pregnancy' => $pregnancy->id]);
     }

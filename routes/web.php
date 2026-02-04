@@ -178,6 +178,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('permission:view-kb');
 
     // General Visits (Poli Umum)
+    Route::get('/general-visits', App\Livewire\GeneralVisitList::class)->name('general-visits.index')
+        ->middleware('permission:view-all-anc-visits'); // Reusing permission for medical visits
+
     Route::get('/general-visits/create/{patient_id}', App\Livewire\GeneralVisitEntry::class)->name('general-visits.create')
         ->middleware('permission:create-anc-visits'); // Reusing permission for medical visits
 

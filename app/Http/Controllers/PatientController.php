@@ -73,9 +73,30 @@ class PatientController extends Controller
      */
     public function show(Patient $patient)
     {
-        $patient->load(['pregnancies.ancVisits', 'pregnancies.deliveryRecord']);
+        // Load all relevant relationships for universal profile
+        $patient->load([
+            'pregnancies.ancVisits',
+            'pregnancies.deliveryRecord',
+            'pregnancies.postnatalVisits',
+            'generalVisits' => function ($query) {
+                $query->with('prescriptions') // Load prescriptions for each general visit
+                    ->orderBy('visit_date', 'desc')
+                    ->limit(10);
+            }
+        ]);
 
-        return view('patients.show', compact('patient'));
+        // Get KB visits (if exists)
+        $kbVisits = \App\Models\KbVisit::where('patient_id', $patient->id)
+            ->orderBy('visit_date', 'desc')
+            ->limit(10)
+            ->get();
+
+        // Get child records (if exists)
+        $children = \App\Models\Child::where('patient_id', $patient->id)
+            ->with(['childVisits', 'immunizationActions'])
+            ->get();
+
+        return view('patients.show', compact('patient', 'kbVisits', 'children'));
     }
 
     /**

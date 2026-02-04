@@ -18,10 +18,14 @@ class DatabaseSeeder extends Seeder
         // Seed roles and permissions first
         $this->call([
             RolePermissionSeeder::class,
-            DemoDataSeeder::class,
-            VaccineSeeder::class,
             Icd10Seeder::class,
             KbMethodSeeder::class,
+            VaccineSeeder::class,
+            WhoStandardSeeder::class,
+            UserSeeder::class,
+
+            // Comprehensive dummy data (50 patients with all visits & relationships)
+            ComprehensiveDataSeeder::class,
         ]);
 
         $this->command->info('🎉 All seeders completed successfully!');

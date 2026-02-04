@@ -11,14 +11,14 @@ class PatientList extends Component
     use WithPagination;
 
     public $search = '';
-    public $pregnancyFilter = 'all'; // all, active, completed, none
-    public $riskFilter = 'all'; // all, high, low
+    public $categoryFilter = 'all'; // all, Umum, Bumil, Bayi/Balita, Lansia
+    public $genderFilter = 'all'; // all, L, P
     public $perPage = 20;
 
     protected $queryString = [
         'search' => ['except' => ''],
-        'pregnancyFilter' => ['except' => 'all'],
-        'riskFilter' => ['except' => 'all'],
+        'categoryFilter' => ['except' => 'all'],
+        'genderFilter' => ['except' => 'all'],
     ];
 
     public function updatingSearch()
@@ -26,12 +26,12 @@ class PatientList extends Component
         $this->resetPage();
     }
 
-    public function updatingPregnancyFilter()
+    public function updatingCategoryFilter()
     {
         $this->resetPage();
     }
 
-    public function updatingRiskFilter()
+    public function updatingGenderFilter()
     {
         $this->resetPage();
     }
@@ -39,57 +39,32 @@ class PatientList extends Component
     public function clearFilters()
     {
         $this->search = '';
-        $this->pregnancyFilter = 'all';
-        $this->riskFilter = 'all';
+        $this->categoryFilter = 'all';
+        $this->genderFilter = 'all';
         $this->resetPage();
     }
 
     public function getPatients()
     {
-        $query = Patient::with(['pregnancies' => function ($q) {
-            $q->where('status', 'Aktif')
-                ->with(['ancVisits' => function ($av) {
-                    $av->latest()->limit(1);
-                }]);
-        }]);
+        $query = Patient::query();
 
-        // Search by NIK or Name
+        // Search by NIK, Name, or Phone
         if ($this->search) {
             $query->where(function ($q) {
                 $q->where('nik', 'like', '%' . $this->search . '%')
-                    ->orWhere('name', 'like', '%' . $this->search . '%');
+                    ->orWhere('name', 'like', '%' . $this->search . '%')
+                    ->orWhere('phone', 'like', '%' . $this->search . '%');
             });
         }
 
-        // Filter by pregnancy status
-        if ($this->pregnancyFilter === 'active') {
-            $query->whereHas('pregnancies', function ($q) {
-                $q->where('status', 'Aktif');
-            });
-        } elseif ($this->pregnancyFilter === 'completed') {
-            $query->whereHas('pregnancies', function ($q) {
-                $q->where('status', 'Lahir');
-            });
-        } elseif ($this->pregnancyFilter === 'none') {
-            $query->doesntHave('pregnancies');
+        // Filter by category
+        if ($this->categoryFilter !== 'all') {
+            $query->where('category', $this->categoryFilter);
         }
 
-        // Filter by risk level
-        if ($this->riskFilter === 'high') {
-            $query->whereHas('pregnancies.ancVisits', function ($q) {
-                $q->where(function ($av) {
-                    $av->where('map_score', '>', 90)
-                        ->orWhere('hiv_status', 'R')
-                        ->orWhere('syphilis_status', 'R')
-                        ->orWhere('hbsag_status', 'R')
-                        ->orWhere('lila', '<', 23.5)
-                        ->orWhere('hb', '<', 11);
-                });
-            });
-        } elseif ($this->riskFilter === 'low') {
-            $query->whereHas('pregnancies.ancVisits', function ($q) {
-                $q->where('risk_category', 'Rendah');
-            });
+        // Filter by gender
+        if ($this->genderFilter !== 'all') {
+            $query->where('gender', $this->genderFilter);
         }
 
         return $query->orderBy('created_at', 'desc')->paginate($this->perPage);
@@ -101,21 +76,23 @@ class PatientList extends Component
 
         // Calculate statistics for filters
         $totalPatients = Patient::count();
-        $activePregnancies = Patient::whereHas('pregnancies', function ($q) {
-            $q->where('status', 'Aktif');
-        })->count();
-        $completedPregnancies = Patient::whereHas('pregnancies', function ($q) {
-            $q->where('status', 'Lahir');
-        })->count();
-        $noPregnancy = Patient::doesntHave('pregnancies')->count();
+        $categoryStats = [
+            'Umum' => Patient::where('category', 'Umum')->count(),
+            'Bumil' => Patient::where('category', 'Bumil')->count(),
+            'Bayi/Balita' => Patient::where('category', 'Bayi/Balita')->count(),
+            'Lansia' => Patient::where('category', 'Lansia')->count(),
+        ];
+        $genderStats = [
+            'L' => Patient::where('gender', 'L')->count(),
+            'P' => Patient::where('gender', 'P')->count(),
+        ];
 
         return view('livewire.patient-list', [
             'patients' => $patients,
             'stats' => [
                 'total' => $totalPatients,
-                'active' => $activePregnancies,
-                'completed' => $completedPregnancies,
-                'none' => $noPregnancy,
+                'categories' => $categoryStats,
+                'genders' => $genderStats,
             ]
         ])->layout('layouts.dashboard');
     }

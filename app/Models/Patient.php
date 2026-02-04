@@ -24,6 +24,7 @@ class Patient extends Model
         'address',
         'phone',
         'gender',
+        'category',
         'responsible_person',
         'job',
         'education',

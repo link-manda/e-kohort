@@ -1,4 +1,44 @@
 <div class="space-y-6">
+    <!-- Flash Messages -->
+    @if (session()->has('success'))
+        <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded-md">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <x-heroicon-o-check-circle class="h-5 w-5 text-green-400" />
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-green-700">{{ session('success') }}</p>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if (session()->has('error'))
+        <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-md">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <x-heroicon-o-x-circle class="h-5 w-5 text-red-400" />
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-red-700">{{ session('error') }}</p>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    @if (session()->has('warning'))
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <x-heroicon-o-exclamation-triangle class="h-5 w-5 text-yellow-400" />
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-yellow-700">{{ session('warning') }}</p>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Header -->
     <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
         <h2 class="text-xl font-bold text-gray-800 mb-2">Pendaftaran Layanan (Kunjungan)</h2>
@@ -7,7 +47,7 @@
 
     <!-- Search & Selection -->
     <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-        @if(!$selectedPatient)
+        @if (!$selectedPatient)
             <div class="space-y-4">
                 <div class="relative">
                     <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Cari Pasien</label>
@@ -21,27 +61,42 @@
                     </div>
                 </div>
 
-                @if(!empty($results) && count($results) > 0)
+                @if (!empty($results) && count($results) > 0)
                     <div class="border border-gray-200 rounded-md overflow-hidden">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No. RM</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIK</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alamat</th>
-                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        No. RM</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Nama</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        NIK</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Alamat</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                @foreach($results as $patient)
+                                @foreach ($results as $patient)
                                     <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $patient->no_rm }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $patient->name }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $patient->nik }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ Str::limit($patient->address, 30) }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                            {{ $patient->no_rm }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                                            {{ $patient->name }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $patient->nik }}</td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ Str::limit($patient->address, 30) }}</td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <button wire:click="selectPatient({{ $patient->id }})" class="text-blue-600 hover:text-blue-900">Pilih</button>
+                                            <button wire:click="selectPatient({{ $patient->id }})"
+                                                class="text-blue-600 hover:text-blue-900">Pilih</button>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -50,12 +105,14 @@
                     </div>
                 @elseif(strlen($search) >= 2)
                     <div class="text-center py-4 text-gray-500">
-                        Pasien tidak ditemukan. <a href="{{ route('patients.create') }}" class="text-blue-600 font-medium hover:underline">Buat Pasien Baru</a>
+                        Pasien tidak ditemukan. <a href="{{ route('patients.create') }}"
+                            class="text-blue-600 font-medium hover:underline">Buat Pasien Baru</a>
                     </div>
                 @endif
 
                 <div class="mt-4 pt-4 border-t border-gray-100 flex justify-end">
-                     <a href="{{ route('patients.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <a href="{{ route('patients.create') }}"
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         <x-heroicon-o-user-plus class="h-5 w-5 mr-2" />
                         Pasien Baru
                     </a>
@@ -67,9 +124,11 @@
                 <div class="flex justify-between items-start mb-6">
                     <div>
                         <h3 class="text-lg font-medium leading-6 text-gray-900">Pasien Terpilih</h3>
-                        <p class="mt-1 max-w-2xl text-sm text-gray-500">Silahkan pilih layanan tujuan untuk pasien ini.</p>
+                        <p class="mt-1 max-w-2xl text-sm text-gray-500">Silahkan pilih layanan tujuan untuk pasien ini.
+                        </p>
                     </div>
-                    <button wire:click="resetSelection" class="text-sm text-gray-500 hover:text-gray-700 flex items-center">
+                    <button wire:click="resetSelection"
+                        class="text-sm text-gray-500 hover:text-gray-700 flex items-center">
                         <x-heroicon-o-x-mark class="h-5 w-5 mr-1" />
                         Batal / Ganti Pasien
                     </button>
@@ -81,12 +140,16 @@
                             <x-heroicon-o-user class="h-5 w-5 text-blue-400" />
                         </div>
                         <div class="ml-3">
-                            <h3 class="text-sm font-medium text-blue-800">{{ $selectedPatient->name }} ({{ $selectedPatient->no_rm }})</h3>
+                            <h3 class="text-sm font-medium text-blue-800">{{ $selectedPatient->name }}
+                                ({{ $selectedPatient->no_rm }})</h3>
                             <div class="mt-2 text-sm text-blue-700 grid grid-cols-1 md:grid-cols-2 gap-2">
                                 <p><span class="font-medium">NIK:</span> {{ $selectedPatient->nik ?? '-' }}</p>
-                                <p><span class="font-medium">Tgl Lahir:</span> {{ $selectedPatient->dob ? $selectedPatient->dob->format('d/m/Y') : '-' }} ({{ $selectedPatient->age }} th)</p>
+                                <p><span class="font-medium">Tgl Lahir:</span>
+                                    {{ $selectedPatient->dob ? $selectedPatient->dob->format('d/m/Y') : '-' }}
+                                    ({{ $selectedPatient->age }} th)</p>
                                 <p><span class="font-medium">Alamat:</span> {{ $selectedPatient->address }}</p>
-                                <p><span class="font-medium">JK:</span> {{ $selectedPatient->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
+                                <p><span class="font-medium">JK:</span>
+                                    {{ $selectedPatient->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
                             </div>
                         </div>
                     </div>
@@ -94,7 +157,8 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <!-- Poli Umum -->
-                    <button wire:click="selectService('general')" class="flex flex-col items-center justify-center p-6 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-blue-300 transition-all group">
+                    <button wire:click="selectService('general')"
+                        class="flex flex-col items-center justify-center p-6 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-blue-300 transition-all group">
                         <div class="p-3 bg-blue-100 rounded-full group-hover:bg-blue-200 mb-3">
                             <x-heroicon-o-clipboard-document-check class="h-8 w-8 text-blue-600" />
                         </div>
@@ -103,7 +167,8 @@
                     </button>
 
                     <!-- Poli KIA (ANC) -->
-                    <button wire:click="selectService('kia')" class="flex flex-col items-center justify-center p-6 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-pink-300 transition-all group">
+                    <button wire:click="selectService('kia')"
+                        class="flex flex-col items-center justify-center p-6 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-pink-300 transition-all group">
                         <div class="p-3 bg-pink-100 rounded-full group-hover:bg-pink-200 mb-3">
                             <x-heroicon-o-heart class="h-8 w-8 text-pink-600" />
                         </div>
@@ -112,7 +177,8 @@
                     </button>
 
                     <!-- Poli KB -->
-                    <button wire:click="selectService('kb')" class="flex flex-col items-center justify-center p-6 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-purple-300 transition-all group">
+                    <button wire:click="selectService('kb')"
+                        class="flex flex-col items-center justify-center p-6 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-purple-300 transition-all group">
                         <div class="p-3 bg-purple-100 rounded-full group-hover:bg-purple-200 mb-3">
                             <x-heroicon-o-check-circle class="h-8 w-8 text-purple-600" />
                         </div>
@@ -121,7 +187,8 @@
                     </button>
 
                     <!-- Poli Anak / Imunisasi -->
-                    <button wire:click="selectService('child')" class="flex flex-col items-center justify-center p-6 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-green-300 transition-all group">
+                    <button wire:click="selectService('child')"
+                        class="flex flex-col items-center justify-center p-6 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-green-300 transition-all group">
                         <div class="p-3 bg-green-100 rounded-full group-hover:bg-green-200 mb-3">
                             <x-heroicon-o-face-smile class="h-8 w-8 text-green-600" />
                         </div>
@@ -130,7 +197,8 @@
                     </button>
 
                     <!-- Poli Nifas -->
-                    <button wire:click="selectService('nifas')" class="flex flex-col items-center justify-center p-6 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-orange-300 transition-all group">
+                    <button wire:click="selectService('nifas')"
+                        class="flex flex-col items-center justify-center p-6 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-orange-300 transition-all group">
                         <div class="p-3 bg-orange-100 rounded-full group-hover:bg-orange-200 mb-3">
                             <x-heroicon-o-users class="h-8 w-8 text-orange-600" />
                         </div>
@@ -143,15 +211,19 @@
     </div>
 
     <!-- Nifas Warning Modal -->
-    @if($showNifasWarning)
-        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    @if ($showNifasWarning)
+        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog"
+            aria-modal="true">
             <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" wire:click="$set('showNifasWarning', false)"></div>
+                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"
+                    wire:click="$set('showNifasWarning', false)"></div>
                 <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div
+                    class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                     <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div class="sm:flex sm:items-start">
-                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <div
+                                class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
                                 <x-heroicon-o-exclamation-triangle class="h-6 w-6 text-yellow-600" />
                             </div>
                             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
@@ -160,18 +232,22 @@
                                 </h3>
                                 <div class="mt-2">
                                     <p class="text-sm text-gray-500">
-                                        Pasien ini belum memiliki riwayat persalinan di sistem. Apakah Anda ingin melanjutkan ke poli Nifas tanpa data persalinan, atau ingin menginput data persalinan terlebih dahulu?
+                                        Pasien ini belum memiliki riwayat persalinan di sistem. Apakah Anda ingin
+                                        melanjutkan ke poli Nifas tanpa data persalinan, atau ingin menginput data
+                                        persalinan terlebih dahulu?
                                     </p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                        <button type="button" wire:click="proceedToNifas" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        <button type="button" wire:click="proceedToNifas"
+                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
                             Lanjut ke Nifas (Tanpa Data Salin)
                         </button>
                         {{-- Assuming we have a route for historical delivery entry or similar, for now just close --}}
-                         <button type="button" wire:click="$set('showNifasWarning', false)" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        <button type="button" wire:click="$set('showNifasWarning', false)"
+                            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                             Batal
                         </button>
                     </div>

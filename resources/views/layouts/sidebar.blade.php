@@ -29,16 +29,7 @@
             <span x-show="open" class="font-medium">Dashboard</span>
         </a>
 
-        <!-- Pendaftaran -->
-        @can('viewAny', App\Models\Patient::class)
-            <a href="{{ route('patients.create') }}"
-                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('patients.create') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
-                <x-heroicon-o-queue-list class="w-6 h-6 flex-shrink-0" />
-                <span x-show="open" class="font-medium">Pendaftaran</span>
-            </a>
-        @endcan
-
-        <!-- Pasien -->
+        <!-- Data Pasien (Universal) -->
         @can('viewAny', App\Models\Patient::class)
             <a href="{{ route('patients.index') }}"
                 class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('patients.*') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
@@ -47,30 +38,54 @@
             </a>
         @endcan
 
-        <!-- Kunjungan ANC -->
+        <!-- Divider -->
+        <div x-show="open" class="border-t border-blue-700 my-4"></div>
+        <div x-show="open" class="px-3 py-2">
+            <p class="text-xs font-semibold text-blue-200 uppercase tracking-wider">Layanan Medis</p>
+        </div>
+
+        <!-- Pendaftaran (Registration Desk) -->
+        @can('viewAny', App\Models\Patient::class)
+            <a href="{{ route('registration-desk') }}"
+                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('registration-desk') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
+                <x-heroicon-o-queue-list class="w-6 h-6 flex-shrink-0" />
+                <span x-show="open" class="font-medium">Pendaftaran</span>
+            </a>
+        @endcan
+
+        <!-- Poli Umum (NEW) -->
+        @can('viewAny', App\Models\Patient::class)
+            <a href="{{ route('general-visits.index') }}"
+                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('general-visits.*') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
+                <x-heroicon-o-clipboard-document-check class="w-6 h-6 flex-shrink-0" />
+                <span x-show="open" class="font-medium">Poli Umum</span>
+            </a>
+        @endcan
+
+        <!-- Poli KIA -->
         @can('viewAny', App\Models\AncVisit::class)
             <a href="{{ route('anc-visits.index') }}"
                 class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('anc-visits.*') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
                 <x-heroicon-o-clipboard-document-list class="w-6 h-6 flex-shrink-0" />
-                <span x-show="open" class="font-medium">Kunjungan ANC</span>
+                <span x-show="open" class="font-medium">Poli KIA</span>
             </a>
         @endcan
 
-        <!-- Imunisasi Anak -->
-        @can('viewAny', App\Models\Patient::class)
-            <a href="{{ route('imunisasi.index') }}"
-                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('imunisasi.*') || request()->routeIs('children.*') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
-                <x-heroicon-o-heart class="w-6 h-6 flex-shrink-0" />
-                <span x-show="open" class="font-medium">Imunisasi Anak</span>
-            </a>
-        @endcan
-
-        <!-- KB (Keluarga Berencana) -->
+        <!-- Poli KB -->
         @can('create', App\Models\KbVisit::class)
             <a href="{{ route('kb.index') }}"
                 class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('kb.*') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
                 <x-heroicon-o-check-circle class="w-6 h-6 flex-shrink-0" />
-                <span x-show="open" class="font-medium">KB (Keluarga Berencana)</span>
+                <span x-show="open" class="font-medium">Poli KB</span>
+            </a>
+        @endcan
+
+        <!-- Poli Anak (Imunisasi) -->
+        @can('viewAny', App\Models\Patient::class)
+            <a href="{{ route('imunisasi.index') }}"
+                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('imunisasi.*') || request()->routeIs('children.*') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
+                <x-heroicon-o-heart class="w-6 h-6 flex-shrink-0" />
+                <span x-show="open" class="font-medium">Poli Anak</span>
             </a>
         @endcan
 

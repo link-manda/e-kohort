@@ -184,8 +184,8 @@ class PatientRegistration extends Component
         // Flash success message
         session()->flash('success', "Pasien {$patient->name} berhasil didaftarkan dengan No. RM: {$patient->no_rm}");
 
-        // Redirect after 2 seconds to patient detail
-        $this->dispatch('patient-registered', patientId: $patient->id);
+        // Redirect to registration desk with patient pre-selected
+        return redirect()->route('registration-desk', ['patient_id' => $patient->id]);
     }
 
     private function generateNoRM(): string
