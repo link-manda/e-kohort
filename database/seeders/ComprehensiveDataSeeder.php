@@ -387,7 +387,7 @@ class ComprehensiveDataSeeder extends Seeder
                         'patient_id' => $parent->id,
                         'nik' => rand(0, 1) ? '5103' . str_pad(rand(100000000000, 999999999999), 12, '0', STR_PAD_LEFT) : null,
                         'no_rm' => 'ANAK-2026-' . str_pad($childCounter, 4, '0', STR_PAD_LEFT),
-                        'name' => $this->getChildName(),
+                        'name' => $this->getChildName($gender),  // Pass gender to getChildName
                         'gender' => $gender,
                         'dob' => $dob,
                         'pob' => ['Denpasar', 'Badung', 'Gianyar'][array_rand(['Denpasar', 'Badung', 'Gianyar'])],
@@ -425,25 +425,32 @@ class ComprehensiveDataSeeder extends Seeder
         ]);
     }
 
-    // Helper methods for names
+    // Helper methods for names - Improved for Bali authenticity
     private function getFemaleName()
     {
-        $names = ['Siti', 'Dewi', 'Sri', 'Wayan', 'Kadek', 'Komang', 'Ketut', 'Ni Luh', 'Ni Made', 'Ni Nyoman',
-                  'Ani', 'Rina', 'Maya', 'Lestari', 'Putri', 'Ayu'];
-        return $names[array_rand($names)] . ' ' . ['Lestari', 'Sari', 'Puspita', 'Permata', 'Anggraini'][array_rand(['Lestari', 'Sari', 'Puspita', 'Permata', 'Anggraini'])];
+        $prefixes = ['Ni Wayan', 'Ni Made', 'Ni Nyoman', 'Ni Ketut', 'Ni Putu', 'Ni Kadek', 'Ni Komang'];
+        $lastNames = ['Puspa', 'Jayanti', 'Lestari', 'Dewi', 'Sari', 'Anggraini', 'Permata', 'Suci', 'Ratna', 'Indah'];
+        return $prefixes[array_rand($prefixes)] . ' ' . $lastNames[array_rand($lastNames)];
     }
 
     private function getMaleName()
     {
-        $names = ['I Wayan', 'I Kadek', 'I Komang', 'I Ketut', 'I Made', 'I Nyoman', 'Putu', 'Gede',
-                  'Budi', 'Agung', 'Adi', 'Rudi', 'Eko', 'Dedi'];
-        return $names[array_rand($names)] . ' ' . ['Suardana', 'Wijaya', 'Kusuma', 'Pratama', 'Santosa'][array_rand(['Suardana', 'Wijaya', 'Kusuma', 'Pratama', 'Santosa'])];
+        $prefixes = ['I Wayan', 'I Made', 'I Nyoman', 'I Ketut', 'I Putu', 'I Kadek', 'I Komang'];
+        $lastNames = ['Suardana', 'Wijaya', 'Pratama', 'Santosa', 'Kusuma', 'Adnyana', 'Arya', 'Budiasa', 'Mahendra', 'Suryawan'];
+        return $prefixes[array_rand($prefixes)] . ' ' . $lastNames[array_rand($lastNames)];
     }
 
-    private function getChildName()
+    private function getChildName($gender)
     {
-        $names = ['Putu', 'Made', 'Komang', 'Ketut', 'Anak Agung', 'Gusti', 'Bagus', 'Ayu', 'Gek', 'Kadek'];
-        return $names[array_rand($names)] . ' ' . ['Arya', 'Satya', 'Cahya', 'Devi', 'Sari'][array_rand(['Arya', 'Satya', 'Cahya', 'Devi', 'Sari'])];
+        if ($gender === 'P') {
+            $prefixes = ['Ni Wayan', 'Ni Made', 'Ni Nyoman', 'Ni Ketut', 'Gusti Ayu', 'Anak Agung Ayu', 'Gek'];
+            $lastNames = ['Dewi', 'Sari', 'Cahya', 'Puspa', 'Lestari', 'Ratna', 'Suci'];
+            return $prefixes[array_rand($prefixes)] . ' ' . $lastNames[array_rand($lastNames)];
+        } else {
+            $prefixes = ['I Wayan', 'I Made', 'I Nyoman', 'I Ketut', 'Gusti Agung', 'Anak Agung', 'Bagus'];
+            $lastNames = ['Arya', 'Satya', 'Cahya', 'Aditya', 'Pradana', 'Mahendra', 'Surya'];
+            return $prefixes[array_rand($prefixes)] . ' ' . $lastNames[array_rand($lastNames)];
+        }
     }
 
     private function getRandomComplaint()

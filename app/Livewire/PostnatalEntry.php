@@ -13,6 +13,13 @@ class PostnatalEntry extends Component
     public $isEditMode = false;
     public $errorMessage;
 
+    // External Birth Modal
+    public $showExternalBirthModal = false;
+    public $external_delivery_datetime = '';
+    public $external_baby_gender = '';
+    public $external_baby_weight = '';
+    public $external_birth_place = '';
+
     // Form fields
     public $visit_date = '';
     public $visit_code = '';
@@ -75,10 +82,18 @@ class PostnatalEntry extends Component
         // Check for error message from session
         $this->errorMessage = session('error');
 
-        // Check if pregnancy is delivered
-        if ($this->pregnancy->status !== 'Lahir') {
-            $this->errorMessage = 'Kunjungan nifas hanya dapat dilakukan setelah persalinan tercatat.';
-            return redirect()->route('patients.show', $pregnancy->patient_id);
+        // Check if pregnancy needs external birth data entry
+        // Show modal if:
+        // 1. No delivery_date at all, OR
+        // 2. Has delivery_date but NO DeliveryRecord (incomplete/dummy data from old system)
+        $needsExternalBirthData = !$this->pregnancy->delivery_date
+            || (!$this->pregnancy->deliveryRecord && !$this->pregnancy->is_external);
+
+        if ($needsExternalBirthData) {
+            // Show modal for external birth data entry
+            $this->showExternalBirthModal = true;
+            $this->external_delivery_datetime = now()->format('Y-m-d\TH:i');
+            return;
         }
 
         // Edit mode
@@ -322,6 +337,89 @@ class PostnatalEntry extends Component
     {
         // Force refresh of visits data
         $this->existingVisits = $this->pregnancy->postnatalVisits()->orderBy('visit_date')->get();
+    }
+
+    public function saveExternalBirth()
+    {
+        // Validate external birth form
+        $this->validate([
+            'external_delivery_datetime' => 'required|date',
+            'external_baby_gender' => 'required|in:L,P',
+            'external_baby_weight' => 'required|numeric|min:500|max:6000',
+            'external_birth_place' => 'nullable|string|max:255',
+        ], [
+            'external_delivery_datetime.required' => 'Tanggal & jam lahir wajib diisi',
+            'external_baby_gender.required' => 'Jenis kelamin bayi wajib dipilih',
+            'external_baby_weight.required' => 'Berat bayi wajib diisi',
+            'external_baby_weight.min' => 'Berat bayi minimal 500 gram',
+            'external_baby_weight.max' => 'Berat bayi maksimal 6000 gram',
+        ]);
+
+        try {
+            \DB::beginTransaction();
+
+            $deliveryDate = \Carbon\Carbon::parse($this->external_delivery_datetime);
+            $hpht = $deliveryDate->copy()->subDays(280); // Auto-calculate HPHT (40 weeks back)
+
+            // 1. Create or Update Pregnancy record
+            $this->pregnancy->update([
+                'hpht' => $hpht,
+                'hpl' => $deliveryDate, // Set HPL = delivery date
+                'status' => 'Lahir',
+                'is_external' => true,
+                'delivery_date' => $deliveryDate,
+                'delivery_method' => 'Normal', // Default assumption
+                'place_of_birth' => $this->external_birth_place ?: 'Rumah Sakit Luar',
+                'birth_attendant' => 'Bidan/Dokter (External)',
+                'baby_gender' => $this->external_baby_gender,
+                'outcome' => 'Hidup',
+            ]);
+
+            // 2. Auto-create Child record
+            $lastChild = \App\Models\Child::orderBy('id', 'desc')->first();
+            $nextChildNumber = $lastChild ? ((int) substr($lastChild->no_rm, -4)) + 1 : 1;
+            $childNoRm = 'ANAK-' . date('Y') . '-' . str_pad($nextChildNumber, 4, '0', STR_PAD_LEFT);
+
+            $babyName = 'Bayi ' . $this->pregnancy->patient->name;
+
+            \App\Models\Child::create([
+                'patient_id' => $this->pregnancy->patient_id,
+                'no_rm' => $childNoRm,
+                'name' => $babyName,
+                'gender' => $this->external_baby_gender,
+                'dob' => $deliveryDate,
+                'pob' => $this->external_birth_place ?: 'External',
+                'birth_weight' => $this->external_baby_weight,
+                'birth_height' => null, // Not required for external birth
+                'status' => 'Hidup',
+            ]);
+
+            \DB::commit();
+
+            // Close modal and reload component
+            $this->showExternalBirthModal = false;
+
+            // Reinitialize form for postnatal entry
+            $this->visit_date = now()->format('Y-m-d');
+            $this->checkVisitDateValidity();
+
+            session()->flash('success', 'Data persalinan luar berhasil disimpan. Silakan lanjutkan input Nifas.');
+
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            $this->errorMessage = 'Gagal menyimpan data: ' . $e->getMessage();
+        }
+    }
+
+    public function cancelExternalBirth()
+    {
+        // Safe check for patient_id - if pregnancy exists use it, otherwise go to dashboard
+        if ($this->pregnancy && $this->pregnancy->patient_id) {
+            return redirect()->route('patients.show', $this->pregnancy->patient_id);
+        }
+
+        // Fallback to dashboard if pregnancy is NULL
+        return redirect()->route('dashboard')->with('info', 'Data pregnancy tidak ditemukan.');
     }
 
     public function render()

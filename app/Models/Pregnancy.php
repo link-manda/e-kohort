@@ -32,6 +32,7 @@ class Pregnancy extends Model
         'outcome',
         'baby_gender',
         'complications',
+        'is_external', // Add for external birth tracking
     ];
 
     /**

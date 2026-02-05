@@ -3,19 +3,174 @@
     // State Alpine untuk modal dihapus, tidak diperlukan lagi
 }"
     x-on:postnatal-visit-saved.window="activeTab = 'history'">
+
+    <!-- MODAL OVERLAY: External Birth Form -->
+    @if ($showExternalBirthModal)
+        <div class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <!-- Background overlay -->
+            <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+
+                <!-- Modal panel -->
+                <div
+                    class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+                    <!-- Header -->
+                    <div class="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-5">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-white bg-opacity-20">
+                                <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white" id="modal-title">
+                                    Konfirmasi Riwayat Persalinan
+                                </h3>
+                                <p class="text-sm text-blue-100 mt-1">Data belum tercatat di sistem ini</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="bg-white px-6 py-5">
+                        <!-- Warning Message -->
+                        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded-r-lg">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd"
+                                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-yellow-700">
+                                        <strong>Pasien ini belum tercatat melahirkan di klinik ini.</strong><br>
+                                        Jika pasien melahirkan di tempat lain, mohon lengkapi data persalinan luar
+                                        sebelum mengisi data Nifas.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Form -->
+                        <form wire:submit.prevent="saveExternalBirth" class="space-y-5">
+                            <!-- Tanggal & Jam Lahir -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    <span class="text-red-500">*</span> Tanggal & Jam Lahir
+                                </label>
+                                <input type="datetime-local" wire:model="external_delivery_datetime"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    required>
+                                @error('external_delivery_datetime')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Jenis Kelamin Bayi -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    <span class="text-red-500">*</span> Jenis Kelamin Bayi
+                                </label>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <label
+                                        class="flex items-center justify-center px-4 py-3 border-2 rounded-lg cursor-pointer transition-all"
+                                        :class="$wire.external_baby_gender === 'L' ? 'border-blue-500 bg-blue-50' :
+                                            'border-gray-300 hover:border-blue-300'">
+                                        <input type="radio" wire:model="external_baby_gender" value="L"
+                                            class="sr-only">
+                                        <span class="text-2xl mr-2">👦</span>
+                                        <span class="font-medium">Laki-laki</span>
+                                    </label>
+                                    <label
+                                        class="flex items-center justify-center px-4 py-3 border-2 rounded-lg cursor-pointer transition-all"
+                                        :class="$wire.external_baby_gender === 'P' ? 'border-pink-500 bg-pink-50' :
+                                            'border-gray-300 hover:border-pink-300'">
+                                        <input type="radio" wire:model="external_baby_gender" value="P"
+                                            class="sr-only">
+                                        <span class="text-2xl mr-2">👧</span>
+                                        <span class="font-medium">Perempuan</span>
+                                    </label>
+                                </div>
+                                @error('external_baby_gender')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Berat Bayi -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    <span class="text-red-500">*</span> Berat Bayi (gram)
+                                </label>
+                                <input type="number" wire:model="external_baby_weight" min="500" max="6000"
+                                    step="10" placeholder="Contoh: 3200"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    required>
+                                @error('external_baby_weight')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Tempat Bersalin (Opsional) -->
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Tempat Bersalin <span class="text-gray-400 text-xs">(Opsional)</span>
+                                </label>
+                                <input type="text" wire:model="external_birth_place"
+                                    placeholder="Contoh: RSUP Sanglah"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                                @error('external_birth_place')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="flex gap-3 pt-4">
+                                <button type="button" wire:click="cancelExternalBirth"
+                                    class="flex-1 px-5 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                                    Batal
+                                </button>
+                                <button type="submit"
+                                    class="flex-1 px-5 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors shadow-lg">
+                                    💾 Simpan & Lanjut Nifas
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Header -->
     <div class="mb-6">
         <div class="flex items-center gap-4 mb-2">
-            <a href="{{ route('patients.show', $pregnancy->patient_id) }}"
-                class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                </svg>
-            </a>
+            @if ($pregnancy && $pregnancy->patient_id)
+                <a href="{{ route('patients.show', $pregnancy->patient_id) }}"
+                    class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                </a>
+            @else
+                <a href="{{ route('dashboard') }}" class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                </a>
+            @endif
             <div>
                 <h1 class="text-2xl font-bold text-gray-900">🤱 Kunjungan Nifas</h1>
-                <p class="text-sm text-gray-500 mt-1">{{ $pregnancy->patient->name }} - {{ $pregnancy->gravida }}</p>
+                <p class="text-sm text-gray-500 mt-1">
+                    {{ $pregnancy?->patient?->name ?? 'Pasien Baru' }} - {{ $pregnancy?->gravida ?? 'G?' }}
+                </p>
             </div>
         </div>
     </div>
@@ -42,10 +197,17 @@
                 <div>
                     <h3 class="text-lg font-bold text-red-900 mb-1">Tidak Dapat Melanjutkan</h3>
                     <p class="text-red-700">{{ $errorMessage }}</p>
-                    <a href="{{ route('patients.show', $pregnancy->patient_id) }}"
-                        class="inline-block mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                        Kembali ke Detail Pasien
-                    </a>
+                    @if ($pregnancy && $pregnancy->patient_id)
+                        <a href="{{ route('patients.show', $pregnancy->patient_id) }}"
+                            class="inline-block mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                            Kembali ke Detail Pasien
+                        </a>
+                    @else
+                        <a href="{{ route('dashboard') }}"
+                            class="inline-block mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                            Kembali ke Dashboard
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -76,8 +238,8 @@
                     <div class="space-y-6">
                         <!-- Alert Info -->
                         <div class="bg-blue-50 border-2 border-blue-500 rounded-xl p-4 flex items-start gap-3">
-                            <svg class="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
+                            <svg class="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
@@ -115,7 +277,8 @@
                         @endif
 
                         <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-pink-600" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
                                 </path>
@@ -159,7 +322,8 @@
                         </div>
 
                         <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
                                 </path>

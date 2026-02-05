@@ -11,7 +11,7 @@ class PatientQueueEntry extends Component
     public $results = [];
     public $selectedPatient = null;
     public $selectedPatientId = null;
-    public $showNifasWarning = false;
+    // $showNifasWarning removed - no longer needed
 
     public function mount($patient_id = null)
     {
@@ -49,7 +49,7 @@ class PatientQueueEntry extends Component
     {
         $this->selectedPatient = null;
         $this->selectedPatientId = null;
-        $this->showNifasWarning = false;
+        // $showNifasWarning removed
     }
 
     public function selectService($service)
@@ -99,19 +99,21 @@ class PatientQueueEntry extends Component
                 }
 
             case 'nifas':
-                // Poli Nifas - check if patient has delivered pregnancy
+                // Poli Nifas - find pregnancy with status Lahir (regardless of delivery_date)
+                // Let PostnatalEntry component handle external birth modal if delivery_date is NULL
                 $deliveredPregnancy = $this->selectedPatient->pregnancies()
                     ->where('status', 'Lahir')
-                    ->whereNotNull('delivery_date')
                     ->latest('delivery_date')
                     ->first();
 
                 if ($deliveredPregnancy) {
-                    // Has delivery record, proceed to postnatal visit
+                    // Has pregnancy with status 'Lahir', proceed to postnatal visit
+                    // PostnatalEntry will show external birth modal if delivery_date is NULL
                     return redirect()->route('pregnancies.postnatal', ['pregnancy' => $deliveredPregnancy->id]);
                 } else {
-                    // No delivery record found, show warning
-                    $this->showNifasWarning = true;
+                    // No pregnancy with status 'Lahir' at all
+                    // Need to create pregnancy first or patient never gave birth
+                    session()->flash('error', 'Pasien tidak memiliki riwayat kehamilan dengan status Lahir. Silakan daftarkan ke Poli KIA terlebih dahulu.');
                     return;
                 }
 
@@ -162,29 +164,10 @@ class PatientQueueEntry extends Component
         }
     }
 
-    public function proceedToNifas()
-    {
-        // Create a historical/placeholder pregnancy record for transferred patients
-        // Use reasonable estimates since exact dates unknown
-        $estimatedDeliveryDate = now()->subDays(7); // Assume delivery was 1 week ago
-        $estimatedHPL = $estimatedDeliveryDate; // HPL = delivery date for completed pregnancy
-
-        $pregnancy = \App\Models\Pregnancy::create([
-            'patient_id' => $this->selectedPatientId,
-            'status' => 'Lahir',
-            'gravida' => 'G1P1A0', // Assume at least 1 birth (can be updated later)
-            'hpht' => $estimatedDeliveryDate->copy()->subMonths(9), // Approximate HPHT (9 months before delivery)
-            'hpl' => $estimatedHPL,
-            'delivery_date' => $estimatedDeliveryDate,
-            'delivery_method' => 'Normal', // Default assumption (ENUM: Normal, Caesar/Sectio, Vakum)
-            'delivery_location' => 'Luar Faskes Ini', // Indicate this is transferred patient
-            'notes' => 'Data persalinan transfer dari luar. Harap update dengan data yang akurat.',
-        ]);
-
-        session()->flash('warning', 'Pasien ini tidak memiliki riwayat persalinan di sistem. Data placeholder telah dibuat. Harap lengkapi data yang sebenarnya.');
-
-        return redirect()->route('pregnancies.postnatal', ['pregnancy' => $pregnancy->id]);
-    }
+    /**
+     * Method proceedToNifas removed - no longer needed.
+     * PostnatalEntry component now handles external birth with proper modal.
+     */
 
     public function render()
     {

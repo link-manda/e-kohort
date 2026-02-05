@@ -93,7 +93,7 @@ class PatientController extends Controller
 
         // Get child records (if exists)
         $children = \App\Models\Child::where('patient_id', $patient->id)
-            ->with(['childVisits', 'immunizationActions'])
+            ->with(['childVisits.immunizationActions'])
             ->get();
 
         return view('patients.show', compact('patient', 'kbVisits', 'children'));

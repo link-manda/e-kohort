@@ -84,4 +84,16 @@ class PostnatalVisit extends Model
             default => false,
         };
     }
+
+    /**
+     * Days since delivery for this visit.
+     */
+    public function getDaysPostPartumAttribute(): ?int
+    {
+        if (!$this->visit_date || !$this->pregnancy || !$this->pregnancy->delivery_date) {
+            return null;
+        }
+
+        return $this->pregnancy->delivery_date->diffInDays($this->visit_date);
+    }
 }

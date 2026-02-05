@@ -77,7 +77,7 @@
                                                     {{ $visit->visit_date->format('d/m/Y') }}
                                                 </p>
                                                 <p class="text-xs text-gray-600">
-                                                    UK {{ $visit->gestational_age_weeks ?? '-' }} minggu
+                                                    UK {{ $visit->gestational_age ?? '-' }} minggu
                                                 </p>
                                             </div>
                                         </div>

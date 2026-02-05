@@ -18,8 +18,8 @@ class UserSeeder extends Seeder
         $faker = FakerFactory::create();
 
         $defaults = [
-            ['name' => 'Admin', 'email' => 'yanti@e-kohort.com', 'password' => 'password', 'roles' => ['Admin']],
-            ['name' => 'Bidan Koordinator', 'email' => 'nia@e-kohort.com', 'password' => 'password', 'roles' => ['Bidan Koordinator']],
+            ['name' => 'Lestari Yanti A.Md,keb', 'email' => 'yanti@e-kohort.com', 'password' => 'password', 'roles' => ['Admin']],
+            ['name' => 'Ns. Nia Maharani, S.Kep', 'email' => 'nia@e-kohort.com', 'password' => 'password', 'roles' => ['Bidan Koordinator']],
             ['name' => 'Bidan Desa', 'email' => 'diah@e-kohort.com', 'password' => 'password', 'roles' => ['Bidan Desa']],
         ];
 

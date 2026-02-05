@@ -53,13 +53,40 @@
                                 </p>
                             </div>
                         </div>
+                    @else
+                        <!-- No delivery record - show info and button -->
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                            <div class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none"
+                                    stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <div class="flex-1">
+                                    <p class="text-sm text-yellow-800 font-medium">Data persalinan detail belum tercatat
+                                        di sistem</p>
+                                    <p class="text-xs text-yellow-700 mt-1">Mungkin pasien melahirkan di tempat lain
+                                        (RS/Klinik Luar)</p>
+                                </div>
+                            </div>
+                        </div>
                     @endif
+
+                    <!-- Action Button: Add Postnatal Visit -->
+                    <div class="border-t border-gray-200 pt-4 mb-4">
+                        <a href="{{ route('pregnancies.postnatal', $pregnancy->id) }}"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-lg transition-colors text-sm">
+                            <x-heroicon-o-plus class="w-4 h-4" />
+                            Tambah Kunjungan Nifas
+                        </a>
+                    </div>
 
                     <!-- Postnatal Visits -->
                     @if ($pregnancy->postnatalVisits && $pregnancy->postnatalVisits->count() > 0)
                         <div class="border-t border-gray-200 pt-4">
                             <p class="text-sm font-semibold text-gray-700 mb-3">Kunjungan Nifas
-                                ({{ $pregnancy->postnatalVisits->count() }} kali):</p>
+                                ({{ $pregnancy->postnatalVisits->count() }} kali)
+                                :</p>
                             <div class="space-y-2">
                                 @foreach ($pregnancy->postnatalVisits->sortByDesc('visit_date') as $visit)
                                     <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
