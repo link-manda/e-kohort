@@ -1,4 +1,7 @@
 <x-dashboard-layout>
+    <!-- Breadcrumb -->
+    <x-breadcrumb :items="[['label' => 'Data Pasien', 'url' => route('patients.index')], ['label' => $patient->name, 'url' => route('patients.show', $patient)], ['label' => 'Edit']]" />
+
     <x-slot name="header">
         <div class="flex items-center justify-between">
             <div>

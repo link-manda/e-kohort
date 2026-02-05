@@ -18,10 +18,10 @@
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
         <!-- Total -->
         <div wire:click="$set('riskFilter', 'all')"
-            class="bg-white rounded-lg shadow-sm border-2 {{ $riskFilter === 'all' ? 'border-blue-500' : 'border-gray-200' }} p-4 cursor-pointer hover:shadow-md transition-shadow">
+            class="bg-white rounded-xl shadow-sm border-2 {{ $riskFilter === 'all' ? 'border-blue-500' : 'border-gray-200' }} p-6 cursor-pointer hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600">Total Kunjungan</p>
@@ -40,7 +40,7 @@
 
         <!-- Ekstrem -->
         <div wire:click="$set('riskFilter', 'ekstrem')"
-            class="bg-white rounded-lg shadow-sm border-2 {{ $riskFilter === 'ekstrem' ? 'border-red-500' : 'border-gray-200' }} p-4 cursor-pointer hover:shadow-md transition-shadow">
+            class="bg-white rounded-xl shadow-sm border-2 {{ $riskFilter === 'ekstrem' ? 'border-red-500' : 'border-gray-200' }} p-6 cursor-pointer hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600">Risiko Ekstrem</p>
@@ -58,7 +58,7 @@
 
         <!-- Tinggi -->
         <div wire:click="$set('riskFilter', 'tinggi')"
-            class="bg-white rounded-lg shadow-sm border-2 {{ $riskFilter === 'tinggi' ? 'border-orange-500' : 'border-gray-200' }} p-4 cursor-pointer hover:shadow-md transition-shadow">
+            class="bg-white rounded-xl shadow-sm border-2 {{ $riskFilter === 'tinggi' ? 'border-orange-500' : 'border-gray-200' }} p-6 cursor-pointer hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600">Risiko Tinggi</p>
@@ -76,7 +76,7 @@
 
         <!-- Rendah -->
         <div wire:click="$set('riskFilter', 'rendah')"
-            class="bg-white rounded-lg shadow-sm border-2 {{ $riskFilter === 'rendah' ? 'border-green-500' : 'border-gray-200' }} p-4 cursor-pointer hover:shadow-md transition-shadow">
+            class="bg-white rounded-xl shadow-sm border-2 {{ $riskFilter === 'rendah' ? 'border-green-500' : 'border-gray-200' }} p-6 cursor-pointer hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600">Risiko Rendah</p>
@@ -94,7 +94,7 @@
     </div>
 
     <!-- Filters -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <!-- Search -->
             <div class="md:col-span-2">
@@ -160,7 +160,7 @@
                 <table class="w-full">
                     <thead class="bg-gray-50 border-b border-gray-200">
                         <tr>
-                            <th class="px-4 py-3 text-left">
+                            <th class="px-6 py-3 text-left">
                                 <button wire:click="sortBy('visit_code')"
                                     class="flex items-center gap-1 text-xs font-semibold text-gray-700 uppercase hover:text-blue-600">
                                     Kode
@@ -179,7 +179,7 @@
                                     @endif
                                 </button>
                             </th>
-                            <th class="px-4 py-3 text-left">
+                            <th class="px-6 py-3 text-left">
                                 <button wire:click="sortBy('visit_date')"
                                     class="flex items-center gap-1 text-xs font-semibold text-gray-700 uppercase hover:text-blue-600">
                                     Tanggal
@@ -198,11 +198,11 @@
                                     @endif
                                 </button>
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Pasien</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">UK</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Indikator
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Pasien</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">UK</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Indikator
                             </th>
-                            <th class="px-4 py-3 text-left">
+                            <th class="px-6 py-3 text-left">
                                 <button wire:click="sortBy('risk_category')"
                                     class="flex items-center gap-1 text-xs font-semibold text-gray-700 uppercase hover:text-blue-600">
                                     Risiko
@@ -221,14 +221,14 @@
                                     @endif
                                 </button>
                             </th>
-                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">Aksi</th>
+                            <th class="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         @foreach ($visits as $visit)
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <!-- Visit Code -->
-                                <td class="px-4 py-3">
+                                <td class="px-6 py-4">
                                     <span
                                         class="inline-flex items-center px-3 py-1 text-sm font-bold rounded-full
                                         {{ in_array($visit->visit_code, ['K1', 'K2']) ? 'bg-blue-100 text-blue-800' : '' }}
@@ -239,14 +239,14 @@
                                 </td>
 
                                 <!-- Date -->
-                                <td class="px-4 py-3">
+                                <td class="px-6 py-4">
                                     <p class="text-sm font-medium text-gray-900">
                                         {{ $visit->visit_date->locale('id')->isoFormat('D MMM YYYY') }}</p>
                                     <p class="text-xs text-gray-500">{{ $visit->visit_date->diffForHumans() }}</p>
                                 </td>
 
                                 <!-- Patient -->
-                                <td class="px-4 py-3">
+                                <td class="px-6 py-4">
                                     @if ($visit->pregnancy && $visit->pregnancy->patient)
                                         <p class="text-sm font-semibold text-gray-900">
                                             {{ $visit->pregnancy->patient->name }}</p>
@@ -257,13 +257,13 @@
                                 </td>
 
                                 <!-- UK -->
-                                <td class="px-4 py-3">
+                                <td class="px-6 py-4">
                                     <span class="text-sm font-semibold text-gray-900">{{ $visit->gestational_age }}
                                         mg</span>
                                 </td>
 
                                 <!-- Indicators -->
-                                <td class="px-4 py-3">
+                                <td class="px-6 py-4">
                                     <div class="space-y-1 text-xs">
                                         <p class="flex items-center gap-1">
                                             <span class="font-medium text-gray-600">MAP:</span>
@@ -285,7 +285,7 @@
                                 </td>
 
                                 <!-- Risk -->
-                                <td class="px-4 py-3">
+                                <td class="px-6 py-4">
                                     <span
                                         class="inline-flex items-center px-3 py-1 text-sm font-bold rounded-full
                                         {{ $visit->risk_category === 'Ekstrem' ? 'bg-red-100 text-red-800' : '' }}
@@ -296,7 +296,7 @@
                                 </td>
 
                                 <!-- Actions -->
-                                <td class="px-4 py-3">
+                                <td class="px-6 py-4">
                                     <div class="flex items-center justify-center gap-2">
                                         <a href="{{ route('anc-visits.show', $visit->id) }}"
                                             class="p-1.5 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded transition-colors"

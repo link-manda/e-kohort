@@ -84,7 +84,7 @@ class PatientQueueEntry extends Component
 
             case 'kb':
                 // KB - always available (can be used by any woman)
-                return redirect()->route('kb.entry') . '?patient_id=' . $this->selectedPatientId;
+                return redirect()->route('kb.entry', ['patient_id' => $this->selectedPatientId]);
 
             case 'child':
                 // Imunisasi Anak - check if there's a child record
@@ -95,7 +95,7 @@ class PatientQueueEntry extends Component
                     return redirect()->route('children.immunization', ['child' => $child->id]);
                 } else {
                     // Need to create child record first
-                    return redirect()->route('children.register') . '?patient_id=' . $this->selectedPatientId;
+                    return redirect()->route('children.register', ['patient_id' => $this->selectedPatientId]);
                 }
 
             case 'nifas':

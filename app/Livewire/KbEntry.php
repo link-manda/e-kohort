@@ -74,6 +74,13 @@ class KbEntry extends Component
         $this->patient_search = '';
     }
 
+    public function resetPatientSelection()
+    {
+        $this->patient_id = null;
+        $this->patient = null;
+        $this->patient_search = '';
+    }
+
     // Scheduling
     public $next_visit_date;
     public $midwife_name;
@@ -103,10 +110,17 @@ class KbEntry extends Component
         'midwife_name' => 'required|string|max:100',
     ];
 
-    public function mount()
+    public function mount($patient_id = null)
     {
         $this->visit_date = now()->format('Y-m-d\TH:i');
         $this->midwife_name = auth()->user()->name;
+
+        // Auto-select patient if coming from registration desk
+        if ($patient_id || request()->query('patient_id')) {
+            $patientId = $patient_id ?? request()->query('patient_id');
+            $this->patient_id = $patientId;
+            $this->patient = Patient::find($patientId);
+        }
     }
 
     /**
@@ -293,7 +307,8 @@ class KbEntry extends Component
         KbVisit::create($validated);
 
         session()->flash('success', 'Data KB berhasil disimpan!');
-        $this->resetForm();
+
+        return redirect()->route('kb.index');
     }
 
     /**

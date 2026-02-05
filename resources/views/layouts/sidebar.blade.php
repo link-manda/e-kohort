@@ -15,7 +15,7 @@
                 <p class="text-xs text-blue-200">Klinik Bidan</p>
             </div>
         </div>
-        <button @click="open = !open" class="p-2 rounded-lg hover:bg-green-600 transition-colors">
+        <button @click="open = !open" class="p-2 rounded-lg hover:bg-cyan-600 transition-colors">
             <x-heroicon-o-bars-3 class="w-5 h-5" />
         </button>
     </div>
@@ -24,7 +24,7 @@
     <nav class="px-3 py-6 space-y-2 flex-1 overflow-y-auto pr-3">
         <!-- Dashboard -->
         <a href="{{ route('dashboard') }}"
-            class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('dashboard') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
+            class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('dashboard') ? 'bg-cyan-600 shadow-lg' : 'hover:bg-cyan-600/60' }}">
             <x-heroicon-o-home class="w-6 h-6 flex-shrink-0" />
             <span x-show="open" class="font-medium">Dashboard</span>
         </a>
@@ -32,7 +32,7 @@
         <!-- Data Pasien (Universal) -->
         @can('viewAny', App\Models\Patient::class)
             <a href="{{ route('patients.index') }}"
-                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('patients.*') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
+                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('patients.*') ? 'bg-cyan-600 shadow-lg' : 'hover:bg-cyan-600/60' }}">
                 <x-heroicon-o-user-group class="w-6 h-6 flex-shrink-0" />
                 <span x-show="open" class="font-medium">Data Pasien</span>
             </a>
@@ -47,7 +47,7 @@
         <!-- Pendaftaran (Registration Desk) -->
         @can('viewAny', App\Models\Patient::class)
             <a href="{{ route('registration-desk') }}"
-                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('registration-desk') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
+                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('registration-desk') ? 'bg-cyan-600 shadow-lg' : 'hover:bg-cyan-600/60' }}">
                 <x-heroicon-o-queue-list class="w-6 h-6 flex-shrink-0" />
                 <span x-show="open" class="font-medium">Pendaftaran</span>
             </a>
@@ -56,7 +56,7 @@
         <!-- Poli Umum (NEW) -->
         @can('viewAny', App\Models\Patient::class)
             <a href="{{ route('general-visits.index') }}"
-                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('general-visits.*') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
+                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('general-visits.*') ? 'bg-cyan-600 shadow-lg' : 'hover:bg-cyan-600/60' }}">
                 <x-heroicon-o-clipboard-document-check class="w-6 h-6 flex-shrink-0" />
                 <span x-show="open" class="font-medium">Poli Umum</span>
             </a>
@@ -65,7 +65,7 @@
         <!-- Poli KIA -->
         @can('viewAny', App\Models\AncVisit::class)
             <a href="{{ route('anc-visits.index') }}"
-                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('anc-visits.*') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
+                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('anc-visits.*') ? 'bg-cyan-600 shadow-lg' : 'hover:bg-cyan-600/60' }}">
                 <x-heroicon-o-clipboard-document-list class="w-6 h-6 flex-shrink-0" />
                 <span x-show="open" class="font-medium">Poli KIA</span>
             </a>
@@ -74,7 +74,7 @@
         <!-- Poli KB -->
         @can('create', App\Models\KbVisit::class)
             <a href="{{ route('kb.index') }}"
-                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('kb.*') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
+                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('kb.*') ? 'bg-cyan-600 shadow-lg' : 'hover:bg-cyan-600/60' }}">
                 <x-heroicon-o-check-circle class="w-6 h-6 flex-shrink-0" />
                 <span x-show="open" class="font-medium">Poli KB</span>
             </a>
@@ -83,7 +83,7 @@
         <!-- Poli Anak (Imunisasi) -->
         @can('viewAny', App\Models\Patient::class)
             <a href="{{ route('imunisasi.index') }}"
-                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('imunisasi.*') || request()->routeIs('children.*') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
+                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('imunisasi.*') || request()->routeIs('children.*') ? 'bg-cyan-600 shadow-lg' : 'hover:bg-cyan-600/60' }}">
                 <x-heroicon-o-heart class="w-6 h-6 flex-shrink-0" />
                 <span x-show="open" class="font-medium">Poli Anak</span>
             </a>
@@ -96,7 +96,7 @@
         @can('export', App\Models\Patient::class)
             <div x-data="{ exportOpen: false }">
                 <button @click="exportOpen = !exportOpen"
-                    class="w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('export.*') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
+                    class="w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('export.*') ? 'bg-cyan-600 shadow-lg' : 'hover:bg-cyan-600/60' }}">
                     <x-heroicon-o-arrow-down-tray class="w-6 h-6 flex-shrink-0" />
                     <span x-show="open" class="font-medium flex-1 text-left">Export Data</span>
                     <x-heroicon-o-chevron-down x-show="open" :class="{ 'rotate-180': exportOpen }" class="w-4 h-4 transition-transform" />
@@ -110,38 +110,38 @@
                     x-transition:leave-start="opacity-100 transform translate-y-0"
                     x-transition:leave-end="opacity-0 transform -translate-y-2" class="ml-9 mt-1 space-y-1">
                     <a href="{{ route('export.anc-register') }}"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.anc-register') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.anc-register') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
                         <x-heroicon-o-document-text class="w-4 h-4" />
                         <span>Register ANC</span>
                     </a>
                     <a href="{{ route('export.patient-list') }}"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.patient-list') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.patient-list') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
                         <x-heroicon-o-user-group class="w-4 h-4" />
                         <span>Data Pasien</span>
                     </a>
 
                     @if (Route::has('export.general-register'))
                         <a href="{{ route('export.general-register') }}"
-                            class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.general-register') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                            class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.general-register') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
                             <x-heroicon-o-clipboard-document-list class="w-4 h-4" />
                             <span>Register Poli Umum</span>
                         </a>
                     @endif
 
                     <a href="{{ route('export.immunization.page') }}"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.immunization.page') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.immunization.page') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
                         <x-heroicon-o-arrow-down-tray class="w-4 h-4" />
                         <span>Imunisasi</span>
                     </a>
 
                     <a href="{{ route('export.kb') }}"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.kb') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.kb') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
                         <x-heroicon-o-check-circle class="w-4 h-4" />
                         <span>Laporan KB</span>
                     </a>
 
                     <a href="{{ route('export.delivery-register') }}"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.delivery-register') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.delivery-register') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
                         <x-heroicon-o-heart class="w-4 h-4" />
                         <span>Register Persalinan</span>
                     </a>
@@ -153,7 +153,7 @@
         @can('view-reports')
             <div x-data="{ reportOpen: false }">
                 <button @click="reportOpen = !reportOpen"
-                    class="w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('reports.*') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
+                    class="w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('reports.*') ? 'bg-cyan-600 shadow-lg' : 'hover:bg-cyan-600/60' }}">
                     <x-heroicon-o-chart-bar class="w-6 h-6 flex-shrink-0" />
                     <span x-show="open" class="font-medium flex-1 text-left">Laporan</span>
                     <x-heroicon-o-chevron-down x-show="open" :class="{ 'rotate-180': reportOpen }" class="w-4 h-4 transition-transform" />
@@ -167,7 +167,7 @@
                     x-transition:leave-start="opacity-100 transform translate-y-0"
                     x-transition:leave-end="opacity-0 transform -translate-y-2" class="ml-9 mt-1 space-y-1">
                     <a href="{{ route('reports.monthly-summary') }}"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('reports.monthly-summary') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('reports.monthly-summary') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
                         <x-heroicon-o-chart-bar class="w-4 h-4" />
                         <span>Ringkasan Bulanan</span>
                     </a>
@@ -179,7 +179,7 @@
         @can('manage-users')
             <div x-data="{ adminOpen: false }">
                 <button @click="adminOpen = !adminOpen"
-                    class="w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('admin.*') ? 'bg-green-600 shadow-lg' : 'hover:bg-green-600/60' }}">
+                    class="w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('admin.*') ? 'bg-cyan-600 shadow-lg' : 'hover:bg-cyan-600/60' }}">
                     <x-heroicon-o-cog-6-tooth class="w-6 h-6 flex-shrink-0" />
                     <span x-show="open" class="font-medium flex-1 text-left">Admin</span>
                     <x-heroicon-o-chevron-down x-show="open" :class="{ 'rotate-180': adminOpen }" class="w-4 h-4 transition-transform" />
@@ -193,19 +193,19 @@
                     x-transition:leave-start="opacity-100 transform translate-y-0"
                     x-transition:leave-end="opacity-0 transform -translate-y-2" class="ml-9 mt-1 space-y-1">
                     <a href="{{ route('admin.users') }}"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.users') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.users') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
                         <x-heroicon-o-user-group class="w-4 h-4" />
                         <span>Kelola User</span>
                     </a>
 
                     <a href="{{ route('admin.vaccines') }}"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.vaccines') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.vaccines') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
                         <x-heroicon-o-plus class="w-4 h-4" />
                         <span>Master Vaksin</span>
                     </a>
 
                     <a href="{{ route('admin.icd10') }}"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.icd10') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.icd10') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
                         <x-heroicon-o-list-bullet class="w-4 h-4" />
                         <span>Master ICD-10</span>
                     </a>
@@ -213,13 +213,13 @@
                     <div class="border-t border-blue-700/30 my-2"></div>
 
                     <a href="{{ route('admin.roles') }}"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.roles') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.roles') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
                         <x-heroicon-o-lock-closed class="w-4 h-4" />
                         <span>Kelola Role & Permission</span>
                     </a>
 
                     <a href="{{ route('admin.user-roles') }}"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.user-roles') ? 'bg-green-600' : 'hover:bg-green-600/40' }}">
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.user-roles') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
                         <x-heroicon-o-user class="w-4 h-4" />
                         <span>Assign Role ke User</span>
                     </a>

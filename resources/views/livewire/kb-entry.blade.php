@@ -26,44 +26,47 @@
 
             <div class="p-6 space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Pasien *</label>
+                    @if (!$patient)
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Pasien *</label>
 
-                        <div class="relative">
-                            <input type="text" wire:model.live.debounce.300ms="patient_search"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="Cari nama atau RM...">
+                            <div class="relative">
+                                <input type="text" wire:model.live.debounce.300ms="patient_search"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="Cari nama atau RM...">
 
-                            @if ($patient_search && $patientResults->count())
-                                <div
-                                    class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded shadow-lg max-h-60 overflow-auto">
-                                    @foreach ($patientResults as $p)
-                                        <button type="button" wire:click="selectPatient({{ $p->id }})"
-                                            class="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors">
-                                            <div class="text-sm font-medium text-gray-900">{{ $p->name }} <span
-                                                    class="text-xs text-gray-500">(RM: {{ $p->no_rm }})</span></div>
-                                            <div class="text-xs text-gray-400">{{ $p->phone }}</div>
-                                        </button>
-                                    @endforeach
-                                </div>
-                            @endif
-                        </div>
-
-                        @error('patient_id')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-
-                        @if ($patient)
-                            <div class="mt-3 bg-gray-50 p-3 rounded border border-gray-200">
-                                <div class="text-sm font-medium">{{ $patient->name }} <span
-                                        class="text-xs text-gray-500">(RM: {{ $patient->no_rm }})</span></div>
-                                <div class="text-xs text-gray-500">{{ $patient->phone }}</div>
+                                @if ($patient_search && $patientResults->count())
+                                    <div
+                                        class="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded shadow-lg max-h-60 overflow-auto">
+                                        @foreach ($patientResults as $p)
+                                            <button type="button" wire:click="selectPatient({{ $p->id }})"
+                                                class="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors">
+                                                <div class="text-sm font-medium text-gray-900">{{ $p->name }} <span
+                                                        class="text-xs text-gray-500">(RM: {{ $p->no_rm }})</span></div>
+                                                <div class="text-xs text-gray-400">{{ $p->phone }}</div>
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                @endif
                             </div>
-                        @endif
-                    </div>
+
+                            @error('patient_id')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    @endif
 
                     @if ($patient)
                         <div class="md:col-span-2 bg-gray-50 p-4 rounded-md border border-gray-200">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-sm font-semibold text-gray-700">Pasien Terpilih:</h3>
+                                @if (!request()->query('patient_id'))
+                                    <button type="button" wire:click="resetPatientSelection"
+                                        class="text-xs text-red-600 hover:text-red-800 font-medium">
+                                        Ganti Pasien
+                                    </button>
+                                @endif
+                            </div>
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
                                 <div><span class="font-medium">Nama:</span> {{ $patient->name }}</div>
                                 <div><span class="font-medium">No RM:</span> {{ $patient->no_rm }}</div>

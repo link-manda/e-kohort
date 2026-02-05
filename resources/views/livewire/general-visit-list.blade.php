@@ -13,32 +13,76 @@
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
-        <div class="p-3 md:p-4 rounded-lg bg-blue-50 border-2 border-blue-200">
-            <p class="text-xs md:text-sm font-medium text-gray-600">Total Kunjungan</p>
-            <p class="text-xl md:text-2xl font-bold text-blue-600 mt-1">{{ $stats['total'] }}</p>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Total Kunjungan</p>
+                    <p class="text-3xl font-bold text-blue-600 mt-2">{{ $stats['total'] }}</p>
+                </div>
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                </div>
+            </div>
         </div>
 
-        <div class="p-3 md:p-4 rounded-lg bg-green-50 border-2 border-green-200">
-            <p class="text-xs md:text-sm font-medium text-gray-600">Hari Ini</p>
-            <p class="text-xl md:text-2xl font-bold text-green-600 mt-1">{{ $stats['today'] }}</p>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Hari Ini</p>
+                    <p class="text-3xl font-bold text-green-600 mt-2">{{ $stats['today'] }}</p>
+                </div>
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z">
+                        </path>
+                    </svg>
+                </div>
+            </div>
         </div>
 
         <button wire:click="$set('statusFilter', 'Rujuk')"
-            class="p-3 md:p-4 rounded-lg border-2 transition-all text-left {{ $statusFilter === 'Rujuk' ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-orange-300' }}">
-            <p class="text-xs md:text-sm font-medium text-gray-600">Dirujuk</p>
-            <p class="text-xl md:text-2xl font-bold text-orange-600 mt-1">{{ $stats['status']['Rujuk'] }}</p>
+            class="bg-white rounded-xl shadow-sm border-2 transition-all text-left p-6 {{ $statusFilter === 'Rujuk' ? 'border-orange-500 bg-orange-50' : 'border-gray-200 hover:border-orange-300' }}">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Dirujuk</p>
+                    <p class="text-3xl font-bold text-orange-600 mt-2">{{ $stats['status']['Rujuk'] }}</p>
+                </div>
+                <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z">
+                        </path>
+                    </svg>
+                </div>
+            </div>
         </button>
 
         <button wire:click="$set('statusFilter', 'Rawat Inap')"
-            class="p-3 md:p-4 rounded-lg border-2 transition-all text-left {{ $statusFilter === 'Rawat Inap' ? 'border-red-500 bg-red-50' : 'border-gray-200 hover:border-red-300' }}">
-            <p class="text-xs md:text-sm font-medium text-gray-600">Rawat Inap</p>
-            <p class="text-xl md:text-2xl font-bold text-red-600 mt-1">{{ $stats['status']['Rawat Inap'] }}</p>
+            class="bg-white rounded-xl shadow-sm border-2 transition-all text-left p-6 {{ $statusFilter === 'Rawat Inap' ? 'border-red-500 bg-red-50' : 'border-gray-200 hover:border-red-300' }}">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-gray-600">Rawat Inap</p>
+                    <p class="text-3xl font-bold text-red-600 mt-2">{{ $stats['status']['Rawat Inap'] }}</p>
+                </div>
+                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                        </path>
+                    </svg>
+                </div>
+            </div>
         </button>
     </div>
 
     <!-- Filters -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
         <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
             <!-- Search -->
             <div class="md:col-span-4">

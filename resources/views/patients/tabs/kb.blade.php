@@ -1,15 +1,11 @@
 <!-- Riwayat KB (Keluarga Berencana) -->
 <div class="space-y-6">
-    <div class="flex items-center justify-between">
+    <div>
         <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
             <x-heroicon-o-check-circle class="w-6 h-6 text-green-600" />
             Riwayat KB (Keluarga Berencana)
         </h3>
-        <a href="{{ route('kb.entry') }}?patient_id={{ $patient->id }}"
-            class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors text-sm">
-            <x-heroicon-o-plus class="w-4 h-4" />
-            Tambah Kunjungan KB
-        </a>
+        <p class="text-sm text-gray-600 mt-1">Pendaftaran KB dilakukan melalui <a href="{{ route('registration-desk') }}" class="text-blue-600 hover:text-blue-800 font-medium underline">Registration Desk</a></p>
     </div>
 
     @if ($kbVisits && $kbVisits->count() > 0)
@@ -65,12 +61,8 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
             <x-heroicon-o-check-circle class="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 class="text-lg font-semibold text-gray-900 mb-2">Belum Ada Riwayat KB</h3>
-            <p class="text-gray-600 mb-6">Pasien ini belum pernah menggunakan layanan KB</p>
-            <a href="{{ route('kb.entry') }}?patient_id={{ $patient->id }}"
-                class="inline-flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors">
-                <x-heroicon-o-plus class="w-5 h-5" />
-                Daftarkan Layanan KB
-            </a>
+            <p class="text-gray-600 mb-3">Pasien ini belum pernah menggunakan layanan KB</p>
+            <p class="text-sm text-gray-500">Gunakan <a href="{{ route('registration-desk') }}" class="text-blue-600 hover:text-blue-800 font-medium underline">Registration Desk</a> untuk mendaftarkan layanan KB</p>
         </div>
     @endif
 </div>

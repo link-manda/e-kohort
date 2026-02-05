@@ -44,13 +44,13 @@
                     </div>
                 </div>
 
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4 text-sm">
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4 text-sm">
                     Export bulanan akan mengeluarkan satu file Excel berisi semua kunjungan imunisasi pada bulan yang dipilih.
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-4">
-                    <a href="{{ route('dashboard') }}" class="px-4 py-2 border border-gray-300 rounded-lg text-sm">Batal</a>
-                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg">Export Excel</button>
+                    <a href="{{ route('dashboard') }}" class="px-6 py-2.5 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">Batal</a>
+                    <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors">Export Excel</button>
                 </div>
             </form>
         </div>
@@ -70,13 +70,13 @@
                     @error('child_id') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror
                 </div>
 
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4 text-sm">
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4 text-sm">
                     Export individual akan menghasilkan riwayat semua kunjungan imunisasi untuk anak terpilih.
                 </div>
 
                 <div class="flex items-center justify-end gap-3 pt-4">
-                    <a href="{{ route('dashboard') }}" class="px-4 py-2 border border-gray-300 rounded-lg text-sm">Batal</a>
-                    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg">Export Excel</button>
+                    <a href="{{ route('dashboard') }}" class="px-6 py-2.5 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">Batal</a>
+                    <button type="submit" class="inline-flex items-center gap-2 px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors">Export Excel</button>
                 </div>
             </form>
         </div>

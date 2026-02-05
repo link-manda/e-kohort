@@ -1,5 +1,8 @@
 <x-dashboard-layout>
     <x-slot name="header">
+        <!-- Breadcrumb -->
+        <x-breadcrumb :items="[['label' => 'Data Pasien']]" />
+
         <div class="flex items-center justify-between">
             <div>
                 <h1 class="text-2xl font-bold text-gray-800">Data Pasien</h1>

@@ -22,34 +22,34 @@
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
         <button wire:click="$set('immunizationFilter', 'all')"
-            class="p-3 md:p-4 rounded-lg border-2 transition-all text-left min-h-[80px] {{ $immunizationFilter === 'all' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300' }}">
-            <p class="text-xs md:text-sm font-medium text-gray-600">Total Anak</p>
-            <p class="text-xl md:text-2xl font-bold text-gray-900 mt-1">{{ $stats['total'] }}</p>
+            class="bg-white rounded-xl shadow-sm border-2 transition-all text-left p-6 {{ $immunizationFilter === 'all' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300' }}">
+            <p class="text-sm font-medium text-gray-600">Total Anak</p>
+            <p class="text-3xl font-bold text-gray-900 mt-2">{{ $stats['total'] }}</p>
         </button>
 
         <button wire:click="$set('immunizationFilter', 'complete')"
-            class="p-4 rounded-lg border-2 transition-all text-left {{ $immunizationFilter === 'complete' ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-green-300' }}">
+            class="bg-white rounded-xl shadow-sm border-2 transition-all text-left p-6 {{ $immunizationFilter === 'complete' ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:border-green-300' }}">
             <p class="text-sm font-medium text-gray-600">Imunisasi Lengkap</p>
-            <p class="text-2xl font-bold text-green-600 mt-1">{{ $stats['complete'] }}</p>
+            <p class="text-3xl font-bold text-green-600 mt-2">{{ $stats['complete'] }}</p>
         </button>
 
         <button wire:click="$set('immunizationFilter', 'partial')"
-            class="p-4 rounded-lg border-2 transition-all text-left {{ $immunizationFilter === 'partial' ? 'border-yellow-500 bg-yellow-50' : 'border-gray-200 hover:border-yellow-300' }}">
+            class="bg-white rounded-xl shadow-sm border-2 transition-all text-left p-6 {{ $immunizationFilter === 'partial' ? 'border-yellow-500 bg-yellow-50' : 'border-gray-200 hover:border-yellow-300' }}">
             <p class="text-sm font-medium text-gray-600">Imunisasi Sebagian</p>
-            <p class="text-2xl font-bold text-yellow-600 mt-1">{{ $stats['partial'] }}</p>
+            <p class="text-3xl font-bold text-yellow-600 mt-2">{{ $stats['partial'] }}</p>
         </button>
 
         <button wire:click="$set('immunizationFilter', 'none')"
-            class="p-4 rounded-lg border-2 transition-all text-left {{ $immunizationFilter === 'none' ? 'border-gray-500 bg-gray-50' : 'border-gray-200 hover:border-gray-300' }}">
+            class="bg-white rounded-xl shadow-sm border-2 transition-all text-left p-6 {{ $immunizationFilter === 'none' ? 'border-gray-500 bg-gray-50' : 'border-gray-200 hover:border-gray-300' }}">
             <p class="text-sm font-medium text-gray-600">Belum Imunisasi</p>
-            <p class="text-2xl font-bold text-gray-600 mt-1">{{ $stats['none'] }}</p>
+            <p class="text-3xl font-bold text-gray-600 mt-2">{{ $stats['none'] }}</p>
         </button>
     </div>
 
     <!-- Search & Filters -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
         <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
             <!-- Search Input -->
             <div class="md:col-span-5">

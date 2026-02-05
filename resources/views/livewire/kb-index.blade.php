@@ -14,17 +14,12 @@
             </h1>
             <p class="text-sm text-gray-500 mt-1">Daftar lengkap seluruh kunjungan KB</p>
         </div>
-
-        <div class="flex items-center space-x-2">
-            <a href="{{ route('kb.entry') }}" class="px-3 py-2 bg-blue-600 text-white rounded">Buat Kunjungan Baru</a>
-            <button wire:click="resetFilters" class="px-3 py-2 border rounded">Reset</button>
-        </div>
     </div>
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
         <div wire:click="$set('')"
-            class="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-4 cursor-pointer hover:shadow-md transition-shadow">
+            class="bg-white rounded-xl shadow-sm border-2 border-gray-200 p-6 cursor-pointer hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600">Total Kunjungan</p>
@@ -42,7 +37,7 @@
         </div>
 
         <div wire:click="$set('')"
-            class="bg-white rounded-lg shadow-sm border-2 {{ 'border-red-500' }} p-4 cursor-pointer hover:shadow-md transition-shadow">
+            class="bg-white rounded-xl shadow-sm border-2 {{ 'border-red-500' }} p-6 cursor-pointer hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600">Hipertensi</p>
@@ -59,7 +54,7 @@
         </div>
 
         <div wire:click="$set('')"
-            class="bg-white rounded-lg shadow-sm border-2 {{ 'border-orange-500' }} p-4 cursor-pointer hover:shadow-md transition-shadow">
+            class="bg-white rounded-xl shadow-sm border-2 {{ 'border-orange-500' }} p-6 cursor-pointer hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600">Normal</p>
@@ -74,25 +69,10 @@
                 </div>
             </div>
         </div>
-
-        <div
-            class="bg-white rounded-lg shadow-sm border-2 border-gray-200 p-4 cursor-pointer hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-gray-600">Placeholder</p>
-                    <p class="text-3xl font-bold text-gray-800">-</p>
-                </div>
-                <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                    <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
-                    </svg>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Filters -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Cari Pasien atau Catatan</label>
@@ -149,34 +129,34 @@
                 <table class="w-full">
                     <thead class="bg-gray-50 border-b border-gray-200">
                         <tr>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Tanggal</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Pasien</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Metode</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Pembayaran
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Tanggal</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Pasien</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Metode</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Pembayaran
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Tensi</th>
-                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">Aksi</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Tensi</th>
+                            <th class="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
                         @foreach ($visits as $v)
                             <tr class="hover:bg-gray-50 transition-colors">
-                                <td class="px-4 py-3">
+                                <td class="px-6 py-4">
                                     <p class="text-sm font-medium text-gray-900">
                                         {{ optional($v->visit_date)->format('d M Y') }}</p>
                                     <p class="text-xs text-gray-500">{{ optional($v->visit_date)->format('H:i') }}</p>
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-6 py-4">
                                     <p class="text-sm font-semibold text-gray-900">{{ $v->patient->name ?? '-' }}</p>
                                     <p class="text-xs text-gray-500">{{ $v->patient->no_rm ?? '-' }}</p>
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-6 py-4">
                                     <span class="text-sm font-medium">{{ $v->kbMethod->name ?? '-' }}</span>
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-6 py-4">
                                     <span class="text-sm">{{ $v->payment_type }}</span>
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-6 py-4">
                                     <span
                                         class="text-sm">{{ $v->blood_pressure_systolic ?? '-' }}/{{ $v->blood_pressure_diastolic ?? '-' }}</span>
                                     @if ($v->blood_pressure_systolic && $v->blood_pressure_diastolic)
