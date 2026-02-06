@@ -31,13 +31,17 @@
                         @endif
                     </div>
                     <div class="mt-2 flex items-center space-x-4 text-sm text-gray-600">
-                        <span class="font-semibold">{{ $patient->name }}</span>
+                        <span class="font-semibold">{{ $visitorName }}</span>
                         <span>|</span>
-                        <span>{{ $patient->gender == 'L' ? '👨 Laki-laki' : '👩 Perempuan' }}</span>
+                        <span>{{ $visitor->gender == 'L' ? '👨 Laki-laki' : '👩 Perempuan' }}</span>
                         <span>|</span>
-                        <span>{{ $patient->age }} Tahun</span>
+                        <span>{{ $visitorAge }}</span>
                         <span>|</span>
-                        <span class="font-mono">RM: {{ $patient->no_rm }}</span>
+                        <span class="font-mono">RM: {{ $visitorNoRm }}</span>
+                        @if($visitorType === 'child' && $visitorParentName)
+                            <span>|</span>
+                            <span class="text-green-700">👤 Orang Tua: {{ $visitorParentName }}</span>
+                        @endif
                     </div>
                     @if ($allergies)
                         <div class="mt-2 flex items-start space-x-2 bg-red-50 border-l-4 border-red-400 p-2 rounded">
@@ -133,7 +137,7 @@
                         {{ number_format($this->getTotalPrescriptionCost(), 0, ',', '.') }}</span>
                 </div>
                 <div class="flex space-x-3">
-                    <a href="{{ route('patients.show', $patient->id) }}"
+                    <a href="{{ $visitorType === 'child' ? route('imunisasi.index') : route('patients.show', $visitor->id) }}"
                         class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         <x-heroicon-o-x-mark class="h-4 w-4 mr-2" />
                         Batal

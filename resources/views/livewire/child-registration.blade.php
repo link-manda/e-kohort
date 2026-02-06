@@ -42,77 +42,184 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8">
             <form wire:submit.prevent="submit">
                 <div class="space-y-6">
-                    <!-- Step 1: Search & Select Mother -->
+                    <!-- Step 1: Birth Location Toggle -->
                     <div>
                         <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
-                            Cari Data Ibu
+                            Asal Kelahiran
                         </h3>
 
-                        @if (!$selectedMother)
-                            <div class="relative">
-                                <input type="text" wire:model.live="searchTerm"
-                                    class="w-full px-4 py-3 pl-10 border-2 rounded-lg border-gray-300
-                                              focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
-                                    placeholder="Ketik nama, NIK, atau no. telepon ibu (min 3 karakter)">
-                                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-4" fill="none"
-                                    stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- External Birth Option -->
+                            <label class="relative cursor-pointer" wire:click="$set('birth_location', 'external')">
+                                <div class="p-4 border-2 rounded-xl transition-all {{ $birth_location === 'external' ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-blue-300' }}">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full flex items-center justify-center {{ $birth_location === 'external' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-500' }}">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold text-gray-900">Lahir di Luar Klinik</p>
+                                            <p class="text-sm text-gray-500">Ibu tidak terdaftar di klinik ini</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <!-- Internal Birth Option -->
+                            <label class="relative cursor-pointer" wire:click="$set('birth_location', 'internal')">
+                                <div class="p-4 border-2 rounded-xl transition-all {{ $birth_location === 'internal' ? 'border-green-500 bg-green-50' : 'border-gray-300 hover:border-green-300' }}">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full flex items-center justify-center {{ $birth_location === 'internal' ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-500' }}">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <p class="font-semibold text-gray-900">Lahir di Klinik Ini</p>
+                                            <p class="text-sm text-gray-500">Ibu sudah terdaftar sebagai pasien</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <hr class="border-gray-300">
+
+                    <!-- Step 2A: External Parent Info -->
+                    @if ($birth_location === 'external')
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                                Data Orang Tua / Wali
+                            </h3>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Parent Name -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                        Nama Orang Tua <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" wire:model="parent_name"
+                                        class="w-full px-4 py-3 border-2 rounded-lg
+                                            @error('parent_name') border-red-500 @else border-gray-300 @enderror
+                                            focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                                        placeholder="Nama ibu atau wali">
+                                    @error('parent_name')
+                                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Parent Phone -->
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                        No HP Orang Tua <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" wire:model="parent_phone"
+                                        class="w-full px-4 py-3 border-2 rounded-lg
+                                            @error('parent_phone') border-red-500 @else border-gray-300 @enderror
+                                            focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                                        placeholder="08xxxxxxxxxx">
+                                    @error('parent_phone')
+                                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <!-- Parent Address -->
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                        Alamat <span class="text-gray-400 text-xs">(Opsional)</span>
+                                    </label>
+                                    <textarea wire:model="parent_address" rows="2"
+                                        class="w-full px-4 py-3 border-2 rounded-lg border-gray-300
+                                            focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                                        placeholder="Alamat lengkap orang tua"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Step 2B: Search Mother (Internal) -->
+                    @if ($birth_location === 'internal')
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
-                            </div>
+                                Cari Data Ibu
+                            </h3>
 
-                            @if (count($searchResults) > 0)
-                                <div class="mt-3 border-2 border-blue-500 rounded-lg max-h-64 overflow-y-auto">
-                                    @foreach ($searchResults as $mother)
-                                        <button type="button" wire:click="selectMother({{ $mother->id }})"
-                                            class="w-full px-4 py-3 text-left hover:bg-blue-50 transition-colors border-b border-gray-200 last:border-0">
-                                            <p class="font-semibold text-gray-900">{{ $mother->name }}</p>
-                                            <p class="text-sm text-gray-600">NIK: {{ $mother->nik ?: '-' }} |
-                                                Telepon: {{ $mother->phone }}</p>
-                                        </button>
-                                    @endforeach
-                                </div>
-                            @elseif(strlen($searchTerm) >= 3)
-                                <p class="mt-3 text-sm text-gray-500 text-center py-4">Tidak ada hasil yang
-                                    ditemukan</p>
-                            @endif
-
-                            @error('patient_id')
-                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        @else
-                            <!-- Selected Mother -->
-                            <div
-                                class="bg-blue-50 border-2 border-blue-500 rounded-lg p-4 flex items-center justify-between">
-                                <div class="flex items-center gap-3">
-                                    <div
-                                        class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                                        {{ strtoupper(substr($selectedMother->name, 0, 1)) }}
-                                    </div>
-                                    <div>
-                                        <p class="font-bold text-gray-900">{{ $selectedMother->name }}</p>
-                                        <p class="text-sm text-gray-600">{{ $selectedMother->phone }}</p>
-                                    </div>
-                                </div>
-                                <button type="button" wire:click="clearMotherSelection"
-                                    class="text-red-600 hover:text-red-800 transition-colors">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            @if (!$selectedMother)
+                                <div class="relative">
+                                    <input type="text" wire:model.live="searchTerm"
+                                        class="w-full px-4 py-3 pl-10 border-2 rounded-lg border-gray-300
+                                                  focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                                        placeholder="Ketik nama, NIK, atau no. telepon ibu (min 3 karakter)">
+                                    <svg class="w-5 h-5 text-gray-400 absolute left-3 top-4" fill="none"
+                                        stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M6 18L18 6M6 6l12 12"></path>
+                                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                     </svg>
-                                </button>
-                            </div>
-                        @endif
-                    </div>
+                                </div>
 
-                    @if ($selectedMother)
+                                @if (count($searchResults) > 0)
+                                    <div class="mt-3 border-2 border-blue-500 rounded-lg max-h-64 overflow-y-auto">
+                                        @foreach ($searchResults as $mother)
+                                            <button type="button" wire:click="selectMother({{ $mother->id }})"
+                                                class="w-full px-4 py-3 text-left hover:bg-blue-50 transition-colors border-b border-gray-200 last:border-0">
+                                                <p class="font-semibold text-gray-900">{{ $mother->name }}</p>
+                                                <p class="text-sm text-gray-600">NIK: {{ $mother->nik ?: '-' }} |
+                                                    Telepon: {{ $mother->phone }}</p>
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                @elseif(strlen($searchTerm) >= 3)
+                                    <p class="mt-3 text-sm text-gray-500 text-center py-4">Tidak ada hasil yang
+                                        ditemukan</p>
+                                @endif
+
+                                @error('patient_id')
+                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
+                            @else
+                                <!-- Selected Mother -->
+                                <div
+                                    class="bg-green-50 border-2 border-green-500 rounded-lg p-4 flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div
+                                            class="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                                            {{ strtoupper(substr($selectedMother->name, 0, 1)) }}
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-gray-900">{{ $selectedMother->name }}</p>
+                                            <p class="text-sm text-gray-600">{{ $selectedMother->phone }}</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" wire:click="clearMotherSelection"
+                                        class="text-red-600 hover:text-red-800 transition-colors">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M6 18L18 6M6 6l12 12"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+
+                    @if ($birth_location === 'external' || $selectedMother)
                         <hr class="border-gray-300">
 
-                        <!-- Step 2: Child Data -->
+                        <!-- Step 3: Child Data -->
                         <div>
                             <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                                 <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor"

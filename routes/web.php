@@ -184,6 +184,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/general-visits/create/{patient_id}', App\Livewire\GeneralVisitEntry::class)->name('general-visits.create')
         ->middleware('permission:create-anc-visits'); // Reusing permission for medical visits
 
+    // General Visit for Children (Poli Umum Anak) - uses same component with child_id
+    Route::get('/general-visits/create-child/{child_id}', App\Livewire\GeneralVisitEntry::class)->name('children.general-visit')
+        ->middleware('permission:create-anc-visits');
+
     // Export: KB Reports
     Route::get('/export/kb', App\Livewire\ExportKb::class)->name('export.kb')
         ->middleware('permission:export-data');

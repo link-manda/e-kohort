@@ -3,15 +3,19 @@
 namespace App\Livewire;
 
 use App\Models\Patient;
+use App\Models\Child;
 use Livewire\Component;
 
 class PatientQueueEntry extends Component
 {
     public $search = '';
     public $results = [];
+    public $childResults = [];  // NEW: Results for child search
     public $selectedPatient = null;
     public $selectedPatientId = null;
-    // $showNifasWarning removed - no longer needed
+    public $selectedChild = null;  // NEW: Selected child for immunization
+    public $selectedChildId = null;  // NEW: Selected child ID
+    public $selectionType = null;  // 'patient' or 'child'
 
     public function mount($patient_id = null)
     {
@@ -26,7 +30,16 @@ class PatientQueueEntry extends Component
         $value = trim($value);
 
         if (strlen($value) >= 2) {
+            // Search patients (adults/mothers)
             $this->results = Patient::query()
+                ->where('name', 'like', '%' . $value . '%')
+                ->orWhere('nik', 'like', '%' . $value . '%')
+                ->orWhere('no_rm', 'like', '%' . $value . '%')
+                ->limit(10)
+                ->get();
+
+            // Search children (for immunization)
+            $this->childResults = Child::query()
                 ->where('name', 'like', '%' . $value . '%')
                 ->orWhere('nik', 'like', '%' . $value . '%')
                 ->orWhere('no_rm', 'like', '%' . $value . '%')
@@ -34,6 +47,7 @@ class PatientQueueEntry extends Component
                 ->get();
         } else {
             $this->results = [];
+            $this->childResults = [];
         }
     }
 
@@ -41,15 +55,57 @@ class PatientQueueEntry extends Component
     {
         $this->selectedPatient = Patient::find($patientId);
         $this->selectedPatientId = $patientId;
+        $this->selectedChild = null;
+        $this->selectedChildId = null;
+        $this->selectionType = 'patient';
         $this->search = '';
         $this->results = [];
+        $this->childResults = [];
+    }
+
+    public function selectChild($childId)
+    {
+        $this->selectedChild = Child::find($childId);
+        $this->selectedChildId = $childId;
+        $this->selectedPatient = null;
+        $this->selectedPatientId = null;
+        $this->selectionType = 'child';
+        $this->search = '';
+        $this->results = [];
+        $this->childResults = [];
     }
 
     public function resetSelection()
     {
         $this->selectedPatient = null;
         $this->selectedPatientId = null;
-        // $showNifasWarning removed
+        $this->selectedChild = null;
+        $this->selectedChildId = null;
+        $this->selectionType = null;
+    }
+
+    /**
+     * Handle service selection for child
+     */
+    public function selectChildService($service)
+    {
+        if (!$this->selectedChild) {
+            session()->flash('error', 'Silakan pilih anak terlebih dahulu.');
+            return;
+        }
+
+        switch ($service) {
+            case 'immunization':
+                return redirect()->route('children.immunization', ['child' => $this->selectedChildId]);
+
+            case 'general':
+                // Poli Umum untuk anak - redirect ke halaman kunjungan umum anak
+                return redirect()->route('children.general-visit', ['child_id' => $this->selectedChildId]);
+
+            default:
+                session()->flash('error', 'Layanan tidak valid untuk anak.');
+                return;
+        }
     }
 
     public function selectService($service)

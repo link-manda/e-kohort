@@ -4,12 +4,20 @@ namespace App\Livewire;
 
 use App\Models\GeneralVisit;
 use App\Models\Patient;
+use App\Models\Child;
 use App\Models\Prescription;
 use Livewire\Component;
 
 class GeneralVisitEntry extends Component
 {
-    public $patient;
+    // Universal visitor (Patient or Child)
+    public $visitor;  // The actual model (Patient or Child)
+    public $visitorType = 'patient';  // 'patient' or 'child'
+    public $visitorName;
+    public $visitorNoRm;
+    public $visitorAge;
+    public $visitorParentName = null;  // Only for children
+
     public $visit_date;
 
     // Tab 1: Anamnesa (Subjective)
@@ -91,9 +99,26 @@ class GeneralVisitEntry extends Component
         // Prescriptions will be validated manually in save() method
     ];
 
-    public function mount($patient_id)
+    public function mount($patient_id = null, $child_id = null)
     {
-        $this->patient = Patient::findOrFail($patient_id);
+        // Determine visitor type and load appropriate model
+        if ($child_id) {
+            $this->visitor = Child::findOrFail($child_id);
+            $this->visitorType = 'child';
+            $this->visitorName = $this->visitor->name;
+            $this->visitorNoRm = $this->visitor->no_rm;
+            $this->visitorAge = $this->visitor->formatted_age ?? '-';
+            $this->visitorParentName = $this->visitor->parent_display_name;
+        } elseif ($patient_id) {
+            $this->visitor = Patient::findOrFail($patient_id);
+            $this->visitorType = 'patient';
+            $this->visitorName = $this->visitor->name;
+            $this->visitorNoRm = $this->visitor->no_rm;
+            $this->visitorAge = $this->visitor->age . ' tahun';
+        } else {
+            abort(400, 'Patient ID atau Child ID harus disediakan.');
+        }
+
         $this->visit_date = now()->format('Y-m-d\TH:i');
 
         // Initialize with 1 empty prescription row
@@ -230,7 +255,8 @@ class GeneralVisitEntry extends Component
 
         // Create General Visit
         $visit = GeneralVisit::create([
-            'patient_id' => $this->patient->id,
+            'patient_id' => $this->visitorType === 'patient' ? $this->visitor->id : null,
+            'child_id' => $this->visitorType === 'child' ? $this->visitor->id : null,
             'visit_date' => $this->visit_date,
 
             // Subjective
@@ -298,7 +324,11 @@ class GeneralVisitEntry extends Component
             session()->flash('success', 'Kunjungan Umum berhasil disimpan (tanpa resep obat).');
         }
 
-        return redirect()->route('patients.show', $this->patient->id);
+        // Redirect based on visitor type
+        if ($this->visitorType === 'child') {
+            return redirect()->route('imunisasi.index')->with('success', 'Kunjungan Umum untuk ' . $this->visitorName . ' berhasil disimpan.');
+        }
+        return redirect()->route('patients.show', $this->visitor->id);
     }
 
     public function render()

@@ -14,7 +14,11 @@ class Child extends Model
     use SoftDeletes, GeneratesChildRm;
 
     protected $fillable = [
-        'patient_id',
+        'patient_id',       // Nullable - for internal births (mother registered)
+        'parent_name',      // For external births
+        'parent_phone',     // For external births
+        'parent_address',   // For external births (optional)
+        'birth_location',   // 'internal' or 'external'
         'nik',
         'no_rm',
         'name',
@@ -33,6 +37,47 @@ class Child extends Model
             'birth_weight' => 'float',
             'birth_height' => 'float',
         ];
+    }
+
+    /**
+     * Check if this child is from external birth (mother not registered)
+     */
+    public function isExternalBirth(): bool
+    {
+        return $this->birth_location === 'external' || $this->patient_id === null;
+    }
+
+    /**
+     * Get parent display name - works for both internal and external births
+     */
+    public function getParentDisplayNameAttribute(): string
+    {
+        if ($this->patient_id && $this->patient) {
+            return $this->patient->name;
+        }
+        return $this->parent_name ?? 'Tidak Diketahui';
+    }
+
+    /**
+     * Get parent phone - works for both internal and external births
+     */
+    public function getParentDisplayPhoneAttribute(): string
+    {
+        if ($this->patient_id && $this->patient) {
+            return $this->patient->phone ?? '-';
+        }
+        return $this->parent_phone ?? '-';
+    }
+
+    /**
+     * Get parent address - works for both internal and external births
+     */
+    public function getParentDisplayAddressAttribute(): string
+    {
+        if ($this->patient_id && $this->patient) {
+            return $this->patient->address ?? '-';
+        }
+        return $this->parent_address ?? '-';
     }
 
     /**

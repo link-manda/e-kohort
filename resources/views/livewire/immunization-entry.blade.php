@@ -25,9 +25,21 @@
 
                 <div class="flex items-center justify-between lg:justify-end gap-4">
                     <div class="text-left lg:text-right">
-                        <p class="text-sm text-blue-100">Ibu</p>
-                        <p class="text-lg font-bold">{{ $child->patient->name }}</p>
-                        <p class="text-sm text-blue-100">{{ $child->patient->phone }}</p>
+                        <p class="text-sm text-blue-100">
+                            @if($child->isExternalBirth())
+                                Orang Tua
+                            @else
+                                Ibu
+                            @endif
+                        </p>
+                        <p class="text-lg font-bold">{{ $child->parent_display_name }}</p>
+                        <p class="text-sm text-blue-100">
+                            @if($child->isExternalBirth())
+                                {{ $child->parent_phone ?? '-' }}
+                            @else
+                                {{ $child->patient->phone ?? '-' }}
+                            @endif
+                        </p>
                     </div>
                     <div class="flex-shrink-0">
                         @if ($child->status === 'Hidup')
@@ -576,6 +588,45 @@
                             </div>
                         </div>
                     @endforeach
+                </div>
+
+                <!-- NEW: Payment Information Section -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h3 class="font-bold text-gray-800 mb-4 text-lg">💰 Informasi Pembayaran</h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Service Fee -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Biaya Pelayanan <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">Rp</span>
+                                <input type="number" wire:model="service_fee" step="1000" min="0"
+                                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('service_fee') border-red-500 @enderror"
+                                    placeholder="0">
+                            </div>
+                            @error('service_fee')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                            <p class="text-xs text-gray-500 mt-1">💡 Masukkan biaya pelayanan imunisasi</p>
+                        </div>
+
+                        <!-- Payment Method -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Metode Pembayaran <span class="text-red-500">*</span>
+                            </label>
+                            <select wire:model="payment_method"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('payment_method') border-red-500 @enderror">
+                                <option value="Umum">Umum</option>
+                                <option value="BPJS">BPJS</option>
+                            </select>
+                            @error('payment_method')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror>
+                        </div>
+                    </div>
                 </div>
             </div>
         @endif

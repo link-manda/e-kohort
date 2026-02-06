@@ -10,6 +10,7 @@ class GeneralVisit extends Model
 {
     protected $fillable = [
         'patient_id',
+        'child_id',  // NEW: for child visits
         'visit_date',
 
         // Subjective (Anamnesa)
@@ -70,8 +71,78 @@ class GeneralVisit extends Model
         return $this->belongsTo(Patient::class);
     }
 
+    public function child(): BelongsTo
+    {
+        return $this->belongsTo(Child::class);
+    }
+
     public function prescriptions(): HasMany
     {
         return $this->hasMany(Prescription::class);
+    }
+
+    // =============================================
+    // Helper Methods for Universal Patient/Child Access
+    // =============================================
+
+    /**
+     * Check if this visit is for a child
+     */
+    public function isChildVisit(): bool
+    {
+        return $this->child_id !== null;
+    }
+
+    /**
+     * Get the visitor name (Patient or Child)
+     */
+    public function getVisitorNameAttribute(): string
+    {
+        if ($this->child_id && $this->child) {
+            return $this->child->name;
+        }
+        if ($this->patient_id && $this->patient) {
+            return $this->patient->name;
+        }
+        return 'Tidak Diketahui';
+    }
+
+    /**
+     * Get the visitor age
+     */
+    public function getVisitorAgeAttribute(): ?string
+    {
+        if ($this->child_id && $this->child) {
+            return $this->child->formatted_age ?? null;
+        }
+        if ($this->patient_id && $this->patient) {
+            return $this->patient->age . ' tahun';
+        }
+        return null;
+    }
+
+    /**
+     * Get the visitor RM number
+     */
+    public function getVisitorNoRmAttribute(): ?string
+    {
+        if ($this->child_id && $this->child) {
+            return $this->child->no_rm;
+        }
+        if ($this->patient_id && $this->patient) {
+            return $this->patient->no_rm;
+        }
+        return null;
+    }
+
+    /**
+     * Get the actual visitor model (Patient or Child)
+     */
+    public function getVisitor(): Patient|Child|null
+    {
+        if ($this->child_id) {
+            return $this->child;
+        }
+        return $this->patient;
     }
 }

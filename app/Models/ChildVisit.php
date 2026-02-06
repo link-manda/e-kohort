@@ -31,6 +31,9 @@ class ChildVisit extends Model
         'medicine_given',
         'medicine_dosage',
         'notes',
+        // Payment fields
+        'service_fee',
+        'payment_method',
     ];
 
     protected function casts(): array
@@ -45,6 +48,7 @@ class ChildVisit extends Model
             'respiratory_rate' => 'integer',
             'head_circumference' => 'float',
             'informed_consent' => 'boolean',
+            'service_fee' => 'decimal:2',
         ];
     }
 

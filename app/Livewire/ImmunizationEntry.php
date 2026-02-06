@@ -35,6 +35,10 @@ class ImmunizationEntry extends Component
     public $medicine_dosage = '';
     public $notes = '';
 
+    // Payment Information
+    public $service_fee = 0;
+    public $payment_method = 'Umum';
+
     // Step 2: Diagnosis & Immunization Actions
     public $icd_code = '';
     public $diagnosis_name = '';
@@ -102,6 +106,9 @@ class ImmunizationEntry extends Component
             'medicine_given' => 'nullable|in:Parasetamol Drop,Parasetamol Sirup,Tidak Ada,Lainnya',
             'medicine_dosage' => 'nullable|string|max:100',
             'notes' => 'nullable|string|max:1000',
+            // Payment fields
+            'service_fee' => 'required|numeric|min:0',
+            'payment_method' => 'required|in:Umum,BPJS',
         ];
 
         // Dynamic rules for vaccine rows
@@ -148,6 +155,12 @@ class ImmunizationEntry extends Component
         'medicine_given.in' => 'Jenis obat tidak valid',
         'medicine_dosage.max' => 'Dosis obat maksimal 100 karakter',
         'notes.max' => 'Keterangan maksimal 1000 karakter',
+        // Payment messages
+        'service_fee.required' => 'Biaya pelayanan wajib diisi',
+        'service_fee.numeric' => 'Biaya pelayanan harus berupa angka',
+        'service_fee.min' => 'Biaya pelayanan tidak boleh negatif',
+        'payment_method.required' => 'Metode pembayaran wajib dipilih',
+        'payment_method.in' => 'Metode pembayaran tidak valid',
     ];
 
     public function updated($propertyName)
@@ -469,6 +482,9 @@ class ImmunizationEntry extends Component
                 'medicine_given' => $this->medicine_given ?: null,
                 'medicine_dosage' => $this->medicine_dosage ?: null,
                 'notes' => $this->notes ?: null,
+                // Payment fields
+                'service_fee' => $this->service_fee,
+                'payment_method' => $this->payment_method,
             ]);
 
             // Create immunization actions
@@ -527,6 +543,9 @@ class ImmunizationEntry extends Component
         $this->medicine_given = '';
         $this->medicine_dosage = '';
         $this->notes = '';
+        // Payment fields
+        $this->service_fee = 0;
+        $this->payment_method = 'Umum';
         $this->vaccine_rows = [[
             'vaccine_type' => '',
             'batch_number' => '',
