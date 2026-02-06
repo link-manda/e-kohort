@@ -23,6 +23,11 @@
 </head>
 
 <body class="font-sans antialiased bg-gray-50">
+    <a href="#main-content"
+        class="fixed top-4 left-4 z-[100] bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg transform -translate-y-[200%] focus:translate-y-0 transition-transform duration-300 ring-2 ring-white">
+        Lewati ke konten utama
+    </a>
+
     <div class="min-h-screen flex">
         <!-- Sidebar -->
         @include('layouts.sidebar')
@@ -33,7 +38,7 @@
             @include('layouts.topbar')
 
             <!-- Page Content -->
-            <main class="flex-1 overflow-y-auto">
+            <main id="main-content" class="flex-1 overflow-y-auto" tabindex="-1">
                 <!-- Page Header -->
                 @if ($header)
                     <header class="bg-white border-b border-gray-200">
