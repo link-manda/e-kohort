@@ -65,6 +65,7 @@
     @livewire('toast-notification')
 
     @livewireScripts
+    @stack('scripts')
 </body>
 
 </html>

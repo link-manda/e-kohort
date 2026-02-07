@@ -583,9 +583,14 @@
 </div>
 
 @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Check if ApexCharts is loaded
+            if (typeof ApexCharts === 'undefined') {
+                console.error('ApexCharts is not loaded! Make sure it is installed via npm and imported in app.js');
+                return;
+            }
+
             // Initialize ApexCharts
             let chartOptions = {
                 series: [{
@@ -600,6 +605,9 @@
                     height: 400,
                     zoom: {
                         enabled: true
+                    },
+                    toolbar: {
+                        show: true
                     }
                 },
                 dataLabels: {
@@ -608,6 +616,12 @@
                 stroke: {
                     curve: 'smooth',
                     width: 2
+                },
+                markers: {
+                    size: 5,
+                    hover: {
+                        size: 7
+                    }
                 },
                 title: {
                     text: 'Grafik Pertumbuhan Anak',
@@ -623,6 +637,14 @@
                     type: 'datetime',
                     title: {
                         text: 'Tanggal Pengukuran'
+                    },
+                    labels: {
+                        datetimeFormatter: {
+                            year: 'yyyy',
+                            month: 'MMM \'yy',
+                            day: 'dd MMM',
+                            hour: 'HH:mm'
+                        }
                     }
                 },
                 yaxis: [{
@@ -639,6 +661,11 @@
                 }],
                 legend: {
                     position: 'top'
+                },
+                tooltip: {
+                    x: {
+                        format: 'dd MMM yyyy'
+                    }
                 }
             };
 
@@ -648,6 +675,7 @@
             // Initialize chart with server-provided data (fallback)
             let initialRecords = @json($chartData ?? []);
             console.log('Initial chart records:', initialRecords);
+
             if (Array.isArray(initialRecords) && initialRecords.length > 0) {
                 let weightData = initialRecords.map(r => ({
                     x: new Date(r.record_date).getTime(),
@@ -658,21 +686,6 @@
                     x: new Date(r.record_date).getTime(),
                     y: parseFloat(r.height)
                 }));
-
-                // Debug logs + basic validation
-                console.log('Parsed initial weightData:', weightData);
-                console.log('Parsed initial heightData:', heightData);
-                const invalidWeight = weightData.some(p => Number.isNaN(p.y) || !isFinite(p.y));
-                const invalidHeight = heightData.some(p => Number.isNaN(p.y) || !isFinite(p.y));
-                const invalidDate = weightData.concat(heightData).some(p => Number.isNaN(p.x));
-                if (invalidWeight || invalidHeight || invalidDate) {
-                    console.warn('Initial chart data contains invalid entries', {
-                        invalidWeight,
-                        invalidHeight,
-                        invalidDate,
-                        initialRecords
-                    });
-                }
 
                 chart.updateSeries([{
                         name: 'Berat Badan (kg)',
@@ -688,8 +701,18 @@
             // Listen to browser events if available
             window.addEventListener('chartUpdated', event => {
                 console.log('Chart update event received:', event.detail);
-                let records = event.detail[0]?.records || event.detail.records || [];
+                updateChartData(chart, event.detail[0]?.records || event.detail.records || []);
+            });
 
+            // Also listen to Livewire.on for more reliable event handling
+            if (typeof Livewire !== 'undefined' && Livewire.on) {
+                Livewire.on('chartUpdated', (data) => {
+                    console.log('Livewire chartUpdated:', data);
+                    updateChartData(chart, data[0]?.records || data.records || []);
+                });
+            }
+
+            function updateChartData(chartInstance, records) {
                 let weightData = records.map(r => ({
                     x: new Date(r.record_date).getTime(),
                     y: parseFloat(r.weight)
@@ -700,22 +723,7 @@
                     y: parseFloat(r.height)
                 }));
 
-                // Debug logs + validation
-                console.log('Browser event parsed weightData:', weightData);
-                console.log('Browser event parsed heightData:', heightData);
-                const invalidWeightB = weightData.some(p => Number.isNaN(p.y) || !isFinite(p.y));
-                const invalidHeightB = heightData.some(p => Number.isNaN(p.y) || !isFinite(p.y));
-                const invalidDateB = weightData.concat(heightData).some(p => Number.isNaN(p.x));
-                if (invalidWeightB || invalidHeightB || invalidDateB) {
-                    console.warn('Browser event chart data contains invalid entries', {
-                        invalidWeightB,
-                        invalidHeightB,
-                        invalidDateB,
-                        records
-                    });
-                }
-
-                chart.updateSeries([{
+                chartInstance.updateSeries([{
                         name: 'Berat Badan (kg)',
                         data: weightData
                     },
@@ -724,49 +732,6 @@
                         data: heightData
                     }
                 ]);
-            });
-
-            // Also listen to Livewire.on for more reliable event handling (if Livewire is present)
-            if (typeof Livewire !== 'undefined' && Livewire.on) {
-                Livewire.on('chartUpdated', (data) => {
-                    console.log('Livewire chartUpdated:', data);
-                    let records = data[0]?.records || data.records || [];
-
-                    let weightData = records.map(r => ({
-                        x: new Date(r.record_date).getTime(),
-                        y: parseFloat(r.weight)
-                    }));
-
-                    let heightData = records.map(r => ({
-                        x: new Date(r.record_date).getTime(),
-                        y: parseFloat(r.height)
-                    }));
-
-                    // Debug logs + validation
-                    console.log('Livewire parsed weightData:', weightData);
-                    console.log('Livewire parsed heightData:', heightData);
-                    const invalidWeightL = weightData.some(p => Number.isNaN(p.y) || !isFinite(p.y));
-                    const invalidHeightL = heightData.some(p => Number.isNaN(p.y) || !isFinite(p.y));
-                    const invalidDateL = weightData.concat(heightData).some(p => Number.isNaN(p.x));
-                    if (invalidWeightL || invalidHeightL || invalidDateL) {
-                        console.warn('Livewire chart data contains invalid entries', {
-                            invalidWeightL,
-                            invalidHeightL,
-                            invalidDateL,
-                            records
-                        });
-                    }
-
-                    chart.updateSeries([{
-                            name: 'Berat Badan (kg)',
-                            data: weightData
-                        },
-                        {
-                            name: 'Tinggi Badan (cm)',
-                            data: heightData
-                        }
-                    ]);
-                });
             }
         });
     </script>

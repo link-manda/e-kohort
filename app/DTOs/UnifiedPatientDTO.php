@@ -125,7 +125,7 @@ class UnifiedPatientDTO
     public function getShowRoute(): string
     {
         if ($this->type === 'child') {
-            return route('imunisasi.kunjungan', $this->id);
+            return route('children.show', $this->id);
         }
         return route('patients.show', $this->id);
     }

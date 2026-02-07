@@ -73,6 +73,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Immunization Module Routes
     Route::get('/children/register', App\Livewire\ChildRegistration::class)->name('children.register')
         ->middleware('permission:create-patients');
+    Route::get('/children/{child}', [App\Http\Controllers\ChildController::class, 'show'])->name('children.show')
+        ->middleware('permission:view-all-patients|view-own-patients');
     Route::get('/children/{child}/immunization', App\Livewire\ImmunizationEntry::class)->name('children.immunization')
         ->middleware('permission:create-anc-visits');
 

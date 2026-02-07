@@ -162,7 +162,7 @@
                     <!-- Data Rows -->
                     @forelse($children as $child)
                         <tr class="hover:bg-blue-50 transition-colors cursor-pointer" wire:loading.remove
-                            onclick="window.location='{{ route('imunisasi.kunjungan', $child->id) }}'">
+                            onclick="window.location='{{ route('children.show', $child->id) }}'">
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
                                     <div

@@ -108,6 +108,14 @@ class Child extends Model
     }
 
     /**
+     * Get all general visits (poli umum) for this child.
+     */
+    public function generalVisits(): HasMany
+    {
+        return $this->hasMany(GeneralVisit::class);
+    }
+
+    /**
      * Get all growth records for this child.
      */
     public function growthRecords(): HasMany
