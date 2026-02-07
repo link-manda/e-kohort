@@ -73,8 +73,8 @@ class IndividualImmunizationExport implements FromCollection, WithHeadings, With
         $child = $visit->child;
         $patient = $child->patient ?? null;
 
-        // Usia pada kunjungan (format detail dari model Child)
-        $ageAtVisit = method_exists($child, 'getDetailedAge') ? $child->getDetailedAge($visit->visit_date) : ($child->dob ? Carbon::parse($child->dob)->diffInMonths($visit->visit_date) . ' bulan' : '-');
+        // Usia pada kunjungan (format detail dari model Child) - rounded to integer
+        $ageAtVisit = method_exists($child, 'getDetailedAge') ? $child->getDetailedAge($visit->visit_date) : ($child->dob ? round(Carbon::parse($child->dob)->diffInMonths($visit->visit_date)) . ' bulan' : '-');
 
         // Jenis imunisasi (nama atau normalisasi kode)
         $vaccineNames = $visit->immunizationActions->map(function($a) {

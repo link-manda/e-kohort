@@ -1,19 +1,51 @@
 <div class="max-w-7xl mx-auto px-4 py-6">
-    <!-- Header -->
-    <div class="mb-6">
-        <div class="flex items-center gap-4 mb-2">
+    {{-- Breadcrumb Navigation --}}
+    <nav class="mb-4 text-sm">
+        <ol class="flex items-center gap-2 text-gray-600">
+            <li><a href="{{ route('dashboard') }}" class="hover:text-pink-600">Dashboard</a></li>
+            <li>/</li>
+            <li><a href="{{ route('patients.index') }}" class="hover:text-pink-600">Data Pasien</a></li>
+            <li>/</li>
+            <li><a href="{{ route('patients.show', $pregnancy->patient_id) }}" class="hover:text-pink-600">{{ $pregnancy->patient->name }}</a></li>
+            <li>/</li>
+            <li class="text-pink-600 font-semibold">Input Persalinan</li>
+        </ol>
+    </nav>
+
+    {{-- Pregnancy Context Card --}}
+    <div class="bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-300 rounded-xl p-5 mb-6">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
+                    🤰
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-gray-900">
+                        Kehamilan {{ $pregnancy->gravida }} - {{ $pregnancy->patient->name }}
+                    </h3>
+                    <div class="flex items-center gap-4 text-sm text-gray-700 mt-1">
+                        <span class="font-medium">📅 HPHT: {{ $pregnancy->hpht->format('d/m/Y') }}</span>
+                        <span class="font-medium">📌 HPL: {{ $pregnancy->hpl->format('d/m/Y') }}</span>
+                        <span class="font-medium bg-purple-200 text-purple-900 px-3 py-1 rounded-full">
+                            {{ $pregnancy->gestational_age }} Minggu
+                        </span>
+                    </div>
+                </div>
+            </div>
             <a href="{{ route('patients.show', $pregnancy->patient_id) }}"
-                class="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                class="p-2 hover:bg-purple-100 rounded-lg transition-colors">
                 <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </a>
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900">🏥 Form Persalinan & Bayi Baru Lahir</h1>
-                <p class="text-sm text-gray-500 mt-1">{{ $pregnancy->patient->name }} - {{ $pregnancy->gravida }}</p>
-            </div>
         </div>
+    </div>
+
+    {{-- Header --}}
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-900">🏥 Form Persalinan & Bayi Baru Lahir</h1>
+        <p class="text-sm text-gray-500 mt-1">Dokumentasi lengkap proses persalinan dan kondisi bayi</p>
     </div>
 
     @if (session()->has('message'))

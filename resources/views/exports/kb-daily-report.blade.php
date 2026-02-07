@@ -127,8 +127,8 @@
                         ', ' .
                         ($patient->dob ? \Carbon\Carbon::parse($patient->dob)->locale('id')->isoFormat('D MMM YYYY') : '-');
 
-                    // Age
-                    $age = $patient->dob ? \Carbon\Carbon::parse($patient->dob)->diffInYears(\Carbon\Carbon::parse($visit->visit_date)) : '-';
+                    // Age - floor to integer years
+                    $age = $patient->dob ? floor(\Carbon\Carbon::parse($patient->dob)->diffInYears(\Carbon\Carbon::parse($visit->visit_date))) : '-';
 
                     // TD
                     $td =

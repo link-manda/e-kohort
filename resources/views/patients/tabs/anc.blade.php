@@ -60,16 +60,41 @@
                         </div>
                     </div>
 
+                    {{-- Delivery Readiness Alert --}}
+                    @if ($pregnancy->status === 'Aktif' && $pregnancy->gestational_age >= 37 && !$pregnancy->hasDeliveryRecord())
+                        <div class="bg-green-50 border-l-4 border-green-500 rounded-lg p-4 mb-4">
+                            <div class="flex items-start gap-3">
+                                <x-heroicon-o-check-circle class="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                                <div class="flex-1">
+                                    <p class="text-sm text-green-800 font-medium">
+                                        ✅ Kehamilan Aterm ({{ $pregnancy->gestational_age }} minggu)
+                                    </p>
+                                    <p class="text-xs text-green-700 mt-1">
+                                        Pasien siap melahirkan. Input data persalinan saat pasien melahirkan.
+                                    </p>
+
+                                    {{-- CTA: Input Persalinan --}}
+                                    <div class="mt-3">
+                                        <a href="{{ route('pregnancies.delivery', $pregnancy->id) }}"
+                                            class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors text-sm shadow-sm">
+                                            <x-heroicon-o-sparkles class="w-4 h-4" />
+                                            Siap Input Data Persalinan
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                     <!-- ANC Visits List -->
                     @if ($pregnancy->ancVisits && $pregnancy->ancVisits->count() > 0)
                         <div class="border-t border-gray-200 pt-4">
                             <p class="text-sm font-semibold text-gray-700 mb-3">Riwayat Kunjungan ANC:</p>
                             <div class="space-y-2">
                                 @foreach ($pregnancy->ancVisits->sortByDesc('visit_date')->take(5) as $visit)
-                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                                         <div class="flex items-center gap-3">
-                                            <span
-                                                class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded">
+                                            <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded">
                                                 {{ $visit->visit_code }}
                                             </span>
                                             <div>
@@ -81,10 +106,28 @@
                                                 </p>
                                             </div>
                                         </div>
-                                        <a href="{{ route('anc-visits.show', $visit->id) }}"
-                                            class="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                                            Detail →
-                                        </a>
+
+                                        <!-- Vital Signs -->
+                                        <div class="flex items-center gap-4">
+                                            @if($visit->td_systolic && $visit->td_diastolic)
+                                                <div class="text-center">
+                                                    <p class="text-xs text-gray-500">TD</p>
+                                                    <p class="text-sm font-semibold {{ ($visit->td_systolic >= 140 || $visit->td_diastolic >= 90) ? 'text-red-600' : 'text-green-600' }}">
+                                                        {{ $visit->td_systolic }}/{{ $visit->td_diastolic }}
+                                                    </p>
+                                                </div>
+                                            @endif
+                                            @if($visit->weight)
+                                                <div class="text-center">
+                                                    <p class="text-xs text-gray-500">BB</p>
+                                                    <p class="text-sm font-semibold text-gray-700">{{ $visit->weight }} kg</p>
+                                                </div>
+                                            @endif
+                                            <a href="{{ route('anc-visits.show', $visit->id) }}"
+                                                class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                                                Detail →
+                                            </a>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>

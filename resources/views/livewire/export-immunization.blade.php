@@ -64,7 +64,7 @@
                     <select wire:model="child_id" class="w-full px-4 py-2 border rounded-lg">
                         <option value="">-- Pilih Anak --</option>
                         @foreach ($children as $ch)
-                            <option value="{{ $ch->id }}">{{ $ch->name }} — Ibu: {{ $ch->patient->name }}</option>
+                            <option value="{{ $ch->id }}">{{ $ch->name }} — Orang Tua: {{ $ch->parent_display_name }}</option>
                         @endforeach
                     </select>
                     @error('child_id') <p class="text-xs text-red-600 mt-1">{{ $message }}</p> @enderror

@@ -119,9 +119,9 @@ $ttl =
     ', ' .
     ($child->dob ? \Carbon\Carbon::parse($child->dob)->locale('id')->isoFormat('D MMM YYYY') : '-');
 
-// Age
+// Age - round to integer
 $age = $child->dob
-    ? \Carbon\Carbon::parse($child->dob)->diffInMonths(\Carbon\Carbon::parse($visit->visit_date)) .
+    ? round(\Carbon\Carbon::parse($child->dob)->diffInMonths(\Carbon\Carbon::parse($visit->visit_date))) .
         ' bln'
     : '-';
 

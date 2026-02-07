@@ -37,14 +37,51 @@ class GeneralRegisterExport implements FromView, ShouldAutoSize, WithStyles, Wit
         return view('exports.general-register', [
             'visits' => $query->get(),
             'period' => $this->startDate && $this->endDate
-                ? "{$this->startDate} s/d {$this->endDate}"
+                ? "{$this->startDate} sd {$this->endDate}"  // Changed s/d to sd (no slash)
                 : "Semua Data",
         ]);
     }
 
     public function title(): string
     {
-        return 'Register Rawat Jalan';
+        // PhpSpreadsheet max 31 characters
+        $title = 'Poli Umum';
+
+        if ($this->startDate && $this->endDate) {
+            $start = \Carbon\Carbon::parse($this->startDate);
+            $end = \Carbon\Carbon::parse($this->endDate);
+
+            // Format: MMM (Jan, Feb, etc.)
+            // We use standard letters to be safe, but keep locale if needed.
+            // Strict truncation at the end will save us.
+
+            // Same month: "Poli Feb 2026"
+            if ($start->format('Y-m') === $end->format('Y-m')) {
+                $title = 'Poli ' . $start->locale('id')->isoFormat('MMM YYYY');
+            }
+            // Same year: "Poli Jan-Feb 2026"
+            elseif ($start->year === $end->year) {
+                $title = sprintf(
+                    'Poli %s-%s %s',
+                    $start->locale('id')->isoFormat('MMM'),
+                    $end->locale('id')->isoFormat('MMM'),
+                    $end->format('Y')
+                );
+            }
+            // Different years: "Poli Des 25-Jan 26"
+            else {
+                $title = sprintf(
+                    'Poli %s %s-%s %s',
+                    $start->locale('id')->isoFormat('MMM'),
+                    $start->format('y'),
+                    $end->locale('id')->isoFormat('MMM'),
+                    $end->format('y')
+                );
+            }
+        }
+
+        // Final safety bracket: max 31 chars
+        return mb_substr($title, 0, 31);
     }
 
     public function styles(Worksheet $sheet)

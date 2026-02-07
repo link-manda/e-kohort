@@ -24,7 +24,7 @@ class ExportGeneralRegister extends Component
             'dateTo' => 'required|date|after_or_equal:dateFrom',
         ]);
 
-        $filename = 'Register_Poli_Umum_' . now()->format('Ymd_His') . '.xlsx';
+        $filename = 'Reg_Poli_Umum_' . now()->format('Ymd') . '.xlsx';
 
         return Excel::download(new GeneralRegisterExport($this->dateFrom, $this->dateTo), $filename);
     }

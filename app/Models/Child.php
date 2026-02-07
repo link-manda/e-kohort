@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Child extends Model
 {
@@ -86,6 +87,16 @@ class Child extends Model
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class);
+    }
+
+    /**
+     * Get the delivery record associated with this child's birth.
+     * Note: Only works for internal births where patient_id is set.
+     */
+    public function deliveryRecord(): HasOne
+    {
+        return $this->hasOne(DeliveryRecord::class, 'pregnancy_id', 'patient_id')
+            ->whereDate('delivery_date_time', $this->dob);
     }
 
     /**

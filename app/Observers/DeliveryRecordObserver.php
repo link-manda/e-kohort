@@ -23,15 +23,21 @@ class DeliveryRecordObserver
     {
         try {
             DB::transaction(function () use ($deliveryRecord) {
-                // 1. Update Pregnancy Status
+                // 1. Sync Delivery Summary to Pregnancy
                 $pregnancy = $deliveryRecord->pregnancy;
                 $pregnancy->update([
                     'status' => 'Lahir',
                     'delivery_date' => $deliveryRecord->delivery_date_time,
+                    'delivery_method' => $this->mapDeliveryMethodForPregnancy($deliveryRecord->delivery_method),
+                    'birth_attendant' => $deliveryRecord->birth_attendant,
+                    'place_of_birth' => $deliveryRecord->place_of_birth,
+                    'outcome' => $deliveryRecord->condition,
+                    'baby_gender' => $deliveryRecord->gender,
+                    'complications' => $deliveryRecord->complications,
                 ]);
 
                 // 2. Auto-Create Child Record
-                // Pastikan bayi hidup dan belum ada child record untuk pregnancy ini
+                // Only if baby is alive and no duplicate exists
                 if ($deliveryRecord->condition === 'Hidup' && !$this->childAlreadyExists($pregnancy->id)) {
                     $child = Child::create([
                         'patient_id' => $pregnancy->patient_id,
@@ -42,7 +48,8 @@ class DeliveryRecordObserver
                         'pob' => $deliveryRecord->place_of_birth,
                         'birth_weight' => $deliveryRecord->birth_weight,
                         'birth_height' => $deliveryRecord->birth_length,
-                        'status' => 'Hidup', // FIX: Changed from 'Aktif' to 'Hidup'
+                        'birth_location' => 'internal', // Delivery at this clinic
+                        'status' => 'Hidup',
                     ]);
 
                     // 3. Auto-Create HB0 Immunization if Given
@@ -69,13 +76,35 @@ class DeliveryRecordObserver
     }
 
     /**
-     * Check if child already exists for this pregnancy.
+     * Check if child already exists for this delivery.
+     * DUPLICATE PREVENTION: Check by patient_id + DOB to handle:
+     * - Re-editing delivery records
+     * - External births registered separately
      */
     private function childAlreadyExists(int $pregnancyId): bool
     {
-        // Check by pregnancy's patient_id and approximate birth date
-        // (untuk menghindari duplikasi jika user edit delivery record)
-        return false; // Simplified for now - bisa ditambahkan logic lebih kompleks
+        $delivery = DeliveryRecord::where('pregnancy_id', $pregnancyId)->first();
+
+        if (!$delivery) {
+            return false;
+        }
+
+        $pregnancy = $delivery->pregnancy;
+        $dob = $delivery->delivery_date_time->toDateString();
+
+        // Check if child with same DOB and mother already exists
+        $existingChild = Child::where('patient_id', $pregnancy->patient_id)
+            ->where('dob', $dob)
+            ->exists();
+
+        if ($existingChild) {
+            Log::info('Child already exists - skipping creation', [
+                'patient_id' => $pregnancy->patient_id,
+                'dob' => $dob,
+            ]);
+        }
+
+        return $existingChild;
     }
 
     /**
@@ -95,12 +124,13 @@ class DeliveryRecordObserver
         ]);
 
         // Create HB0 immunization action
+        // Note: immunization_actions uses vaccine_type string, not vaccine_id FK
         ImmunizationAction::create([
             'child_visit_id' => $childVisit->id,
             'vaccine_type' => 'HB0',
-            'batch_number' => null, // Will be filled later
+            'batch_number' => 'AUTO-' . now()->format('Ymd'),
             'body_part' => 'Paha Kanan',
-            'provider_name' => null, // Will be filled later
+            'provider_name' => 'Bidan (Auto-generated)',
         ]);
 
         Log::info('DeliveryRecordObserver: Created HB0 immunization', [
@@ -139,6 +169,22 @@ class DeliveryRecordObserver
     public function forceDeleted(DeliveryRecord $deliveryRecord): void
     {
         //
+    }
+
+    /**
+     * Map detailed delivery methods from delivery_records to simplified pregnancy enum.
+     *
+     * delivery_records ENUM: 'Spontan Belakang Kepala', 'Sungsang', 'Vakum', 'Sectio Caesarea'
+     * pregnancies ENUM: 'Normal', 'Caesar/Sectio', 'Vakum'
+     */
+    private function mapDeliveryMethodForPregnancy(string $deliveryMethod): string
+    {
+        return match ($deliveryMethod) {
+            'Spontan Belakang Kepala', 'Sungsang' => 'Normal',
+            'Sectio Caesarea' => 'Caesar/Sectio',
+            'Vakum' => 'Vakum',
+            default => 'Normal', // Fallback to Normal
+        };
     }
 }
 

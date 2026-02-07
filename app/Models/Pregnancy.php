@@ -80,6 +80,64 @@ class Pregnancy extends Model
     }
 
     /**
+     * Check if delivery data has been recorded.
+     */
+    public function hasDeliveryRecord(): bool
+    {
+        return $this->deliveryRecord()->exists();
+    }
+
+    /**
+     * Get delivery status badge HTML/text for UI display.
+     */
+    public function getDeliveryStatusBadge(): string
+    {
+        if ($this->hasDeliveryRecord()) {
+            return '<span class="badge badge-success">✅ Sudah Melahirkan</span>';
+        }
+
+        if ($this->isReadyForDelivery()) {
+            return '<span class="badge badge-warning">⏳ Siap Melahirkan</span>';
+        }
+
+        return '<span class="badge badge-secondary">🤰 Hamil</span>';
+    }
+
+    /**
+     * Check if pregnancy is ready for delivery entry.
+     * Criteria: gestational_age >= 37 weeks (full term) OR status = 'Lahir'
+     */
+    public function isReadyForDelivery(): bool
+    {
+        return $this->gestational_age >= 37 || $this->status === 'Lahir';
+    }
+
+    /**
+     * Get delivery summary for quick reference.
+     * Returns array with key delivery data from DeliveryRecord.
+     */
+    public function getDeliverySummaryAttribute(): ?array
+    {
+        $delivery = $this->deliveryRecord;
+
+        if (!$delivery) {
+            return null;
+        }
+
+        return [
+            'date' => $delivery->delivery_date_time,
+            'method' => $delivery->delivery_method,
+            'attendant' => $delivery->birth_attendant,
+            'place' => $delivery->place_of_birth,
+            'baby_name' => $delivery->baby_name,
+            'gender' => $delivery->gender,
+            'weight' => $delivery->birth_weight,
+            'length' => $delivery->birth_length,
+            'condition' => $delivery->condition,
+        ];
+    }
+
+    /**
      * Calculate gestational age in weeks from HPHT.
      */
     public function getGestationalAgeAttribute(): int

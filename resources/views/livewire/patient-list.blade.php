@@ -146,7 +146,7 @@
                 <tbody class="divide-y divide-gray-200">
                     @forelse($patients as $patient)
                         <tr class="hover:bg-blue-50 transition-colors cursor-pointer"
-                            onclick="window.location='{{ route('patients.show', $patient->id) }}'">
+                            onclick="window.location='{{ $patient->getShowRoute() }}'">
                             <!-- Nama Pasien -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
@@ -194,7 +194,7 @@
 
                             <!-- Umur -->
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ $patient->age }} tahun</div>
+                                <div class="text-sm text-gray-900">{{ $patient->getFormattedAge() }}</div>
                             </td>
 
                             <!-- Kategori -->
