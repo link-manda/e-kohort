@@ -20,6 +20,8 @@ class PostnatalVisit extends Model
         'td_systolic',
         'td_diastolic',
         'temperature',
+        'notes',
+        'service_fee',
         'lochea',
         'uterine_involution',
         'vitamin_a',

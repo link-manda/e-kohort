@@ -28,6 +28,8 @@ class AncVisit extends Model
         'systolic',
         'diastolic',
         'map_score',
+        'notes',
+        'service_fee',
         'tfu',
         'djj',
         'fetal_presentation',

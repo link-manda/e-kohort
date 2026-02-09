@@ -38,6 +38,8 @@ class DeliveryRecord extends Model
 
         // Data Bayi - Identitas & Antropometri
         'baby_name',
+        'notes',
+        'service_fee',
         'gender',
         'birth_weight',
         'birth_length',

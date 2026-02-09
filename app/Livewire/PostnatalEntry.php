@@ -32,6 +32,7 @@ class PostnatalEntry extends Component
     public $fe_tablets = 0;
     public $complication_check = false;
     public $conclusion = '';
+    public $service_fee = '';
 
     // UI state
     public $showSuccess = false;
@@ -60,6 +61,7 @@ class PostnatalEntry extends Component
             'fe_tablets' => 'nullable|integer|min:0|max:200',
             'complication_check' => 'boolean',
             'conclusion' => 'nullable|string',
+            'service_fee' => 'nullable|numeric|min:0',
         ];
     }
 
@@ -123,6 +125,7 @@ class PostnatalEntry extends Component
         $this->fe_tablets = $visit->fe_tablets;
         $this->complication_check = $visit->complication_check;
         $this->conclusion = $visit->conclusion;
+        $this->service_fee = $visit->service_fee;
     }
 
     public function updatedVisitCode()
@@ -264,6 +267,7 @@ class PostnatalEntry extends Component
             'fe_tablets' => $this->fe_tablets ?: 0,
             'complication_check' => $this->complication_check,
             'conclusion' => $this->conclusion,
+            'service_fee' => $this->service_fee ?: null,
         ];
 
         if ($this->isEditMode) {
@@ -307,6 +311,7 @@ class PostnatalEntry extends Component
         $this->fe_tablets = 0;
         $this->complication_check = false;
         $this->conclusion = '';
+        $this->service_fee = '';
         $this->visit_date_warning = '';
     }
 

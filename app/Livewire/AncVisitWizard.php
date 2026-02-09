@@ -61,6 +61,7 @@ class AncVisitWizard extends Component
     public $risk_level;
     public $follow_up;
     public $midwife_name;
+    public $service_fee;
     // Auto-generated
     public $risk_category;
     public $has_kek = false;
@@ -105,6 +106,7 @@ class AncVisitWizard extends Component
             $rules['risk_level'] = 'nullable|string|max:500';
             $rules['follow_up'] = 'nullable|string|max:500';
             $rules['midwife_name'] = 'nullable|string|max:200';
+            $rules['service_fee'] = 'nullable|numeric|min:0';
         }
 
         return $rules;
@@ -144,6 +146,7 @@ class AncVisitWizard extends Component
             'hbsag_status.required' => 'Status HBsAg harus dipilih.',
             'fe_tablets.min' => 'Jumlah tablet Fe tidak boleh negatif.',
             'fe_tablets.max' => 'Jumlah tablet Fe maksimal 200.',
+            'service_fee.min' => 'Biaya layanan tidak boleh negatif.',
         ];
     }
 
@@ -213,6 +216,7 @@ class AncVisitWizard extends Component
         $this->risk_level = $visit->risk_level;
         $this->follow_up = $visit->follow_up;
         $this->midwife_name = $visit->midwife_name;
+        $this->service_fee = $visit->service_fee;
 
         $this->diagnosis = $visit->diagnosis;
         $this->referral_target = $visit->referral_target;
@@ -371,6 +375,7 @@ class AncVisitWizard extends Component
                 'referral_target' => $this->referral_target ?: null,
                 'follow_up' => $this->follow_up ?: null,
                 'midwife_name' => $this->midwife_name ?: null,
+                'service_fee' => $this->service_fee ?: null,
             ];
 
             if ($this->isEditMode) {

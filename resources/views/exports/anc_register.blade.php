@@ -41,7 +41,7 @@
         <thead>
             <!-- JUDUL -->
             <tr>
-                <th colspan="58" style="font-size: 14px; padding: 10px;">
+                <th colspan="59" style="font-size: 14px; padding: 10px;">
                     REGISTER ANTENATAL CARE (ANC) TERINTEGRASI<br>
                     PERIODE: {{ strtoupper($period ?? '-') }}
                 </th>
@@ -104,6 +104,7 @@
                 <th rowspan="2">DIAGNOSA</th>
                 <th rowspan="2">TINDAK<br>LANJUT</th>
                 <th rowspan="2">NAKES</th>
+                <th rowspan="2">BIAYA</th>
             </tr>
 
             <!-- BARIS HEADER 2 (Sub-Kolom) -->
@@ -259,6 +260,7 @@
                     <td>{{ $visit->diagnosis ?? '-' }}</td>
                     <td>{{ $visit->follow_up ?? '-' }}</td>
                     <td>{{ $visit->midwife_name ?? '-' }}</td>
+                    <td class="center">{{ $visit->service_fee ? 'Rp ' . number_format($visit->service_fee, 0, ',', '.') : '-' }}</td>
                 </tr>
             @empty
                 <tr>

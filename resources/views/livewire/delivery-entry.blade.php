@@ -293,6 +293,19 @@
                                 class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"></textarea>
                         </div>
                     </div>
+
+                    <!-- Biaya Layanan -->
+                    <div class="mt-4 pt-4 border-t border-pink-300">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Biaya Layanan (Rp)
+                        </label>
+                        <input type="number" wire:model="service_fee" min="0" step="1000"
+                            class="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500"
+                            placeholder="Biaya jasa persalinan">
+                        @error('service_fee')
+                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
             </div>
         </div>

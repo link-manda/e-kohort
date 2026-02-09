@@ -12,7 +12,7 @@
         <!-- Title Row -->
         <thead>
             <tr>
-                <th colspan="27"
+                <th colspan="28"
                     style="border: 1px solid black; padding: 10px; text-align: center; font-size: 16px; font-weight: bold;">
                     REGISTER PERSALINAN
                     <br>
@@ -70,6 +70,9 @@
                 <th rowspan="2"
                     style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #f0f0f0;">
                     KETERANGAN</th>
+                <th rowspan="2"
+                    style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #f0f0f0;">
+                    BIAYA</th>
             </tr>
 
             <!-- Child Headers (Row 2) -->
@@ -281,10 +284,13 @@
                     <!-- KETERANGAN -->
                     <td style="border: 1px solid black; padding: 5px; vertical-align: middle;">{{ $keteranganText }}
                     </td>
+                    <td style="border: 1px solid black; padding: 5px; text-align: right; vertical-align: middle;">
+                        {{ $delivery->service_fee ? 'Rp ' . number_format($delivery->service_fee, 0, ',', '.') : '-' }}
+                    </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="27"
+                    <td colspan="28"
                         style="border: 1px solid black; padding: 20px; text-align: center; vertical-align: middle; font-style: italic;">
                         Tidak ada data persalinan pada bulan
                         {{ \Carbon\Carbon::createFromDate($year, $month, 1)->locale('id')->isoFormat('MMMM YYYY') }}

@@ -62,6 +62,9 @@ class DeliveryEntry extends Component
     #[Validate('nullable|string')]
     public $complications = '';
 
+    #[Validate('nullable|numeric|min:0')]
+    public $service_fee = '';
+
     // Data Bayi - Identitas
     #[Validate('nullable|string|max:255')]
     public $baby_name = '';
@@ -141,7 +144,9 @@ class DeliveryEntry extends Component
         $this->bleeding_amount = $dr->bleeding_amount;
         $this->blood_pressure = $dr->blood_pressure;
         $this->postpartum_monitoring_2h = $dr->postpartum_monitoring_2h;
+        $this->postpartum_monitoring_2h = $dr->postpartum_monitoring_2h;
         $this->complications = $dr->complications;
+        $this->service_fee = $dr->service_fee;
 
         $this->baby_name = $dr->baby_name;
         $this->gender = $dr->gender;
@@ -186,7 +191,9 @@ class DeliveryEntry extends Component
             'bleeding_amount' => $this->bleeding_amount,
             'blood_pressure' => $this->blood_pressure,
             'postpartum_monitoring_2h' => $this->postpartum_monitoring_2h,
+            'postpartum_monitoring_2h' => $this->postpartum_monitoring_2h,
             'complications' => $this->complications,
+            'service_fee' => $this->service_fee ?: null,
 
             'baby_name' => $this->baby_name,
             'gender' => $this->gender,

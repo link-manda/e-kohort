@@ -536,6 +536,20 @@
                             @enderror
                         </div>
 
+                        <!-- Biaya Layanan -->
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Biaya Layanan (Rp)
+                            </label>
+                            <input type="number" wire:model="service_fee" min="0" step="1000"
+                                class="w-full px-4 py-3 border-2 rounded-lg border-gray-300
+                                      focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors"
+                                placeholder="Biaya jasa kunjungan nifas">
+                            @error('service_fee')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <!-- Action Buttons -->
                         <div class="flex gap-4 pt-6 border-t border-gray-200">
                             <button type="submit" wire:loading.attr="disabled" wire:target="save"

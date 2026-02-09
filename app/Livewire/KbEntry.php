@@ -39,6 +39,7 @@ class KbEntry extends Component
     public $side_effects;
     public $complications;
     public $informed_consent = false;
+    public $service_fee;
 
 
     public function updated($propertyName)
@@ -108,6 +109,7 @@ class KbEntry extends Component
         'informed_consent' => 'boolean',
         'next_visit_date' => 'nullable|date|after:visit_date',
         'midwife_name' => 'required|string|max:100',
+        'service_fee' => 'nullable|numeric|min:0',
     ];
 
     public function mount($patient_id = null)
@@ -334,6 +336,7 @@ class KbEntry extends Component
             'selectedMethod',
             'isHypertensive',
             'hypertensionWarning',
+            'service_fee',
         ]);
 
         $this->visit_date = now()->format('Y-m-d\TH:i');

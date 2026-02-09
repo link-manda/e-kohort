@@ -11,7 +11,7 @@
         <!-- Title Row -->
         <thead>
             <tr>
-                <th colspan="20"
+                <th colspan="21"
                     style="border: 1px solid black; padding: 10px; text-align: center; font-size: 16px; font-weight: bold;">
                     REGISTER PELAYANAN KELUARGA BERENCANA (KB)
                     <br>
@@ -63,6 +63,9 @@
                 <th rowspan="2"
                     style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #f0f0f0;">
                     BIDAN</th>
+                <th rowspan="2"
+                    style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: middle; font-weight: bold; background-color: #f0f0f0;">
+                    BIAYA</th>
             </tr>
 
             <!-- Child Headers (Row 2) -->
@@ -218,10 +221,13 @@
                     <!-- BIDAN -->
                     <td style="border: 1px solid black; padding: 5px; vertical-align: middle;">
                         {{ $visit->midwife_name ?? '-' }}</td>
+                    <td style="border: 1px solid black; padding: 5px; text-align: right; vertical-align: middle;">
+                        {{ $visit->service_fee ? 'Rp ' . number_format($visit->service_fee, 0, ',', '.') : '-' }}
+                    </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="20"
+                    <td colspan="21"
                         style="border: 1px solid black; padding: 20px; text-align: center; vertical-align: middle; font-style: italic;">
                         Tidak ada data kunjungan KB pada periode ini.
                     </td>
