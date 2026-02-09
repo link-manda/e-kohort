@@ -306,7 +306,9 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                     <!-- Poli Umum -->
                     <button wire:click="selectChildService('general')"
                         class="flex flex-col items-center justify-center p-6 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-blue-300 transition-all group">
@@ -325,6 +327,16 @@
                         </div>
                         <h4 class="font-semibold text-gray-900">Imunisasi</h4>
                         <p class="text-sm text-gray-500 text-center mt-1">Input data imunisasi anak.</p>
+                    </button>
+
+                    <!-- Poli Gizi -->
+                    <button wire:click="selectChildService('growth')"
+                        class="flex flex-col items-center justify-center p-6 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-purple-300 transition-all group">
+                        <div class="p-3 bg-purple-100 rounded-full group-hover:bg-purple-200 mb-3">
+                            <x-heroicon-o-chart-bar class="h-8 w-8 text-purple-600" />
+                        </div>
+                        <h4 class="font-semibold text-gray-900">Poli Gizi</h4>
+                        <p class="text-sm text-gray-500 text-center mt-1">Pantau tumbuh kembang.</p>
                     </button>
                 </div>
             </div>

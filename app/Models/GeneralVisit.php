@@ -145,4 +145,13 @@ class GeneralVisit extends Model
         }
         return $this->patient;
     }
+    /**
+     * Get Total Price (Sum of Prescriptions)
+     * Note: Currently only counts prescriptions as service_fee column does not exist yet.
+     */
+    public function getTotalPriceAttribute(): float
+    {
+        // Eager load prescriptions if not already loaded to prevent N+1 in loops
+        return $this->prescriptions->sum('total_price');
+    }
 }

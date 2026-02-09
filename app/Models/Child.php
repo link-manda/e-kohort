@@ -124,6 +124,14 @@ class Child extends Model
     }
 
     /**
+     * Get the latest growth record for this child.
+     */
+    public function latestGrowthRecord(): HasOne
+    {
+        return $this->hasOne(ChildGrowthRecord::class)->latestOfMany('record_date');
+    }
+
+    /**
      * Get child's age in months.
      */
     public function getAgeInMonthsAttribute(): int

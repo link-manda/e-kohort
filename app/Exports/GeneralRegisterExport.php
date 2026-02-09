@@ -25,7 +25,7 @@ class GeneralRegisterExport implements FromView, ShouldAutoSize, WithStyles, Wit
 
     public function view(): View
     {
-        $query = GeneralVisit::with('patient')->orderBy('visit_date', 'asc');
+        $query = GeneralVisit::with(['patient', 'child', 'prescriptions'])->orderBy('visit_date', 'asc');
 
         if ($this->startDate) {
             $query->whereDate('visit_date', '>=', $this->startDate);

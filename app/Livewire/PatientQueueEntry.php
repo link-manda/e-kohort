@@ -102,6 +102,10 @@ class PatientQueueEntry extends Component
                 // Poli Umum untuk anak - redirect ke halaman kunjungan umum anak
                 return redirect()->route('children.general-visit', ['child_id' => $this->selectedChildId]);
 
+            case 'growth':
+                // Poli Gizi / Pertumbuhan
+                return redirect()->route('children.growth', ['childId' => $this->selectedChildId]);
+
             default:
                 session()->flash('error', 'Layanan tidak valid untuk anak.');
                 return;

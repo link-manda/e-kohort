@@ -89,6 +89,15 @@
             </a>
         @endcan
 
+        <!-- Poli Gizi (New) -->
+        @can('viewAny', App\Models\Patient::class)
+            <a href="{{ route('growth.index') }}"
+                class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('growth.*') ? 'bg-cyan-600 shadow-lg' : 'hover:bg-cyan-600/60' }}">
+                <x-heroicon-o-chart-bar class="w-6 h-6 flex-shrink-0" />
+                <span x-show="open" class="font-medium">Poli Gizi</span>
+            </a>
+        @endcan
+
         <!-- Divider -->
         <div x-show="open" class="border-t border-blue-700 my-4"></div>
 
@@ -120,6 +129,12 @@
                         <span>Data Pasien</span>
                     </a>
 
+                    <a href="{{ route('export.growth') }}"
+                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.growth') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
+                        <x-heroicon-o-chart-bar class="w-4 h-4" />
+                        <span>Register Gizi</span>
+                    </a>
+
                     @if (Route::has('export.general-register'))
                         <a href="{{ route('export.general-register') }}"
                             class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.general-register') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
@@ -131,13 +146,13 @@
                     <a href="{{ route('export.immunization.page') }}"
                         class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.immunization.page') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
                         <x-heroicon-o-arrow-down-tray class="w-4 h-4" />
-                        <span>Imunisasi</span>
+                        <span>Register Imunisasi</span>
                     </a>
 
                     <a href="{{ route('export.kb') }}"
                         class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('export.kb') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
                         <x-heroicon-o-check-circle class="w-4 h-4" />
-                        <span>Laporan KB</span>
+                        <span>Register KB</span>
                     </a>
 
                     <a href="{{ route('export.delivery-register') }}"

@@ -151,7 +151,7 @@
 
                     <!-- BIAYA -->
                     <td style="border: 1px solid black; padding: 5px; text-align: right; vertical-align: middle;">
-                        {{ $visit->service_fee ? 'Rp ' . number_format($visit->service_fee, 0, ',', '.') : '-' }}</td>
+                        {{ $visit->total_price ? 'Rp ' . number_format($visit->total_price, 0, ',', '.') : '-' }}</td>
 
                     <!-- PEMBAYARAN -->
                     <td style="border: 1px solid black; padding: 5px; text-align: center; vertical-align: middle;">

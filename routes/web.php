@@ -119,6 +119,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // === END IMMUNIZATION MODULE ===
 
     // === GROWTH/KMS MODULE ===
+    // Growth Index (Poli Gizi)
+    Route::get('/growth', App\Livewire\GrowthIndex::class)->name('growth.index')
+        ->middleware('permission:view-all-patients|view-own-patients');
+
     // Growth Entry (KMS Digital)
     Route::get('/children/{childId}/growth', App\Livewire\GrowthEntry::class)->name('children.growth')
         ->middleware('permission:create-anc-visits');
@@ -145,6 +149,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Export: Immunization Page
     Route::get('/export/immunization', App\Livewire\ExportImmunization::class)->name('export.immunization.page')
+        ->middleware('permission:export-data');
+
+    // Export: Growth Data (New)
+    Route::get('/export/growth', App\Livewire\ExportGrowth::class)->name('export.growth')
         ->middleware('permission:export-data');
 
     // Export: Delivery Register (Register Persalinan)
