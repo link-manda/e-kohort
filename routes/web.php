@@ -86,6 +86,33 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/imunisasi/{child}/kunjungan', App\Livewire\ImmunizationEntry::class)->name('imunisasi.kunjungan')
         ->middleware('permission:create-anc-visits');
 
+
+    // KB Visit Detail Routes
+    Route::prefix('kb-visits')->name('kb-visits.')->group(function () {
+        Route::get('/{kbVisit}', [App\Http\Controllers\KbVisitController::class, 'show'])
+            ->name('show')
+            ->middleware('permission:view-all-patients|view-own-patients');
+        Route::get('/{kbVisit}/edit', [App\Http\Controllers\KbVisitController::class, 'edit'])
+            ->name('edit')
+            ->middleware('permission:create-anc-visits');
+        Route::delete('/{kbVisit}', [App\Http\Controllers\KbVisitController::class, 'destroy'])
+            ->name('destroy')
+            ->middleware('permission:delete-anc-visits');
+    });
+
+    // Postnatal Visit Detail Routes
+    Route::prefix('postnatal-visits')->name('postnatal-visits.')->group(function () {
+        Route::get('/{postnatalVisit}', [App\Http\Controllers\PostnatalVisitController::class, 'show'])
+            ->name('show')
+            ->middleware('permission:view-all-patients|view-own-patients');
+        Route::get('/{postnatalVisit}/edit', [App\Http\Controllers\PostnatalVisitController::class, 'edit'])
+            ->name('edit')
+            ->middleware('permission:create-anc-visits');
+        Route::delete('/{postnatalVisit}', [App\Http\Controllers\PostnatalVisitController::class, 'destroy'])
+            ->name('destroy')
+            ->middleware('permission:delete-anc-visits');
+    });
+
     // ANC Visits Index (All visits)
     Route::get('/anc-visits', App\Livewire\AncVisitIndex::class)->name('anc-visits.index')
         ->middleware('permission:view-all-anc-visits|view-own-anc-visits');

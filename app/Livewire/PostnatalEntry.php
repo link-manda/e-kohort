@@ -98,11 +98,14 @@ class PostnatalEntry extends Component
             return;
         }
 
-        // Edit mode
-        if ($postnatal_visit_id) {
+        // Check for visit_id from query parameter (for detail view from patient profile)
+        $visitIdFromQuery = request()->query('visit_id');
+
+        // Edit mode (prioritize parameter, then query)
+        if ($postnatal_visit_id || $visitIdFromQuery) {
             $this->isEditMode = true;
-            $this->postnatal_visit_id = $postnatal_visit_id;
-            $this->loadVisitData($postnatal_visit_id);
+            $this->postnatal_visit_id = $postnatal_visit_id ?? $visitIdFromQuery;
+            $this->loadVisitData($this->postnatal_visit_id);
         } else {
             // Create mode - set defaults
             $this->visit_date = now()->format('Y-m-d');

@@ -160,10 +160,25 @@
                                         {{ $delivery->eye_ointment_given ? '✅' : '⬜' }} Salep Mata
                                     </span>
                                     <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium {{ $delivery->hb0_given ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500' }}">
-                                        {{ $delivery->hb0_given ? '✅' : '⬜' }} HB0
+                                        {{ $delivery->hb0_immunization_given ? '✅' : '⬜' }} HB0
                                     </span>
                                 </div>
                             </div>
+
+                            {{-- Service Fee --}}
+                            @if($delivery->service_fee)
+                            <div class="border-t border-pink-200 pt-3 mt-3">
+                                <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                                    <div class="flex items-center gap-2">
+                                        <x-heroicon-s-currency-dollar class="w-5 h-5 text-green-600" />
+                                        <span class="text-sm font-semibold text-gray-700">Biaya Persalinan</span>
+                                    </div>
+                                    <span class="text-lg font-bold text-green-700">
+                                        Rp {{ number_format($delivery->service_fee, 0, ',', '.') }}
+                                    </span>
+                                </div>
+                            </div>
+                            @endif
                         </div>
 
                         <!-- Mother's Delivery Details (Collapsible) -->
@@ -253,7 +268,7 @@
                                 ({{ $pregnancy->postnatalVisits->count() }} kali):</p>
                             <div class="space-y-2">
                                 @foreach ($pregnancy->postnatalVisits->sortByDesc('visit_date') as $visit)
-                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                                         <div class="flex items-center gap-3">
                                             <span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-semibold rounded">
                                                 {{ $visit->visit_code }}
@@ -267,9 +282,16 @@
                                                 </p>
                                             </div>
                                         </div>
-                                        <span class="text-sm {{ $visit->td_systolic && $visit->td_systolic < 140 ? 'text-green-600' : 'text-red-600' }} font-medium">
-                                            {{ $visit->td_systolic ?? '-' }}/{{ $visit->td_diastolic ?? '-' }} mmHg
-                                        </span>
+                                        <div class="flex items-center gap-4">
+                                            <span class="text-sm {{ $visit->td_systolic && $visit->td_systolic < 140 ? 'text-green-600' : 'text-red-600' }} font-medium">
+                                                {{ $visit->td_systolic ?? '-' }}/{{ $visit->td_diastolic ?? '-' }} mmHg
+                                            </span>
+                                            <a href="{{ route('postnatal-visits.show', $visit->id) }}"
+                                               class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-200">
+                                                <x-heroicon-m-arrow-right class="w-3 h-3" />
+                                                Lihat Detail
+                                            </a>
+                                        </div>
                                     </div>
                                 @endforeach
                             </div>

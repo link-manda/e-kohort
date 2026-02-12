@@ -29,6 +29,7 @@ class KbVisit extends Model
         'informed_consent',
         'next_visit_date',
         'midwife_name',
+        'service_fee',
     ];
 
     protected $casts = [
