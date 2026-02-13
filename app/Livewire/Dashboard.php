@@ -5,12 +5,14 @@ namespace App\Livewire;
 use App\Models\Patient;
 use App\Models\Pregnancy;
 use App\Models\AncVisit;
+use App\Models\Child;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
 
 class Dashboard extends Component
 {
     public $totalPatients = 0;
+    public $patientCategories = [];
     public $activePregnancies = 0;
     public $todayVisits = 0;
     public $highRiskPatients = 0;
@@ -27,8 +29,16 @@ class Dashboard extends Component
 
     public function loadStatistics()
     {
-        // Total patients registered
-        $this->totalPatients = Patient::count();
+        // Total patients registered (including children for Bayi/Balita category)
+        $this->totalPatients = Patient::count() + Child::count();
+
+        // Patient Categories Breakdown
+        $this->patientCategories = [
+            'Umum' => Patient::where('category', 'Umum')->count(),
+            'Bumil' => Patient::where('category', 'Bumil')->count(),
+            'Bayi/Balita' => Child::count(),
+            'Lansia' => Patient::where('category', 'Lansia')->count(),
+        ];
 
         // Active pregnancies
         $this->activePregnancies = Pregnancy::where('status', 'Aktif')->count();

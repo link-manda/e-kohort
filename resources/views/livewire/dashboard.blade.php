@@ -3,7 +3,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <!-- Total Patients Card -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between mb-4">
                 <div>
                     <p class="text-sm font-medium text-gray-600 mb-1">Total Pasien</p>
                     <p class="text-3xl font-bold text-gray-900">{{ $totalPatients }}</p>
@@ -15,6 +15,34 @@
                             d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
                         </path>
                     </svg>
+                </div>
+            </div>
+
+            {{-- Breakdown per kategori --}}
+            <div class="grid grid-cols-2 gap-2 pt-4 border-t border-gray-100">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-600">👤 Umum</span>
+                    <span class="px-2 py-0.5 text-xs font-semibold bg-blue-100 text-blue-700 rounded">
+                        {{ $patientCategories['Umum'] ?? 0 }}
+                    </span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-600">🤰 Bumil</span>
+                    <span class="px-2 py-0.5 text-xs font-semibold bg-green-100 text-green-700 rounded">
+                        {{ $patientCategories['Bumil'] ?? 0 }}
+                    </span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-600">👶 Bayi/Balita</span>
+                    <span class="px-2 py-0.5 text-xs font-semibold bg-yellow-100 text-yellow-700 rounded">
+                        {{ $patientCategories['Bayi/Balita'] ?? 0 }}
+                    </span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-xs text-gray-600">🧓 Lansia</span>
+                    <span class="px-2 py-0.5 text-xs font-semibold bg-purple-100 text-purple-700 rounded">
+                        {{ $patientCategories['Lansia'] ?? 0 }}
+                    </span>
                 </div>
             </div>
         </div>

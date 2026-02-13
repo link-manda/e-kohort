@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Patient;
 use App\Models\Pregnancy;
 use App\Models\AncVisit;
+use App\Models\Child;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -15,8 +16,16 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        // Total Patients
-        $totalPatients = Patient::count();
+        // Total Patients (including children for Bayi/Balita category)
+        $totalPatients = Patient::count() + Child::count();
+
+        // Patient Categories Breakdown
+        $patientCategories = [
+            'Umum' => Patient::where('category', 'Umum')->count(),
+            'Bumil' => Patient::where('category', 'Bumil')->count(),
+            'Bayi/Balita' => Child::count(),
+            'Lansia' => Patient::where('category', 'Lansia')->count(),
+        ];
 
         // Active Pregnancies
         $activePregnancies = Pregnancy::where('status', 'Aktif')->count();
@@ -58,6 +67,7 @@ class DashboardController extends Controller
 
         return view('dashboard', compact(
             'totalPatients',
+            'patientCategories',
             'activePregnancies',
             'visitsThisMonth',
             'highRiskPatients',
