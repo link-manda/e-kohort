@@ -135,7 +135,7 @@
         <tbody>
             <tr>
                 @foreach (['K1', 'K2', 'K3', 'K4', 'K5', 'K6', 'K7', 'K8'] as $code)
-                    <td class="text-center">{{ $data['visits_by_code'][strtolower($code)] ?? 0 }}</td>
+                    <td class="text-center">{{ $data['visits_by_code'][$code] ?? 0 }}</td>
                 @endforeach
             </tr>
         </tbody>
@@ -350,15 +350,15 @@
         <tbody>
             <tr>
                 <td>Pemeriksaan USG</td>
-                <td class="text-right">{{ $data['usg_check'] }}</td>
+                <td class="text-right">{{ $data['usg_count'] }}</td>
             </tr>
             <tr>
                 <td>Konseling</td>
-                <td class="text-right">{{ $data['counseling_check'] }}</td>
+                <td class="text-right">{{ $data['counseling_count'] }}</td>
             </tr>
             <tr>
                 <td>ANC Lengkap (12T)</td>
-                <td class="text-right">{{ $data['anc_12t'] }}</td>
+                <td class="text-right">{{ $data['anc_12t_complete'] }}</td>
             </tr>
             <tr>
                 <td>Rujukan Keluar</td>

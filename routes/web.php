@@ -195,6 +195,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/reports/monthly-summary', App\Livewire\MonthlySummaryReport::class)->name('reports.monthly-summary')
         ->middleware('permission:view-reports');
 
+    // Reports: Export PDF (Dedicated Route)
+    Route::get('/reports/monthly-summary/export', [App\Http\Controllers\MonthlyReportExportController::class, 'export'])
+        ->name('reports.monthly-summary.export')
+        ->middleware('permission:view-reports');
+
     // Reports (redirect to dashboard for now)
     Route::get('/reports', function () {
         return redirect()->route('dashboard')->with('info', 'Fitur laporan akan segera hadir.');

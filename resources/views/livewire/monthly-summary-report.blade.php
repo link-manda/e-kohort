@@ -47,7 +47,7 @@
                         </select>
                     </div>
                     <div>
-                        <button wire:click="exportPdf"
+                        <a href="{{ route('reports.monthly-summary.export', ['year' => $year, 'month' => $month]) }}" target="_blank"
                             class="inline-flex items-center gap-2 px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-lg transition duration-150">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
@@ -55,7 +55,7 @@
                                     d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                             </svg>
                             Export PDF
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
