@@ -4,8 +4,16 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Patient;
+use App\Models\Child;
 use App\Models\AncVisit;
 use App\Models\Pregnancy;
+use App\Models\DeliveryRecord;
+use App\Models\PostnatalVisit;
+use App\Models\KbVisit;
+use App\Models\GeneralVisit;
+use App\Models\ChildVisit;
+use App\Models\ChildGrowthRecord;
+use App\Models\ImmunizationAction;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -44,8 +52,16 @@ class MonthlySummaryReport extends Component
         $extremeRiskCount = $highRiskQuery->where('map_score', '>', 100)->pluck('pregnancy_id')->unique()->count();
 
         $this->data = [
-            // 1. Total Pasien Baru Terdaftar
-            'new_patients' => Patient::whereBetween('created_at', [$startDate, $endDate])->count(),
+            // 1. Patient Demographics (Enhanced)
+            'patient_demographics' => [
+                'new_patients_total' => Patient::whereBetween('created_at', [$startDate, $endDate])->count(),
+                'new_patients_by_category' => [
+                    'umum' => Patient::whereBetween('created_at', [$startDate, $endDate])->where('category', 'Umum')->count(),
+                    'bumil' => Patient::whereBetween('created_at', [$startDate, $endDate])->where('category', 'Bumil')->count(),
+                    'lansia' => Patient::whereBetween('created_at', [$startDate, $endDate])->where('category', 'Lansia')->count(),
+                ],
+                'new_children' => Child::whereBetween('created_at', [$startDate, $endDate])->count(),
+            ],
 
             // 2. Total Kehamilan Baru Terdaftar
             'new_pregnancies' => Pregnancy::whereBetween('created_at', [$startDate, $endDate])->count(),
@@ -81,10 +97,10 @@ class MonthlySummaryReport extends Component
             // 4. Total Kunjungan ANC
             'total_visits' => AncVisit::whereBetween('visit_date', [$startDate, $endDate])->count(),
 
-            // 5. Pasien Resiko Tinggi (MAP > 90) - Calculated from BP
+            // 5. Pasien Resiko Tinggi (MAP > 90)
             'high_risk_count' => $highRiskCount,
 
-            // 6. Pasien dengan MAP Ekstrem (MAP > 100) - Calculated from BP
+            // 6. Pasien dengan MAP Ekstrem (MAP > 100)
             'extreme_risk_count' => $extremeRiskCount,
 
             // 7. Pasien KEK (LILA < 23.5)
@@ -129,13 +145,13 @@ class MonthlySummaryReport extends Component
                     ->count('pregnancy_id'),
             ],
 
-            // 10. ANC 12T Compliance (yang sudah lengkap 12 pemeriksaan)
+            // 10. ANC 12T Compliance
             'anc_12t_complete' => AncVisit::whereBetween('visit_date', [$startDate, $endDate])
                 ->where('anc_12t', true)
                 ->distinct('pregnancy_id')
                 ->count('pregnancy_id'),
 
-            // 13. Imunisasi TT
+            // 11. Imunisasi TT
             'tt_immunization' => [
                 'tt1' => AncVisit::whereBetween('visit_date', [$startDate, $endDate])
                     ->where('tt_immunization', 'TT1')
@@ -154,21 +170,120 @@ class MonthlySummaryReport extends Component
                     ->count(),
             ],
 
-            // 14. USG Screening
+            // 12. USG Screening
             'usg_count' => AncVisit::whereBetween('visit_date', [$startDate, $endDate])
                 ->where('usg_check', true)
                 ->count(),
 
-            // 15. Konseling
+            // 13. Konseling
             'counseling_count' => AncVisit::whereBetween('visit_date', [$startDate, $endDate])
                 ->where('counseling_check', true)
                 ->count(),
 
-            // 16. Rujukan
+            // 14. Rujukan
             'referrals' => AncVisit::whereBetween('visit_date', [$startDate, $endDate])
                 ->whereNotNull('referral_target')
                 ->whereNotIn('referral_target', ['-', ''])
                 ->count(),
+
+            // === NEW MODULES ===
+
+            // 15. Persalinan (Delivery Records)
+            'delivery' => [
+                'total' => DeliveryRecord::whereBetween('delivery_date_time', [$startDate, $endDate])->count(),
+                'normal' => DeliveryRecord::whereBetween('delivery_date_time', [$startDate, $endDate])
+                    ->where('delivery_method', 'Normal')->count(),
+                'caesarean' => DeliveryRecord::whereBetween('delivery_date_time', [$startDate, $endDate])
+                    ->where('delivery_method', 'SC')->count(),
+                'with_complications' => DeliveryRecord::whereBetween('delivery_date_time', [$startDate, $endDate])
+                    ->where('complications', true)->count(),
+                'live_births' => DeliveryRecord::whereBetween('delivery_date_time', [$startDate, $endDate])
+                    ->where('condition', 'Hidup')->count(),
+                'stillbirths' => DeliveryRecord::whereBetween('delivery_date_time', [$startDate, $endDate])
+                    ->where('condition', 'Mati')->count(),
+            ],
+
+            // 16. Postnatal Care (Kunjungan Nifas)
+            'postnatal' => [
+                'total_visits' => PostnatalVisit::whereBetween('visit_date', [$startDate, $endDate])->count(),
+                'kf1' => PostnatalVisit::whereBetween('visit_date', [$startDate, $endDate])
+                    ->where('visit_code', 'KF1')->count(),
+                'kf2' => PostnatalVisit::whereBetween('visit_date', [$startDate, $endDate])
+                    ->where('visit_code', 'KF2')->count(),
+                'kf3' => PostnatalVisit::whereBetween('visit_date', [$startDate, $endDate])
+                    ->where('visit_code', 'KF3')->count(),
+                'with_complications' => PostnatalVisit::whereBetween('visit_date', [$startDate, $endDate])
+                    ->where('complication_check', true)->count(),
+            ],
+
+            // 17. KB (Family Planning)
+            'kb' => [
+                'total_visits' => KbVisit::whereBetween('visit_date', [$startDate, $endDate])->count(),
+                'new_acceptors' => KbVisit::whereBetween('visit_date', [$startDate, $endDate])
+                    ->where('visit_type', 'Baru')->count(),
+                'by_method' => KbVisit::whereBetween('visit_date', [$startDate, $endDate])
+                    ->join('kb_methods', 'kb_visits.kb_method_id', '=', 'kb_methods.id')
+                    ->select('kb_methods.name', \DB::raw('count(*) as count'))
+                    ->groupBy('kb_methods.name')
+                    ->pluck('count', 'name')
+                    ->toArray(),
+            ],
+
+            // 18. Child Immunization
+            'immunization' => [
+                'total_visits' => ChildVisit::whereBetween('visit_date', [$startDate, $endDate])->count(),
+                'total_actions' => ImmunizationAction::whereHas('childVisit', function($q) use ($startDate, $endDate) {
+                    $q->whereBetween('visit_date', [$startDate, $endDate]);
+                })->count(),
+                'by_vaccine' => ImmunizationAction::whereHas('childVisit', function($q) use ($startDate, $endDate) {
+                    $q->whereBetween('visit_date', [$startDate, $endDate]);
+                })
+                    ->select('vaccine_type', \DB::raw('count(*) as count'))
+                    ->groupBy('vaccine_type')
+                    ->pluck('count', 'vaccine_type')
+                    ->toArray(),
+            ],
+
+            // 19. Child Growth & Nutrition
+            'child_growth' => [
+                'total_measurements' => ChildGrowthRecord::whereBetween('record_date', [$startDate, $endDate])->count(),
+                'vitamin_a' => ChildGrowthRecord::whereBetween('record_date', [$startDate, $endDate])
+                    ->whereNotNull('vitamin_a')->count(),
+                'nutrition_summary' => ChildGrowthRecord::whereBetween('record_date', [$startDate, $endDate])
+                    ->selectRaw('
+                        SUM(CASE WHEN zscore_bb_tb > -2 AND zscore_bb_tb < 2 THEN 1 ELSE 0 END) as normal,
+                        SUM(CASE WHEN zscore_bb_tb <= -2 THEN 1 ELSE 0 END) as wasting,
+                        SUM(CASE WHEN zscore_tb_u <= -2 THEN 1 ELSE 0 END) as stunting
+                    ')
+                    ->first(),
+            ],
+
+            // 20. General Visits (Poli Umum)
+            'general_visits' => [
+                'total' => GeneralVisit::whereBetween('visit_date', [$startDate, $endDate])->count(),
+                'adult_patients' => GeneralVisit::whereBetween('visit_date', [$startDate, $endDate])
+                    ->whereNotNull('patient_id')->count(),
+                'child_patients' => GeneralVisit::whereBetween('visit_date', [$startDate, $endDate])
+                    ->whereNotNull('child_id')->count(),
+                'top_diagnoses' => GeneralVisit::whereBetween('visit_date', [$startDate, $endDate])
+                    ->whereNotNull('icd10_code')
+                    ->whereNotNull('diagnosis')
+                    ->select('icd10_code', 'diagnosis', \DB::raw('count(*) as count'))
+                    ->groupBy('icd10_code', 'diagnosis')
+                    ->orderByDesc('count')
+                    ->limit(10)
+                    ->get()
+                    ->map(function($item) {
+                        return [
+                            'code' => $item->icd10_code,
+                            'description' => $item->diagnosis,
+                            'count' => $item->count,
+                        ];
+                    })
+                    ->toArray(),
+                'with_prescription' => GeneralVisit::whereBetween('visit_date', [$startDate, $endDate])
+                    ->whereHas('prescriptions')->count(),
+            ],
 
             // Metadata
             'period' => [
@@ -184,7 +299,8 @@ class MonthlySummaryReport extends Component
     public function exportPdf()
     {
         $data = $this->data;
-        $pdf = Pdf::loadView('reports.monthly-summary', compact('data'));
+        $pdf = Pdf::loadView('reports.monthly-summary-pdf', compact('data'))
+            ->setPaper('a4', 'portrait');
 
         $filename = 'Laporan_Bulanan_' . $this->year . '_' . str_pad($this->month, 2, '0', STR_PAD_LEFT) . '.pdf';
 
