@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'E-Kohort Klinik') }}</title>
+    <title>{{ config('app.name', 'SI-PRIMA') }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -43,14 +43,14 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-bold text-white">E-Kohort</h1>
+                        <h1 class="text-2xl font-bold text-white">SI-PRIMA</h1>
                         <p class="text-sm text-blue-200">Klinik Bidan</p>
                     </div>
                 </div>
 
                 <div class="mt-12">
                     <h2 class="text-4xl font-bold text-white leading-tight mb-4">
-                        Sistem Informasi<br>Kohort Ibu & Anak
+                        Sistem Informasi Pelayanan<br>Rekam medik Interaktif & MAndiri
                     </h2>
                     <p class="text-blue-100 text-lg leading-relaxed">
                         Platform digital untuk pencatatan dan pemantauan kesehatan ibu hamil, persalinan,
@@ -96,7 +96,7 @@
                             </svg>
                         </div>
                         <div>
-                            <h1 class="text-2xl font-bold text-white">E-Kohort</h1>
+                            <h1 class="text-2xl font-bold text-white">SI-PRIMA</h1>
                             <p class="text-sm text-blue-200">Klinik Bidan</p>
                         </div>
                     </div>
@@ -109,7 +109,7 @@
 
                 <!-- Footer Text -->
                 <p class="text-center text-blue-100 text-sm mt-6">
-                    © {{ date('Y') }} E-Kohort Klinik. Sistem Informasi Kesehatan Ibu & Anak.
+                    © {{ date('Y') }} SI-PRIMA. Sistem Informasi Pelayanan Rekam medik Interaktif & MAndiri.
                 </p>
             </div>
         </div>

@@ -90,7 +90,7 @@
 <body>
     <div class="header">
         <h1>Laporan Ringkasan Bulanan</h1>
-        <p>E-Kohort Klinik</p>
+        <p>SI-PRIMA</p>
         <p>Periode: <strong>{{ $data['period']['month_name'] }} {{ $data['period']['year'] }}</strong></p>
     </div>
 
@@ -368,7 +368,7 @@
     </table>
 
     <div class="footer">
-        Dicetak pada: {{ date('d M Y H:i') }} | E-Kohort Klinik System
+        Dicetak pada: {{ date('d M Y H:i') }} | SI-PRIMA
     </div>
 </body>
 </html>

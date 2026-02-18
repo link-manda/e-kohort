@@ -243,7 +243,7 @@
             <strong>Periode: {{ $data['period']['month_name'] }} {{ $data['period']['year'] }}</strong>
         </div>
         <div class="clinic-info">
-            Klinik Bidan | Sistem E-Kohort | Tanggal Cetak: {{ now()->locale('id')->isoFormat('D MMMM Y') }}
+            Klinik Bidan | SI-PRIMA | Tanggal Cetak: {{ now()->locale('id')->isoFormat('D MMMM Y') }}
         </div>
     </div>
 
@@ -447,7 +447,7 @@
 
     <!-- Footer -->
     <div class="footer">
-        Laporan ini digenerate secara otomatis oleh Sistem E-Kohort Klinik | Halaman {PAGE_NUM} dari {PAGE_COUNT}
+        Laporan ini digenerate secara otomatis oleh SI-PRIMA | Halaman {PAGE_NUM} dari {PAGE_COUNT}
     </div>
 </body>
 

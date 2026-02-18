@@ -11,7 +11,7 @@
                 <x-heroicon-o-document-text class="w-6 h-6 text-blue-600" />
             </div>
             <div>
-                <h1 class="font-bold text-lg">E-Kohort</h1>
+                <h1 class="font-bold text-lg">SI-PRIMA</h1>
                 <p class="text-xs text-blue-200">Klinik Bidan</p>
             </div>
         </div>

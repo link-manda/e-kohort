@@ -2,7 +2,7 @@
     <div class="flex flex-col md:flex-row justify-between items-center gap-2">
         <!-- Left Section: Copyright -->
         <div class="text-sm text-gray-600">
-            <p>&copy; {{ date('Y') }} <span class="font-semibold text-blue-600">Sistem Kohort Ibu</span>. All rights
+            <p>&copy; {{ date('Y') }} <span class="font-semibold text-blue-600">SI-PRIMA</span>. All rights
                 reserved.</p>
         </div>
 

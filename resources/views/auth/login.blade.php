@@ -76,7 +76,7 @@
                 <div class="w-full border-t border-gray-300"></div>
             </div>
             <div class="relative flex justify-center text-sm">
-                <span class="px-4 bg-white text-gray-500">Sistem E-Kohort Klinik</span>
+                <span class="px-4 bg-white text-gray-500">SI-PRIMA — Sistem Informasi Pelayanan Rekam medik Interaktif & MAndiri</span>
             </div>
         </div>
 

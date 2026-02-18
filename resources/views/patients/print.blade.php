@@ -267,9 +267,9 @@
         <!-- Header -->
         <div class="header avoid-break">
             <div class="clinic-info">
-                <div class="clinic-name">KLINIK BIDAN E-KOHORT</div>
+                <div class="clinic-name">KLINIK BIDAN SI-PRIMA</div>
                 <div class="clinic-address">Jl. Kesehatan No. 123, Denpasar, Bali</div>
-                <div class="clinic-address">Telp: (0361) 1234567 | Email: klinik@e-kohort.id</div>
+                <div class="clinic-address">Telp: (0361) 1234567 | Email: klinik@si-prima.id</div>
             </div>
         </div>
 
@@ -484,7 +484,7 @@
         <div class="no-print"
             style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; text-align: center; color: #9ca3af; font-size: 9pt;">
             <p>Dokumen ini dicetak pada {{ \Carbon\Carbon::now()->format('d F Y, H:i') }} WIB</p>
-            <p>Sistem E-Kohort Klinik v1.0.0</p>
+            <p>SI-PRIMA v1.0.0</p>
         </div>
     </div>
 
