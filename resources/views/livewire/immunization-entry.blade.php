@@ -55,6 +55,27 @@
         </div>
     </div>
 
+    <!-- Validation Error Summary Banner -->
+    @if ($errors->any())
+        <div class="mb-6 bg-red-50 border-2 border-red-500 rounded-xl p-4 animate-pulse">
+            <div class="flex items-start gap-3">
+                <svg class="w-6 h-6 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <div class="flex-1">
+                    <h4 class="font-bold text-red-800 mb-2">❌ Form Tidak Dapat Disimpan - {{ $errors->count() }} Kesalahan Ditemukan</h4>
+                    <ul class="list-disc list-inside text-sm text-red-700 space-y-1">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                    <p class="text-xs text-red-600 mt-3 font-semibold">💡 Silakan perbaiki field yang ditandai merah di bawah</p>
+                </div>
+            </div>
+        </div>
+    @endif
+
     <!-- Step Progress Indicator -->
     <div class="mb-8">
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -889,6 +910,54 @@
             Livewire.on('immunizationValidationFailed', function(errors) {
                 // Determine target step and emit to server to switch step first
                 scrollToFirstError(errors);
+            });
+
+            // NEW: Listen for validationFailed event (general validation error with custom message)
+            Livewire.on('validationFailed', function(payload) {
+                try {
+                    var toast = document.getElementById('immunization-toast');
+                    var inner = document.getElementById('immunization-toast-inner');
+                    var msg = document.getElementById('immunization-toast-message');
+
+                    // Show error toast with custom message
+                    if (payload && payload.message) {
+                        msg.textContent = payload.message;
+                    } else {
+                        msg.textContent = 'Form tidak dapat disimpan. Silakan periksa kembali.';
+                    }
+
+                    inner.classList.remove('bg-green-600', 'bg-yellow-600');
+                    inner.classList.add('bg-red-600');
+                    toast.classList.remove('hidden');
+
+                    // Hide after 5 seconds
+                    setTimeout(function() {
+                        toast.classList.add('hidden');
+                    }, 5000);
+
+                    console.warn('Validation failed:', payload.errors || {});
+                } catch (err) {
+                    console.error('Error handling validationFailed event', err);
+                }
+            });
+
+            // NEW: Trigger scroll to first error
+            Livewire.on('scrollToFirstError', function() {
+                setTimeout(function() {
+                    // Find first element with error class (border-red-500)
+                    var firstError = document.querySelector('.border-red-500');
+                    if (firstError) {
+                        firstError.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                        setTimeout(function() {
+                            if (typeof firstError.focus === 'function') {
+                                firstError.focus();
+                            }
+                        }, 400);
+                    }
+                }, 300); // Wait for DOM update and step  change
             });
 
             // Enhanced scroll: if field is in another step, instruct server to switch first then focus

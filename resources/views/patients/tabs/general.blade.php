@@ -152,6 +152,32 @@
                             </div>
                         @endif
 
+                        <!-- Service Fee & Total Cost (NEW) -->
+                        <div class="col-span-2">
+                            <div class="bg-blue-50 border border-blue-200 rounded-md p-3 space-y-2">
+                                <div class="flex justify-between items-center text-xs">
+                                    <p class="font-semibold text-gray-700">💵 Biaya Jasa Layanan:</p>
+                                    <p class="font-bold text-blue-700">
+                                        Rp {{ number_format($visit->service_fee ?? 0, 0, ',', '.') }}
+                                    </p>
+                                </div>
+                                @if ($visit->prescriptions && $visit->prescriptions->count() > 0)
+                                    <div class="flex justify-between items-center text-xs">
+                                        <p class="font-semibold text-gray-700">💊 Biaya Obat:</p>
+                                        <p class="font-bold text-green-700">
+                                            Rp {{ number_format($visit->prescriptions->sum('total_price'), 0, ',', '.') }}
+                                        </p>
+                                    </div>
+                                @endif
+                                <div class="pt-2 border-t-2 border-blue-300 flex justify-between items-center">
+                                    <p class="text-sm font-bold text-gray-900">TOTAL BIAYA:</p>
+                                    <p class="text-lg font-bold text-red-600">
+                                        Rp {{ number_format($visit->total_price, 0, ',', '.') }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Physical Exam (if exists) -->
                         @if ($visit->physical_exam)
                             <div class="col-span-2">

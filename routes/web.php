@@ -77,6 +77,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('permission:view-all-patients|view-own-patients');
     Route::get('/children/{child}/immunization', App\Livewire\ImmunizationEntry::class)->name('children.immunization')
         ->middleware('permission:create-anc-visits');
+    Route::get('/children/{child}/visits/{childVisit}', [App\Http\Controllers\ChildController::class, 'showVisit'])->name('children.visit.show')
+        ->middleware('permission:view-all-patients|view-own-patients');
+    Route::get('/children/{child}/general-visits/{generalVisit}', [App\Http\Controllers\ChildController::class, 'showGeneralVisit'])->name('children.general-visit.show')
+        ->middleware('permission:view-all-patients|view-own-patients');
 
     // Friendly routes for Imunisasi Module (UI/UX)
     Route::get('/imunisasi', App\Livewire\ChildIndex::class)->name('imunisasi.index')
@@ -85,6 +89,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->middleware('permission:create-patients');
     Route::get('/imunisasi/{child}/kunjungan', App\Livewire\ImmunizationEntry::class)->name('imunisasi.kunjungan')
         ->middleware('permission:create-anc-visits');
+    Route::get('/imunisasi/{child}/kunjungan/{childVisit}', [App\Http\Controllers\ChildController::class, 'showVisit'])->name('imunisasi.kunjungan.detail')
+        ->middleware('permission:view-all-patients|view-own-patients');
 
 
     // KB Visit Detail Routes

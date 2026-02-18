@@ -412,10 +412,27 @@ class ImmunizationEntry extends Component
     public function nextStep()
     {
         if ($this->currentStep === 1) {
-            $this->validate([
-                'visit_date' => $this->rules()['visit_date'],
-                'temperature' => $this->rules()['temperature'],
-            ]);
+            try {
+                $this->validate([
+                    'visit_date' => $this->rules()['visit_date'],
+                    'weight' => $this->rules()['weight'],
+                    'height' => $this->rules()['height'],
+                    'temperature' => $this->rules()['temperature'],
+                    'nutritional_status' => $this->rules()['nutritional_status'],
+                    'informed_consent' => $this->rules()['informed_consent'],
+                ]);
+            } catch (\Illuminate\Validation\ValidationException $e) {
+                // Dispatch event to show error toast
+                $this->dispatch('validationFailed', [
+                    'message' => 'Mohon lengkapi semua field yang wajib diisi di Step 1',
+                    'errors' => $e->errors(),
+                ]);
+
+                // Scroll to first error
+                $this->dispatch('scrollToFirstError');
+
+                throw $e; // Rethrow to show inline errors
+            }
         }
 
         if ($this->currentStep < $this->totalSteps) {
@@ -450,8 +467,33 @@ class ImmunizationEntry extends Component
         } catch (\Illuminate\Validation\ValidationException $ve) {
             // Log and dispatch a validation-failed event with errors
             \Illuminate\Support\Facades\Log::warning('ImmunizationEntry::validation failed', ['errors' => $ve->errors()]);
-            // Dispatch validation failed so frontend can show messages
-            $this->dispatch('immunizationValidationFailed', $ve->errors());
+
+            // Determine which step contains errors
+            $step1Fields = ['visit_date', 'complaint', 'weight', 'height', 'temperature',
+                            'heart_rate', 'respiratory_rate', 'head_circumference',
+                            'development_notes', 'nutritional_status', 'informed_consent',
+                            'medicine_given', 'medicine_dosage', 'notes'];
+
+            $hasStep1Errors = collect($step1Fields)->some(fn($field) => isset($ve->errors()[$field]));
+
+            // Auto-navigate to step with errors
+            if ($hasStep1Errors && $this->currentStep > 1) {
+                $this->currentStep = 1;
+                $this->dispatch('validationFailed', [
+                    'message' => 'Ada kesalahan di Step 1 - Tanda Vital. Form dikembalikan ke Step 1.',
+                    'errors' => $ve->errors(),
+                ]);
+            } else {
+                $this->dispatch('immunizationValidationFailed', $ve->errors());
+                $this->dispatch('validationFailed', [
+                    'message' => 'Form tidak dapat disimpan. Mohon perbaiki field yang ditandai merah.',
+                    'errors' => $ve->errors(),
+                ]);
+            }
+
+            // Scroll to first error
+            $this->dispatch('scrollToFirstError');
+
             // Rethrow so Livewire will populate the error bag for inline display
             throw $ve;
         }

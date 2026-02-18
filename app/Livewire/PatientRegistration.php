@@ -53,7 +53,7 @@ class PatientRegistration extends Component
             'pob' => 'nullable|string|max:100',
             'job' => 'nullable|string|max:100',
             'education' => 'nullable|string|max:100',
-            'blood_type' => 'required|in:A,B,AB,O',
+            'blood_type' => 'required|in:A,B,AB,O,Unknown',
             'phone' => 'required|string|max:20',
             'address' => 'required|string',
             'no_kk' => 'nullable|string|max:16',
@@ -66,7 +66,7 @@ class PatientRegistration extends Component
             'husband_nik' => 'nullable|digits:16',
             'husband_job' => 'nullable|string|max:100',
             'husband_education' => 'nullable|string|max:100',
-            'husband_blood_type' => 'nullable|in:A,B,AB,O',
+            'husband_blood_type' => 'nullable|in:A,B,AB,O,Unknown',
         ];
 
         return $rules;
@@ -220,7 +220,13 @@ class PatientRegistration extends Component
     public function render()
     {
         return view('livewire.patient-registration', [
-            'bloodTypes' => ['A', 'B', 'AB', 'O'],
+            'bloodTypes' => [
+                'A' => 'A',
+                'B' => 'B',
+                'AB' => 'AB',
+                'O' => 'O',
+                'Unknown' => 'Tidak diketahui'
+            ],
             'progressPercentage' => ($this->currentStep / $this->totalSteps) * 100,
         ])->layout('layouts.dashboard');
     }

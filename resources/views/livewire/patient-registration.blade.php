@@ -244,8 +244,8 @@
                                                @error('blood_type') border-red-500 @else border-gray-300 @enderror
                                                focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors">
                                 <option value="">Pilih golongan darah</option>
-                                @foreach ($bloodTypes as $type)
-                                    <option value="{{ $type }}">{{ $type }}</option>
+                                @foreach ($bloodTypes as $value => $label)
+                                    <option value="{{ $value }}">{{ $label }}</option>
                                 @endforeach
                             </select>
                             @error('blood_type')
@@ -469,8 +469,8 @@
                                     class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg
                                                    focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-colors">
                                     <option value="">Pilih golongan darah</option>
-                                    @foreach ($bloodTypes as $type)
-                                        <option value="{{ $type }}">{{ $type }}</option>
+                                    @foreach ($bloodTypes as $value => $label)
+                                        <option value="{{ $value }}">{{ $label }}</option>
                                     @endforeach
                                 </select>
                             </div>

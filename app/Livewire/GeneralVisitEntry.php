@@ -60,6 +60,7 @@ class GeneralVisitEntry extends Component
     public $diagnosis;
     public $icd10_code;
     public $therapy;
+    public $service_fee = 0; // Biaya Layanan/Jasa
     public $status = 'Pulang';
     public $payment_method = 'Umum';
 
@@ -94,6 +95,7 @@ class GeneralVisitEntry extends Component
         'diagnosis' => 'required|string',
         'icd10_code' => 'nullable|string',
         'therapy' => 'nullable|string',
+        'service_fee' => 'nullable|numeric|min:0',
         'status' => 'required|in:Pulang,Rujuk,Rawat Inap',
         'payment_method' => 'required|in:Umum,BPJS',
         // Prescriptions will be validated manually in save() method
@@ -293,6 +295,7 @@ class GeneralVisitEntry extends Component
 
             // Plan
             'therapy' => $this->therapy,
+            'service_fee' => $this->service_fee ?: 0,
             'status' => $this->status,
             'payment_method' => $this->payment_method,
         ]);

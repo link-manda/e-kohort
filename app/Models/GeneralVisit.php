@@ -47,6 +47,7 @@ class GeneralVisit extends Model
 
         // Plan
         'therapy',
+        'service_fee',
         'status',
         'payment_method',
     ];
@@ -63,6 +64,7 @@ class GeneralVisit extends Model
             'is_emergency' => 'boolean',
             'lifestyle_alcohol' => 'boolean',
             'physical_assessment_details' => 'array', // JSON cast
+            'service_fee' => 'decimal:2',
         ];
     }
 
@@ -146,12 +148,12 @@ class GeneralVisit extends Model
         return $this->patient;
     }
     /**
-     * Get Total Price (Sum of Prescriptions)
-     * Note: Currently only counts prescriptions as service_fee column does not exist yet.
+     * Get Total Price (Service Fee + Sum of Prescriptions)
      */
     public function getTotalPriceAttribute(): float
     {
-        // Eager load prescriptions if not already loaded to prevent N+1 in loops
-        return $this->prescriptions->sum('total_price');
+        $serviceFee = $this->service_fee ?? 0;
+        $prescriptionTotal = $this->prescriptions->sum('total_price');
+        return $serviceFee + $prescriptionTotal;
     }
 }
