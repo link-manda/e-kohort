@@ -7,6 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'SI-PRIMA') }}</title>
+    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -35,17 +36,11 @@
             <!-- Content -->
             <div class="relative z-10">
                 <div class="flex items-center space-x-3 mb-8">
-                    <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center shadow-lg">
-                        <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                            </path>
-                        </svg>
-                    </div>
-                    <div>
+                    <img src="{{ asset('images/logo.png') }}" alt="SI-PRIMA" class="w-30 h-24 rounded-lg object-contain shadow-lg bg-white p-0.5">
+                    <!-- <div>
                         <h1 class="text-2xl font-bold text-white">SI-PRIMA</h1>
                         <p class="text-sm text-blue-200">Klinik Bidan</p>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="mt-12">
@@ -88,13 +83,7 @@
                 <!-- Mobile Logo -->
                 <div class="lg:hidden flex justify-center mb-8">
                     <div class="flex items-center space-x-3">
-                        <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center shadow-lg">
-                            <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                </path>
-                            </svg>
-                        </div>
+                        <img src="{{ asset('images/logo.png') }}" alt="SI-PRIMA" class="w-12 h-12 rounded-lg object-contain shadow-lg bg-white p-0.5">
                         <div>
                             <h1 class="text-2xl font-bold text-white">SI-PRIMA</h1>
                             <p class="text-sm text-blue-200">Klinik Bidan</p>

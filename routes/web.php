@@ -100,7 +100,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->middleware('permission:view-all-patients|view-own-patients');
         Route::get('/{kbVisit}/edit', [App\Http\Controllers\KbVisitController::class, 'edit'])
             ->name('edit')
-            ->middleware('permission:create-anc-visits');
+            ->middleware('permission:edit-kb');
         Route::delete('/{kbVisit}', [App\Http\Controllers\KbVisitController::class, 'destroy'])
             ->name('destroy')
             ->middleware('permission:delete-anc-visits');
@@ -154,11 +154,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // === GROWTH/KMS MODULE ===
     // Growth Index (Poli Gizi)
     Route::get('/growth', App\Livewire\GrowthIndex::class)->name('growth.index')
-        ->middleware('permission:view-all-patients|view-own-patients');
+        ->middleware('permission:view-growth');
 
     // Growth Entry (KMS Digital)
     Route::get('/children/{childId}/growth', App\Livewire\GrowthEntry::class)->name('children.growth')
-        ->middleware('permission:create-anc-visits');
+        ->middleware('permission:create-growth');
 
     // === END GROWTH MODULE ===
 
@@ -227,14 +227,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // General Visits (Poli Umum)
     Route::get('/general-visits', App\Livewire\GeneralVisitList::class)->name('general-visits.index')
-        ->middleware('permission:view-all-anc-visits'); // Reusing permission for medical visits
+        ->middleware('permission:view-general-visits');
 
     Route::get('/general-visits/create/{patient_id}', App\Livewire\GeneralVisitEntry::class)->name('general-visits.create')
-        ->middleware('permission:create-anc-visits'); // Reusing permission for medical visits
+        ->middleware('permission:create-general-visits');
 
     // General Visit for Children (Poli Umum Anak) - uses same component with child_id
     Route::get('/general-visits/create-child/{child_id}', App\Livewire\GeneralVisitEntry::class)->name('children.general-visit')
-        ->middleware('permission:create-anc-visits');
+        ->middleware('permission:create-general-visits');
 
     // Export: KB Reports
     Route::get('/export/kb', App\Livewire\ExportKb::class)->name('export.kb')

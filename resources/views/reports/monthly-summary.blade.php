@@ -237,6 +237,9 @@
 <body>
     <!-- Header -->
     <div class="header">
+        <div style="text-align: center; margin-bottom: 10px;">
+            <img src="{{ asset('images/logo.png') }}" alt="SI-PRIMA" style="height: 50px; object-fit: contain;">
+        </div>
         <h1>📊 LAPORAN RINGKASAN BULANAN</h1>
         <div class="subtitle">Program Antenatal Care (ANC) Terintegrasi</div>
         <div class="subtitle">

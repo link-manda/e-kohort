@@ -50,7 +50,7 @@ class RolePermissionSeeder extends Seeder
             'edit-anc-visits',
             'delete-anc-visits',
 
-            // Immunization Management (new)
+            // Immunization Management
             'manage-vaccines',
             'manage-icd10',
 
@@ -59,6 +59,15 @@ class RolePermissionSeeder extends Seeder
             'view-kb',
             'create-kb',
             'edit-kb',
+
+            // General Visit (Poli Umum) Management
+            'view-general-visits',
+            'create-general-visits',
+            'edit-general-visits',
+
+            // Growth / Poli Gizi Management
+            'view-growth',
+            'create-growth',
 
             // Reports & Export
             'view-reports',
@@ -79,60 +88,96 @@ class RolePermissionSeeder extends Seeder
             Permission::firstOrCreate(['name' => $permission]);
         }
 
-        // Create Roles and Assign Permissions (idempotent)
-
+        // =========================================================
         // 1. Admin Role - Full Access
+        // =========================================================
         $adminRole = Role::firstOrCreate(['name' => 'Admin']);
-        $adminRole->givePermissionTo(Permission::all());
+        $adminRole->syncPermissions(Permission::all());
 
-        // 2. Bidan Koordinator Role - View all, manage reports, manage users
+        // =========================================================
+        // 2. Bidan Koordinator - View all, manage reports, manage users
+        //    Can access: all clinical menus, export, reports, user mgmt
+        //    Cannot: manage vaccines/ICD10/roles (master data admin only)
+        // =========================================================
         $koordinatorRole = Role::firstOrCreate(['name' => 'Bidan Koordinator']);
-        $koordinatorRole->givePermissionTo([
+        $koordinatorRole->syncPermissions([
+            // User management
             'view-users',
             'manage-users',
             'create-users',
             'edit-users',
 
+            // Patient
             'view-all-patients',
             'create-patients',
             'edit-patients',
 
+            // Pregnancy & ANC
             'view-all-pregnancies',
             'create-pregnancies',
             'edit-pregnancies',
-
             'view-all-anc-visits',
             'create-anc-visits',
             'edit-anc-visits',
 
-            'view-reports',
-            'export-data',
-            'generate-monthly-reports',
-
+            // KB
             'manage-kb',
             'view-kb',
             'create-kb',
             'edit-kb',
 
+            // Poli Umum
+            'view-general-visits',
+            'create-general-visits',
+            'edit-general-visits',
+
+            // Poli Gizi
+            'view-growth',
+            'create-growth',
+
+            // Reports & Export
+            'view-reports',
+            'export-data',
+            'generate-monthly-reports',
+
+            // Dashboard
             'view-dashboard',
             'view-all-statistics',
         ]);
 
-        // 3. Bidan Desa Role - Only own patients
+        // =========================================================
+        // 3. Bidan Desa - Own patients only
+        //    Can access: all clinical menus (own data), no export/reports/admin
+        // =========================================================
         $desaRole = Role::firstOrCreate(['name' => 'Bidan Desa']);
-        $desaRole->givePermissionTo([
+        $desaRole->syncPermissions([
+            // Patient (own only)
             'view-own-patients',
             'create-patients',
             'edit-patients',
 
+            // Pregnancy & ANC (own only)
             'view-own-pregnancies',
             'create-pregnancies',
             'edit-pregnancies',
-
             'view-own-anc-visits',
             'create-anc-visits',
             'edit-anc-visits',
 
+            // KB (own patients)
+            'view-kb',
+            'create-kb',
+            'edit-kb',
+
+            // Poli Umum (own patients)
+            'view-general-visits',
+            'create-general-visits',
+
+            // Poli Gizi (own patients)
+            'view-growth',
+            'create-growth',
+
+            // Dashboard
             'view-dashboard',
             'view-own-statistics',
         ]);
@@ -144,9 +189,9 @@ class RolePermissionSeeder extends Seeder
             echo "Admin role assigned to: {$user->email}\n";
         }
 
-        echo "Roles and permissions created successfully!\n";
+        echo "Roles and permissions created/updated successfully!\n";
         echo "- Admin (Full Access)\n";
-        echo "- Bidan Koordinator (View All, Manage Reports)\n";
-        echo "- Bidan Desa (Own Patients Only)\n";
+        echo "- Bidan Koordinator (View All, Manage Reports, All Clinical Menus)\n";
+        echo "- Bidan Desa (Own Patients Only, All Clinical Menus)\n";
     }
 }

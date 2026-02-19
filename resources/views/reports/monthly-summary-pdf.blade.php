@@ -89,6 +89,9 @@
 </head>
 <body>
     <div class="header">
+        <div style="text-align: center; margin-bottom: 5px;">
+            <img src="{{ public_path('images/logo.png') }}" alt="SI-PRIMA" style="height: 45px; object-fit: contain;">
+        </div>
         <h1>Laporan Ringkasan Bulanan</h1>
         <p>SI-PRIMA</p>
         <p>Periode: <strong>{{ $data['period']['month_name'] }} {{ $data['period']['year'] }}</strong></p>

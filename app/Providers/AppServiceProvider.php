@@ -9,10 +9,14 @@ use App\Models\Pregnancy;
 use App\Models\AncVisit;
 use App\Models\KbVisit;
 use App\Models\DeliveryRecord;
+use App\Models\GeneralVisit;
+use App\Models\ChildGrowthRecord;
 use App\Policies\PatientPolicy;
 use App\Policies\PregnancyPolicy;
 use App\Policies\AncVisitPolicy;
 use App\Policies\KbVisitPolicy;
+use App\Policies\GeneralVisitPolicy;
+use App\Policies\ChildGrowthRecordPolicy;
 use App\Observers\DeliveryRecordObserver;
 
 class AppServiceProvider extends ServiceProvider
@@ -27,6 +31,8 @@ class AppServiceProvider extends ServiceProvider
         Pregnancy::class => PregnancyPolicy::class,
         AncVisit::class => AncVisitPolicy::class,
         KbVisit::class => KbVisitPolicy::class,
+        GeneralVisit::class => GeneralVisitPolicy::class,
+        ChildGrowthRecord::class => ChildGrowthRecordPolicy::class,
     ];
 
     /**

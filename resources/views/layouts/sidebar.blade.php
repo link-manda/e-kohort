@@ -7,13 +7,11 @@
     <!-- Logo Section -->
     <div class="flex items-center justify-between px-4 py-6 border-b border-blue-700">
         <div x-show="open" class="flex items-center space-x-3">
-            <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                <x-heroicon-o-document-text class="w-6 h-6 text-blue-600" />
-            </div>
-            <div>
+            <img src="{{ asset('images/logo.png') }}" alt="SI-PRIMA" class="w-30 h-24 rounded-lg object-contain bg-white p-0.5">
+            <!-- <div>
                 <h1 class="font-bold text-lg">SI-PRIMA</h1>
                 <p class="text-xs text-blue-200">Klinik Bidan</p>
-            </div>
+            </div> -->
         </div>
         <button @click="open = !open" class="p-2 rounded-lg hover:bg-cyan-600 transition-colors">
             <x-heroicon-o-bars-3 class="w-5 h-5" />
@@ -45,7 +43,7 @@
         </div>
 
         <!-- Pendaftaran (Registration Desk) -->
-        @can('viewAny', App\Models\Patient::class)
+        @can('create-patients')
             <a href="{{ route('registration-desk') }}"
                 class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('registration-desk') ? 'bg-cyan-600 shadow-lg' : 'hover:bg-cyan-600/60' }}">
                 <x-heroicon-o-queue-list class="w-6 h-6 flex-shrink-0" />
@@ -54,7 +52,7 @@
         @endcan
 
         <!-- Poli Umum (NEW) -->
-        @can('viewAny', App\Models\Patient::class)
+        @can('view-general-visits')
             <a href="{{ route('general-visits.index') }}"
                 class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('general-visits.*') ? 'bg-cyan-600 shadow-lg' : 'hover:bg-cyan-600/60' }}">
                 <x-heroicon-o-clipboard-document-check class="w-6 h-6 flex-shrink-0" />
@@ -72,7 +70,7 @@
         @endcan
 
         <!-- Poli KB -->
-        @can('create', App\Models\KbVisit::class)
+        @can('view-kb')
             <a href="{{ route('kb.index') }}"
                 class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('kb.*') ? 'bg-cyan-600 shadow-lg' : 'hover:bg-cyan-600/60' }}">
                 <x-heroicon-o-check-circle class="w-6 h-6 flex-shrink-0" />
@@ -90,7 +88,7 @@
         @endcan
 
         <!-- Poli Gizi (New) -->
-        @can('viewAny', App\Models\Patient::class)
+        @can('view-growth')
             <a href="{{ route('growth.index') }}"
                 class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('growth.*') ? 'bg-cyan-600 shadow-lg' : 'hover:bg-cyan-600/60' }}">
                 <x-heroicon-o-chart-bar class="w-6 h-6 flex-shrink-0" />
@@ -102,7 +100,7 @@
         <div x-show="open" class="border-t border-blue-700 my-4"></div>
 
         <!-- Export Menu (Dropdown) -->
-        @can('export', App\Models\Patient::class)
+        @can('export-data')
             <div x-data="{ exportOpen: false }">
                 <button @click="exportOpen = !exportOpen"
                     class="w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('export.*') ? 'bg-cyan-600 shadow-lg' : 'hover:bg-cyan-600/60' }}">
@@ -191,7 +189,7 @@
         @endcan
 
         <!-- Admin (Dropdown) -->
-        @can('manage-users')
+        @canany(['manage-users', 'manage-vaccines', 'manage-icd10', 'manage-roles'])
             <div x-data="{ adminOpen: false }">
                 <button @click="adminOpen = !adminOpen"
                     class="w-full flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors {{ request()->routeIs('admin.*') ? 'bg-cyan-600 shadow-lg' : 'hover:bg-cyan-600/60' }}">
@@ -207,40 +205,49 @@
                     x-transition:leave="transition ease-in duration-150"
                     x-transition:leave-start="opacity-100 transform translate-y-0"
                     x-transition:leave-end="opacity-0 transform -translate-y-2" class="ml-9 mt-1 space-y-1">
-                    <a href="{{ route('admin.users') }}"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.users') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
-                        <x-heroicon-o-user-group class="w-4 h-4" />
-                        <span>Kelola User</span>
-                    </a>
 
-                    <a href="{{ route('admin.vaccines') }}"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.vaccines') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
-                        <x-heroicon-o-plus class="w-4 h-4" />
-                        <span>Master Vaksin</span>
-                    </a>
+                    @can('manage-users')
+                        <a href="{{ route('admin.users') }}"
+                            class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.users') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
+                            <x-heroicon-o-user-group class="w-4 h-4" />
+                            <span>Kelola User</span>
+                        </a>
+                    @endcan
 
-                    <a href="{{ route('admin.icd10') }}"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.icd10') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
-                        <x-heroicon-o-list-bullet class="w-4 h-4" />
-                        <span>Master ICD-10</span>
-                    </a>
+                    @can('manage-vaccines')
+                        <a href="{{ route('admin.vaccines') }}"
+                            class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.vaccines') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
+                            <x-heroicon-o-plus class="w-4 h-4" />
+                            <span>Master Vaksin</span>
+                        </a>
+                    @endcan
 
-                    <div class="border-t border-blue-700/30 my-2"></div>
+                    @can('manage-icd10')
+                        <a href="{{ route('admin.icd10') }}"
+                            class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.icd10') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
+                            <x-heroicon-o-list-bullet class="w-4 h-4" />
+                            <span>Master ICD-10</span>
+                        </a>
+                    @endcan
 
-                    <a href="{{ route('admin.roles') }}"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.roles') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
-                        <x-heroicon-o-lock-closed class="w-4 h-4" />
-                        <span>Kelola Role & Permission</span>
-                    </a>
+                    @can('manage-roles')
+                        <div class="border-t border-blue-700/30 my-2"></div>
 
-                    <a href="{{ route('admin.user-roles') }}"
-                        class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.user-roles') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
-                        <x-heroicon-o-user class="w-4 h-4" />
-                        <span>Assign Role ke User</span>
-                    </a>
+                        <a href="{{ route('admin.roles') }}"
+                            class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.roles') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
+                            <x-heroicon-o-lock-closed class="w-4 h-4" />
+                            <span>Kelola Role & Permission</span>
+                        </a>
+
+                        <a href="{{ route('admin.user-roles') }}"
+                            class="flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors text-sm {{ request()->routeIs('admin.user-roles') ? 'bg-cyan-600' : 'hover:bg-cyan-600/40' }}">
+                            <x-heroicon-o-user class="w-4 h-4" />
+                            <span>Assign Role ke User</span>
+                        </a>
+                    @endcan
                 </div>
             </div>
-        @endcan
+        @endcanany
     </nav>
 
     {{-- Bottom Section - DISABLED FOR TESTING

@@ -266,10 +266,13 @@
 
         <!-- Header -->
         <div class="header avoid-break">
-            <div class="clinic-info">
-                <div class="clinic-name">KLINIK BIDAN SI-PRIMA</div>
-                <div class="clinic-address">Jl. Kesehatan No. 123, Denpasar, Bali</div>
-                <div class="clinic-address">Telp: (0361) 1234567 | Email: klinik@si-prima.id</div>
+            <div class="clinic-info" style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+                <img src="{{ asset('images/logo.png') }}" alt="SI-PRIMA" style="width: 55px; height: 55px; object-fit: contain;">
+                <div>
+                    <div class="clinic-name">KLINIK BIDAN SI-PRIMA</div>
+                    <div class="clinic-address">Jl. Kesehatan No. 123, Denpasar, Bali</div>
+                    <div class="clinic-address">Telp: (0361) 1234567 | Email: klinik@si-prima.id</div>
+                </div>
             </div>
         </div>
 
