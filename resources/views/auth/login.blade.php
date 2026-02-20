@@ -8,7 +8,7 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}" class="space-y-6">
+    <form method="POST" action="{{ route('login') }}" class="space-y-6" id="loginForm">
         @csrf
 
         <!-- Email Address -->
@@ -57,9 +57,13 @@
             @endif
         </div>
 
+        <!-- Hidden reCAPTCHA Token (populated by JS before submit) -->
+        <input type="hidden" name="captchaToken" id="captchaToken" />
+        <x-input-error :messages="$errors->get('captchaToken')" class="mt-2" />
+
         <!-- Login Button -->
         <div class="pt-2">
-            <button type="submit"
+            <button type="submit" id="loginBtn"
                 class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center space-x-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -76,7 +80,7 @@
                 <div class="w-full border-t border-gray-300"></div>
             </div>
             <div class="relative flex justify-center text-sm">
-                <span class="px-4 bg-white text-gray-500">SI-PRIMA — Sistem Informasi Pelayanan Rekam medik Interaktif & MAndiri</span>
+                <span class="px-4 bg-white text-gray-500">SI-PRIMA — Sistem Informasi Pelayanan Rekam medik Interaktif &amp; MAndiri</span>
             </div>
         </div>
 
@@ -94,5 +98,56 @@
                 </div>
             </div>
         </div>
+
+        <!-- reCAPTCHA Badge Info -->
+        <p class="text-xs text-center text-gray-400 mt-2">
+            Dilindungi oleh reCAPTCHA —
+            <a href="https://policies.google.com/privacy" target="_blank" class="underline hover:text-gray-600">Privasi</a> &amp;
+            <a href="https://policies.google.com/terms" target="_blank" class="underline hover:text-gray-600">Syarat</a> berlaku.
+        </p>
     </form>
+
+    {{-- reCAPTCHA v3: Load Google script with site key from .env --}}
+    <script src="https://www.google.com/recaptcha/api.js?render={{ config('services.recaptcha.site_key') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form   = document.getElementById('loginForm');
+            const btn    = document.getElementById('loginBtn');
+            const siteKey = "{{ config('services.recaptcha.site_key') }}";
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault(); // Hold submission until token is ready
+
+                // Disable button to prevent double-submit
+                btn.disabled = true;
+                btn.innerHTML = `
+                    <svg class="animate-spin w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                    <span>Memverifikasi...</span>
+                `;
+
+                // Execute reCAPTCHA v3 and inject token before submit
+                grecaptcha.ready(function () {
+                    grecaptcha.execute(siteKey, { action: 'login' }).then(function (token) {
+                        document.getElementById('captchaToken').value = token;
+                        form.submit(); // Now submit for real
+                    }).catch(function () {
+                        // Re-enable button if reCAPTCHA fails to load
+                        btn.disabled = false;
+                        btn.innerHTML = `
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1">
+                                </path>
+                            </svg>
+                            <span>Log in</span>
+                        `;
+                        alert('Gagal memuat layanan verifikasi keamanan. Periksa koneksi internet Anda.');
+                    });
+                });
+            });
+        });
+    </script>
 </x-guest-layout>
