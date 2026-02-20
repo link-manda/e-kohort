@@ -11,6 +11,12 @@ Route::get('/', function () {
     return redirect()->route('dashboard');
 });
 
+// CSRF Token Refresh Endpoint (untuk auto-refresh di halaman login)
+// Endpoint ini public agar dapat diakses sebelum login untuk mencegah 419 Page Expired
+Route::get('/csrf-token/refresh', function () {
+    return response()->json(['token' => csrf_token()]);
+})->name('csrf.refresh')->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class]);
+
 // Protected Routes (Requires Authentication)
 Route::middleware(['auth', 'verified'])->group(function () {
 

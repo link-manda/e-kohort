@@ -18,5 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Handle CSRF token mismatch (419 Page Expired)
+        // Redirect ke halaman login dengan pesan yang informatif
+        $exceptions->render(function (\Illuminate\Session\TokenMismatchException $e, \Illuminate\Http\Request $request) {
+            return redirect()->route('login')
+                ->with('status', 'Sesi Anda telah berakhir. Silakan login kembali.');
+        });
     })->create();

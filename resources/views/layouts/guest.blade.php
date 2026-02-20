@@ -103,6 +103,43 @@
             </div>
         </div>
     </div>
+    {{-- Auto-refresh CSRF token untuk mencegah 419 Page Expired di halaman login --}}
+    <script>
+        (function () {
+            // Refresh CSRF token setiap 25 menit (session default 120 menit, ini sebagai jaga-jaga)
+            const REFRESH_INTERVAL = 25 * 60 * 1000; // 25 menit dalam milliseconds
+
+            function refreshCsrfToken() {
+                fetch('/csrf-token/refresh', {
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.token) {
+                        // Update semua hidden input _token di halaman
+                        document.querySelectorAll('input[name="_token"]').forEach(el => {
+                            el.value = data.token;
+                        });
+                        // Update meta csrf-token
+                        const metaTag = document.querySelector('meta[name="csrf-token"]');
+                        if (metaTag) metaTag.setAttribute('content', data.token);
+                    }
+                })
+                .catch(() => {}); // Diam-diam jika gagal (user mungkin offline)
+            }
+
+            // Jalankan refresh secara berkala
+            setInterval(refreshCsrfToken, REFRESH_INTERVAL);
+
+            // Juga refresh ketika tab kembali aktif setelah lama ditinggal
+            document.addEventListener('visibilitychange', function () {
+                if (!document.hidden) {
+                    refreshCsrfToken();
+                }
+            });
+        })();
+    </script>
 </body>
 
 </html>
