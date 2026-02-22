@@ -62,9 +62,6 @@
         </div>
     </div>
 
-    <!-- Toast Notification Component -->
-    @livewire('toast-notification')
-
     @livewireScripts
     @stack('scripts')
 </body>

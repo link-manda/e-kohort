@@ -88,7 +88,7 @@
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach ($results as $patient)
-                                        <tr class="hover:bg-blue-50 cursor-pointer" wire:click="selectPatient({{ $patient->id }})">
+                                        <tr wire:key="patient-{{ $patient->id }}" class="hover:bg-blue-50 cursor-pointer" wire:click="selectPatient({{ $patient->id }})">
                                             <td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
                                                 {{ $patient->no_rm }}</td>
                                             <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700">
@@ -137,7 +137,7 @@
                                 </thead>
                                 <tbody class="bg-white divide-y divide-green-100">
                                     @foreach ($childResults as $child)
-                                        <tr class="hover:bg-green-50 cursor-pointer" wire:click="selectChild({{ $child->id }})">
+                                        <tr wire:key="child-{{ $child->id }}" class="hover:bg-green-50 cursor-pointer" wire:click="selectChild({{ $child->id }})">
                                             <td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">
                                                 {{ $child->no_rm }}</td>
                                             <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700">

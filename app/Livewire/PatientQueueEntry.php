@@ -4,17 +4,14 @@ namespace App\Livewire;
 
 use App\Models\Patient;
 use App\Models\Child;
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class PatientQueueEntry extends Component
 {
     public $search = '';
-    public $results = [];
-    public $childResults = [];  // NEW: Results for child search
-    public $selectedPatient = null;
     public $selectedPatientId = null;
-    public $selectedChild = null;  // NEW: Selected child for immunization
-    public $selectedChildId = null;  // NEW: Selected child ID
+    public $selectedChildId = null;
     public $selectionType = null;  // 'patient' or 'child'
 
     public function mount($patient_id = null)
@@ -25,61 +22,73 @@ class PatientQueueEntry extends Component
         }
     }
 
-    public function updatedSearch($value)
+    // NEW: Computed properties to prevent payload bloat
+    #[Computed]
+    public function results()
     {
-        $value = trim($value);
-
+        $value = trim($this->search);
         if (strlen($value) >= 2) {
-            // Search patients (adults/mothers)
-            $this->results = Patient::query()
+            return Patient::select('id', 'name', 'nik', 'no_rm', 'gender', 'dob', 'category')
                 ->where('name', 'like', '%' . $value . '%')
                 ->orWhere('nik', 'like', '%' . $value . '%')
                 ->orWhere('no_rm', 'like', '%' . $value . '%')
                 ->limit(10)
                 ->get();
-
-            // Search children (for immunization)
-            $this->childResults = Child::query()
-                ->where('name', 'like', '%' . $value . '%')
-                ->orWhere('nik', 'like', '%' . $value . '%')
-                ->orWhere('no_rm', 'like', '%' . $value . '%')
-                ->limit(10)
-                ->get();
-        } else {
-            $this->results = [];
-            $this->childResults = [];
         }
+        return [];
+    }
+
+    #[Computed]
+    public function childResults()
+    {
+        $value = trim($this->search);
+        if (strlen($value) >= 2) {
+            return Child::select('id', 'patient_id', 'name', 'nik', 'no_rm', 'gender', 'dob')
+                ->with('patient:id,name,phone') // Eager load parent info to avoid N+1 in view
+                ->where('name', 'like', '%' . $value . '%')
+                ->orWhere('nik', 'like', '%' . $value . '%')
+                ->orWhere('no_rm', 'like', '%' . $value . '%')
+                ->limit(10)
+                ->get();
+        }
+        return [];
+    }
+
+    #[Computed]
+    public function selectedPatient()
+    {
+        if (!$this->selectedPatientId) return null;
+        return Patient::with([
+            'pregnancies' => fn($q) => $q->whereIn('status', ['Aktif', 'Lahir'])->latest()
+        ])->find($this->selectedPatientId);
+    }
+
+    #[Computed]
+    public function selectedChild()
+    {
+        if (!$this->selectedChildId) return null;
+        return Child::with('patient')->find($this->selectedChildId);
     }
 
     public function selectPatient($patientId)
     {
-        $this->selectedPatient = Patient::find($patientId);
         $this->selectedPatientId = $patientId;
-        $this->selectedChild = null;
         $this->selectedChildId = null;
         $this->selectionType = 'patient';
         $this->search = '';
-        $this->results = [];
-        $this->childResults = [];
     }
 
     public function selectChild($childId)
     {
-        $this->selectedChild = Child::find($childId);
         $this->selectedChildId = $childId;
-        $this->selectedPatient = null;
         $this->selectedPatientId = null;
         $this->selectionType = 'child';
         $this->search = '';
-        $this->results = [];
-        $this->childResults = [];
     }
 
     public function resetSelection()
     {
-        $this->selectedPatient = null;
         $this->selectedPatientId = null;
-        $this->selectedChild = null;
         $this->selectedChildId = null;
         $this->selectionType = null;
     }
@@ -89,7 +98,7 @@ class PatientQueueEntry extends Component
      */
     public function selectChildService($service)
     {
-        if (!$this->selectedChild) {
+        if (!$this->selectedChild()) {
             session()->flash('error', 'Silakan pilih anak terlebih dahulu.');
             return;
         }
@@ -114,7 +123,7 @@ class PatientQueueEntry extends Component
 
     public function selectService($service)
     {
-        if (!$this->selectedPatient) {
+        if (!$this->selectedPatient()) {
             session()->flash('error', 'Silakan pilih pasien terlebih dahulu.');
             return;
         }
@@ -129,7 +138,7 @@ class PatientQueueEntry extends Component
 
             case 'kia':
                 // Poli KIA (ANC) - for pregnant women
-                $activePregnancy = $this->selectedPatient->pregnancies()
+                $activePregnancy = $this->selectedPatient()->pregnancies()
                     ->where('status', 'Aktif')
                     ->latest()
                     ->first();
@@ -161,7 +170,7 @@ class PatientQueueEntry extends Component
             case 'nifas':
                 // Poli Nifas - find pregnancy with status Lahir (regardless of delivery_date)
                 // Let PostnatalEntry component handle external birth modal if delivery_date is NULL
-                $deliveredPregnancy = $this->selectedPatient->pregnancies()
+                $deliveredPregnancy = $this->selectedPatient()->pregnancies()
                     ->where('status', 'Lahir')
                     ->latest('delivery_date')
                     ->first();
@@ -189,7 +198,7 @@ class PatientQueueEntry extends Component
      */
     private function updatePatientCategory($service)
     {
-        $patient = $this->selectedPatient;
+        $patient = $this->selectedPatient();
         $age = $patient->age;
 
         // Skip if category is manually set to something other than 'Umum'
@@ -231,6 +240,11 @@ class PatientQueueEntry extends Component
 
     public function render()
     {
-        return view('livewire.patient-queue-entry')->layout('layouts.dashboard');
+        return view('livewire.patient-queue-entry', [
+            'results' => $this->results(),
+            'childResults' => $this->childResults(),
+            'selectedPatient' => $this->selectedPatient(),
+            'selectedChild' => $this->selectedChild(),
+        ])->layout('layouts.dashboard');
     }
 }

@@ -160,4 +160,18 @@ class PatientController extends Controller
 
         return view('patients.print', compact('patient'));
     }
+
+    /**
+     * Display general visit detail for an adult patient.
+     */
+    public function showGeneralVisit(Patient $patient, \App\Models\GeneralVisit $generalVisit)
+    {
+        // Ensure the visit belongs to this patient
+        abort_unless($generalVisit->patient_id === $patient->id, 404);
+
+        // Load relationships
+        $generalVisit->load('prescriptions');
+
+        return view('patients.general-visit-show', compact('patient', 'generalVisit'));
+    }
 }

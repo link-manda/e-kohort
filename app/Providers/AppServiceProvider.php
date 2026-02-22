@@ -48,6 +48,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Prevent lazy loading in development to catch N+1 queries early
+        \Illuminate\Database\Eloquent\Model::preventLazyLoading(!app()->isProduction());
+
         // Register Observer untuk auto-create child & HB0
         DeliveryRecord::observe(DeliveryRecordObserver::class);
 

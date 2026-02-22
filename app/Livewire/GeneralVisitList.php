@@ -57,7 +57,10 @@ class GeneralVisitList extends Component
 
     public function getVisits()
     {
-        $query = GeneralVisit::with('patient');
+        $query = GeneralVisit::with([
+            'patient' => fn($q) => $q->withTrashed(),
+            'child',  // Eager load child relation for child visits
+        ]);
 
         // Date range filter
         if ($this->dateFrom) {
@@ -67,11 +70,16 @@ class GeneralVisitList extends Component
             $query->whereDate('visit_date', '<=', $this->dateTo);
         }
 
-        // Search by patient name or NIK
+        // Search by patient name or NIK (supports both patient and child visits)
         if ($this->search) {
-            $query->whereHas('patient', function ($q) {
-                $q->where('name', 'like', '%' . $this->search . '%')
-                    ->orWhere('nik', 'like', '%' . $this->search . '%');
+            $query->where(function ($q) {
+                $q->whereHas('patient', fn($p) => $p
+                    ->where('name', 'like', '%' . $this->search . '%')
+                    ->orWhere('nik', 'like', '%' . $this->search . '%')
+                )->orWhereHas('child', fn($c) => $c
+                    ->where('name', 'like', '%' . $this->search . '%')
+                    ->orWhere('nik', 'like', '%' . $this->search . '%')
+                );
             });
         }
 

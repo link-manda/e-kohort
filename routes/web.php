@@ -201,7 +201,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Legacy / alias route for Pendaftaran (kept for sidebar compatibility)
     Route::get('/registration', function () {
         return redirect()->route('patients.create');
-    })->name('registration-desk')->middleware('permission:create-patients');
+    })->name('legacy.registration')->middleware('permission:create-patients');
 
     // Reports: Monthly Summary
     Route::get('/reports/monthly-summary', App\Livewire\MonthlySummaryReport::class)->name('reports.monthly-summary')
@@ -241,6 +241,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // General Visit for Children (Poli Umum Anak) - uses same component with child_id
     Route::get('/general-visits/create-child/{child_id}', App\Livewire\GeneralVisitEntry::class)->name('children.general-visit')
         ->middleware('permission:create-general-visits');
+
+    // General Visit Detail - Adult Patient
+    Route::get('/patients/{patient}/general-visits/{generalVisit}', [PatientController::class, 'showGeneralVisit'])
+        ->name('patients.general-visit.show')
+        ->middleware('permission:view-general-visits');
 
     // Export: KB Reports
     Route::get('/export/kb', App\Livewire\ExportKb::class)->name('export.kb')

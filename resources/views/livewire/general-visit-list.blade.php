@@ -165,7 +165,12 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200">
                     @forelse($visits as $visit)
-                        <tr class="hover:bg-blue-50 transition-colors">
+                        @php
+                            $detailUrl = $visit->isChildVisit() && $visit->child
+                                ? route('children.general-visit.show', [$visit->child, $visit])
+                                : ($visit->patient ? route('patients.general-visit.show', [$visit->patient, $visit]) : '#');
+                        @endphp
+                        <tr class="hover:bg-blue-50 transition-colors cursor-pointer" onclick="window.location='{{ $detailUrl }}'">
                             <!-- Tanggal -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">
@@ -178,15 +183,26 @@
 
                             <!-- Pasien -->
                             <td class="px-6 py-4 whitespace-nowrap">
+                                @php
+                                    $visitor = $visit->getVisitor();
+                                    $isChild = $visit->isChildVisit();
+                                    $visitorName = $visit->visitor_name;
+                                    $visitorNik = $visitor?->nik ?? '-';
+                                    $visitorGender = $visitor?->gender ?? 'L';
+                                @endphp
                                 <div class="flex items-center">
                                     <div
-                                        class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 {{ $visit->patient->gender === 'L' ? 'bg-gradient-to-br from-blue-400 to-blue-600' : 'bg-gradient-to-br from-pink-400 to-pink-600' }}">
-                                        {{ strtoupper(substr($visit->patient->name, 0, 2)) }}
+                                        class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0 {{ $isChild ? 'bg-gradient-to-br from-green-400 to-green-600' : ($visitorGender === 'L' ? 'bg-gradient-to-br from-blue-400 to-blue-600' : 'bg-gradient-to-br from-pink-400 to-pink-600') }}">
+                                        {{ strtoupper(substr($visitorName, 0, 2)) }}
                                     </div>
                                     <div class="ml-4">
-                                        <div class="font-semibold text-gray-900">{{ $visit->patient->name }}</div>
-                                        <div class="text-xs text-gray-500">{{ $visit->patient->nik ?? 'Tanpa NIK' }}
+                                        <div class="font-semibold text-gray-900">
+                                            {{ $visitorName }}
+                                            @if($isChild)
+                                                <span class="ml-1 text-xs font-normal bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full">Anak</span>
+                                            @endif
                                         </div>
+                                        <div class="text-xs text-gray-500">{{ $visitorNik }}</div>
                                     </div>
                                 </div>
                             </td>
