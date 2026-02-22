@@ -26,10 +26,22 @@ return new class extends Migration
 
         // Step 2: Make patient_id nullable (for MySQL)
         if (DB::getDriverName() === 'mysql') {
-            // Drop foreign key first
-            Schema::table('general_visits', function (Blueprint $table) {
-                $table->dropForeign(['patient_id']);
-            });
+            // Drop foreign key only if it exists (check via INFORMATION_SCHEMA)
+            $database = DB::connection()->getDatabaseName();
+            $foreignKeyExists = DB::select("
+                SELECT CONSTRAINT_NAME
+                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+                WHERE TABLE_SCHEMA = ?
+                  AND TABLE_NAME = 'general_visits'
+                  AND COLUMN_NAME = 'patient_id'
+                  AND REFERENCED_TABLE_NAME IS NOT NULL
+                LIMIT 1
+            ", [$database]);
+
+            if (!empty($foreignKeyExists)) {
+                $constraintName = $foreignKeyExists[0]->CONSTRAINT_NAME;
+                DB::statement("ALTER TABLE `general_visits` DROP FOREIGN KEY `{$constraintName}`");
+            }
 
             // Modify column to be nullable
             Schema::table('general_visits', function (Blueprint $table) {
@@ -51,8 +63,25 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Drop child_id foreign key only if it exists
+        if (DB::getDriverName() === 'mysql') {
+            $database = DB::connection()->getDatabaseName();
+            $fk = DB::select("
+                SELECT CONSTRAINT_NAME
+                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+                WHERE TABLE_SCHEMA = ?
+                  AND TABLE_NAME = 'general_visits'
+                  AND COLUMN_NAME = 'child_id'
+                  AND REFERENCED_TABLE_NAME IS NOT NULL
+                LIMIT 1
+            ", [$database]);
+
+            if (!empty($fk)) {
+                DB::statement("ALTER TABLE `general_visits` DROP FOREIGN KEY `{$fk[0]->CONSTRAINT_NAME}`");
+            }
+        }
+
         Schema::table('general_visits', function (Blueprint $table) {
-            $table->dropForeign(['child_id']);
             $table->dropColumn('child_id');
         });
 

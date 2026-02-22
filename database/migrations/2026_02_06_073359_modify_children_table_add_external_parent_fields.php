@@ -26,10 +26,22 @@ return new class extends Migration
         // Make patient_id nullable (requires raw SQL for SQLite compatibility)
         // For MySQL, we need to drop and recreate the foreign key
         if (DB::getDriverName() === 'mysql') {
-            // Drop foreign key first
-            Schema::table('children', function (Blueprint $table) {
-                $table->dropForeign(['patient_id']);
-            });
+            // Drop foreign key only if it exists (check via INFORMATION_SCHEMA)
+            $database = DB::connection()->getDatabaseName();
+            $foreignKeyExists = DB::select("
+                SELECT CONSTRAINT_NAME
+                FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+                WHERE TABLE_SCHEMA = ?
+                  AND TABLE_NAME = 'children'
+                  AND COLUMN_NAME = 'patient_id'
+                  AND REFERENCED_TABLE_NAME IS NOT NULL
+                LIMIT 1
+            ", [$database]);
+
+            if (!empty($foreignKeyExists)) {
+                $constraintName = $foreignKeyExists[0]->CONSTRAINT_NAME;
+                DB::statement("ALTER TABLE `children` DROP FOREIGN KEY `{$constraintName}`");
+            }
 
             // Modify column to be nullable
             Schema::table('children', function (Blueprint $table) {
